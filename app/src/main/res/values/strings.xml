@@ -6,4 +6,13 @@
     <string name="bottom_person">Person</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+<!--    home fragment -->
+    <string name="time">Chào buổi sáng</string>
+    <string name="notifi_label">Thông báo</string>
+    <string name="recent_label">Gần đây</string>
+    <string name="setting_label">Cài đặt</string>
+    <string name="story">Truyện</string>
+    <string name="news">Tin tức</string>
+    <string name="favorite_buttom">Yêu thích</string>
 </resources>

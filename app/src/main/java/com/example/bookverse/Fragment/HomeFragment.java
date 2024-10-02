@@ -7,8 +7,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.bookverse.R;
+import com.example.bookverse.databinding.FragmentHomeBinding;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +18,9 @@ import com.example.bookverse.R;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+
+    LinearLayout home_favorite;
+    FragmentHomeBinding binding;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
