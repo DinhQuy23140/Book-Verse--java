@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time">Chào buổi sáng</string>
+    <string name="notifi_label">Thông báo</string>
+    <string name="recent_label">Gần đây</string>
+    <string name="setting_label">Cài đặt</string>
+    <string name="story">Truyện</string>
+    <string name="news">Tin tức</string>
+    <string name="favorite_buttom">Yêu thích</string>
+</resources>

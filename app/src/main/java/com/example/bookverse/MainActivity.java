@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.bookverse.Fragment.HomeFragment;
 import com.example.bookverse.Fragment.LibFragment;
@@ -28,9 +30,13 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        FragmentTransaction fragmentTransaction;
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.bottom_home);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, new HomeFragment()).commit();
+        fragmentTransaction.addToBackStack(null);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.bottom_home){
@@ -39,17 +45,32 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             else if(item.getItemId() == R.id.bottom_search){
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
+//                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                FragmentTransaction replaceFragment = getSupportFragmentManager().beginTransaction();
+                replaceFragment.replace(R.id.fragment_container, new SearchFragment());
+                replaceFragment.addToBackStack(null); // Optional
+                replaceFragment.commit();
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return true;
             }
             else if(item.getItemId() == R.id.bottom_Lib){
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LibFragment()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LibFragment()).commit();
+//                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                FragmentTransaction replaceFragment = getSupportFragmentManager().beginTransaction();
+                replaceFragment.replace(R.id.fragment_container, new LibFragment());
+                replaceFragment.addToBackStack(null); // Optional
+                replaceFragment.commit();
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return true;
             }
             else if(item.getItemId() == R.id.bottom_person){
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PersonFragment()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PersonFragment()).commit();
+//                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                FragmentTransaction replaceFragment = getSupportFragmentManager().beginTransaction();
+                replaceFragment.replace(R.id.fragment_container, new PersonFragment());
+                replaceFragment.addToBackStack(null); // Optional
+                replaceFragment.commit();
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return true;
             }

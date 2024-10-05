@@ -1,12 +1,24 @@
 package com.example.bookverse.Fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.example.bookverse.R;
@@ -20,6 +32,7 @@ import com.example.bookverse.databinding.FragmentHomeBinding;
 public class HomeFragment extends Fragment {
 
     LinearLayout home_favorite;
+    ImageButton btnSettings;
     FragmentHomeBinding binding;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -66,6 +79,101 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        //return inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(R.string.title_dialogBackPress)
+                        .setPositiveButton(R.string.dialogBackPressOk, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setNegativeButton(R.string.dialogBackPressCancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                builder.show();
+            }
+        };
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        home_favorite = binding.homeFavorite;
+        btnSettings = binding.homeSettings;
+        home_favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                home_favorite.setScaleX(0.9F);
+//                home_favorite.setScaleY(0.9F);
+//
+//                //set lai kich thuoc sau khi click
+//                home_favorite.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        home_favorite.setScaleX(1.0F);
+//                        home_favorite.setScaleY(1.0F);
+//                    }
+//                }, 150);
+
+                //tao doi tuong amination co ten phan tu, hieu ung, kich thuoc sau khi ap dung hieu ung
+                ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(home_favorite, "scaleX", 0.9F);
+                ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(home_favorite, "scaleY", 0.9F);
+
+                //set thoi gian scale
+                scaleDownX.setDuration(200);
+                scaleDownY.setDuration(200);
+
+                //chay doi tuong animator
+                scaleDownX.start();
+                scaleDownY.start();
+
+                scaleDownX.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(home_favorite, "scaleX", 1.0F);
+                        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(home_favorite, "scaleY", 1.0F);
+
+                        scaleUpX.setDuration(200);
+                        scaleUpY.setDuration(200);
+
+                        scaleUpX.setStartDelay(100);
+                        scaleUpY.setStartDelay(100);
+
+                        scaleUpX.start();
+                        scaleUpY.start();
+                    }
+                });
+            }
+        });
+
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingsFragment settingsFragment = new SettingsFragment();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, settingsFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
+
+    }
+
 }
