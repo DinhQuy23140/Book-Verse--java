@@ -7,4 +7,6 @@
     <string name="story">Truyện</string>
     <string name="news">Tin tức</string>
     <string name="favorite_buttom">Yêu thích</string>
+    <string name="theme">Chủ đề</string>
+    <string name="themeBtnSelect">Chọn</string>
 </resources>

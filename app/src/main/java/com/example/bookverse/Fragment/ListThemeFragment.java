@@ -5,31 +5,31 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.example.bookverse.AdapterCustom.ThemeAdapter;
+import com.example.bookverse.Class.Image;
 import com.example.bookverse.R;
-import com.example.bookverse.databinding.FragmentSettingsBinding;
+import com.example.bookverse.databinding.FragmentListThemeBinding;
 
-import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SettingsFragment#newInstance} factory method to
+ * Use the {@link ListThemeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SettingsFragment extends Fragment {
+public class ListThemeFragment extends Fragment {
 
-    ImageButton  btnBack;
-    FragmentSettingsBinding binding;
-    TextView tvIntroduce, tvTheme, tvLanguage;
+    FragmentListThemeBinding binding;
+    ListView lvTheme;
+    ArrayList<Image> listTheme;
+    ThemeAdapter adapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,7 +40,7 @@ public class SettingsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public SettingsFragment() {
+    public ListThemeFragment() {
         // Required empty public constructor
     }
 
@@ -50,11 +50,11 @@ public class SettingsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingsFragment.
+     * @return A new instance of fragment ListThemeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
+    public static ListThemeFragment newInstance(String param1, String param2) {
+        ListThemeFragment fragment = new ListThemeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,30 +75,25 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_settings, container, false);
-        binding = FragmentSettingsBinding.inflate(inflater, container, false);
+//        return inflater.inflate(R.layout.fragment_list_theme, container, false);
+        binding = FragmentListThemeBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tvIntroduce = binding.settingsIntroduce;
-        tvLanguage = binding.settingsLanguage;
-        tvTheme = binding.settingsTheme;
-        btnBack = binding.settingsBackbtn;
-        btnBack.setOnClickListener(viewBack -> {
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, new HomeFragment()).commit();
-        });
-
-
-        tvTheme.setOnClickListener(viewTheme -> {
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, new ListThemeFragment()).commit();
-            fragmentTransaction.addToBackStack(null);
-        });
+        lvTheme = binding.lvTheme;
+        int[] listPathImage = {R.drawable.background_app, R.drawable.favorite, R.drawable.theme_alfomedeiros18926843,
+        R.drawable.theme_exel, R.drawable.theme_mati12509859, R.drawable.theme_mdsnmdsnmdsn1831234,
+        R.drawable.theme_padrinan19670, R.drawable.theme_pixabay459277};
+        listTheme = new ArrayList<Image>();
+        for (int i : listPathImage) {
+            Image image = new Image(i);
+            listTheme.add(image);
+        }
+        adapter = new ThemeAdapter(requireContext(), listTheme);
+        lvTheme.setAdapter(adapter);
+        lvTheme.setClickable(true);
     }
 }

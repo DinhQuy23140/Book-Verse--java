@@ -2,7 +2,7 @@
 <resources>
     <string name="settings_title">Cài đặt</string>
     <string name="introduce">Giới thiệu</string>
-    <string name="settings_theme">Chế độ</string>
+    <string name="settings_theme">Chủ đề</string>
     <string name="settings_language">Ngôn ngữ</string>
     <string name="setting_group_system">Hệ thống</string>
 </resources>
