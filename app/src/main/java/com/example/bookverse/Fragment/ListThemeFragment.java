@@ -1,20 +1,26 @@
 package com.example.bookverse.Fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.bookverse.AdapterCustom.ThemeAdapter;
 import com.example.bookverse.Class.Image;
 import com.example.bookverse.R;
+import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.databinding.FragmentListThemeBinding;
 
 import java.util.ArrayList;
@@ -26,10 +32,13 @@ import java.util.ArrayList;
  */
 public class ListThemeFragment extends Fragment {
 
+    DrawerLayout layout;
+    ActivityMainBinding mainBinding;
     FragmentListThemeBinding binding;
     ListView lvTheme;
     ArrayList<Image> listTheme;
     ThemeAdapter adapter;
+    SharedPreferences preferences;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -77,23 +86,33 @@ public class ListThemeFragment extends Fragment {
         // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_list_theme, container, false);
         binding = FragmentListThemeBinding.inflate(inflater, container, false);
+        mainBinding = ActivityMainBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        preferences = getActivity().getSharedPreferences("MySharePref", Context.MODE_PRIVATE);
+        int presentPath = preferences.getInt("pathTheme", 0);
+        layout = mainBinding.layoutmain;
         lvTheme = binding.lvTheme;
         int[] listPathImage = {R.drawable.background_app, R.drawable.favorite, R.drawable.theme_alfomedeiros18926843,
         R.drawable.theme_exel, R.drawable.theme_mati12509859, R.drawable.theme_mdsnmdsnmdsn1831234,
         R.drawable.theme_padrinan19670, R.drawable.theme_pixabay459277};
         listTheme = new ArrayList<Image>();
         for (int i : listPathImage) {
-            Image image = new Image(i);
-            listTheme.add(image);
+            if (i != presentPath){
+                Image image = new Image(i);
+                listTheme.add(image);
+            }
+            else{
+                continue;
+            }
         }
         adapter = new ThemeAdapter(requireContext(), listTheme);
         lvTheme.setAdapter(adapter);
         lvTheme.setClickable(true);
+
     }
 }

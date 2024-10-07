@@ -43,4 +43,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    //glide
+    implementation (libs.glide) // Phiên bản Glide mới nhất
+    annotationProcessor (libs.compiler)
 }
