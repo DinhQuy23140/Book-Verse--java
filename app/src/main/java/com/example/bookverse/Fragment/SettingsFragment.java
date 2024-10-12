@@ -13,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bookverse.AdapterCustom.ThemeAdapter;
 import com.example.bookverse.R;
+import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.databinding.FragmentSettingsBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
@@ -27,6 +30,8 @@ import java.util.Objects;
  */
 public class SettingsFragment extends Fragment {
 
+    ActivityMainBinding mainBinding;
+    BottomNavigationView bottomNavigationView;
     ImageButton  btnBack;
     FragmentSettingsBinding binding;
     TextView tvIntroduce, tvTheme, tvLanguage;
@@ -71,14 +76,30 @@ public class SettingsFragment extends Fragment {
         }
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_settings, container, false);
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
+        mainBinding = ActivityMainBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if (mainBinding.bottomNavigation != null) {
+//            mainBinding.bottomNavigation.setSelectedItemId(R.id.bottom_Lib);
+//            Toast.makeText(getContext(), "Item set to bottom_Lib", Toast.LENGTH_LONG).show();
+//        } else {
+//            Toast.makeText(getContext(), "BottomNavigationView is null", Toast.LENGTH_LONG).show();
+//        }
+//    }
+
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -101,4 +122,5 @@ public class SettingsFragment extends Fragment {
             fragmentTransaction.addToBackStack(null);
         });
     }
+
 }

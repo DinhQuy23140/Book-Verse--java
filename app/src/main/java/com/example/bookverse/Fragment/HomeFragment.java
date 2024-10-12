@@ -23,6 +23,9 @@ import android.widget.LinearLayout;
 
 import com.example.bookverse.R;
 import com.example.bookverse.databinding.FragmentHomeBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +34,7 @@ import com.example.bookverse.databinding.FragmentHomeBinding;
  */
 public class HomeFragment extends Fragment {
 
+    BottomNavigationView bottomNavigationView;
     LinearLayout home_favorite;
     ImageButton btnSettings;
     FragmentHomeBinding binding;
@@ -84,30 +88,36 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.title_dialogBackPress)
-                        .setPositiveButton(R.string.dialogBackPressOk, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+//    @Override
+//    public void onAttach(@NonNull Context context) {
+//        super.onAttach(context);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setMessage(R.string.title_dialogBackPress)
+//                        .setPositiveButton(R.string.dialogBackPressOk, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                // Thoát ứng dụng
+//                                getActivity().finish();  // Đóng Activity hiện tại
+//                                System.exit(0);  // Thoát ứng dụng
+//                            }
+//                        })
+//                        .setNegativeButton(R.string.dialogBackPressCancel, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                // Đóng dialog
+//                                dialogInterface.dismiss(); // Đóng dialog
+//                            }
+//                        });
+//                builder.show();
+//
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//    }
 
-                            }
-                        })
-                        .setNegativeButton(R.string.dialogBackPressCancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                builder.show();
-            }
-        };
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -164,11 +174,19 @@ public class HomeFragment extends Fragment {
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SettingsFragment settingsFragment = new SettingsFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, settingsFragment);
+
+                // Tạo một instance của SettingsFragment
+                SettingsFragment settingsFragment = new SettingsFragment();
+
+                // Thay thế fragment hiện tại trong fragment_container bằng SettingsFragment
+                fragmentTransaction.replace(R.id.fragment_container, settingsFragment, "SettingsFragment");
+
+                // Thêm transaction vào backstack để quay lại được fragment trước đó
                 fragmentTransaction.addToBackStack(null);
+
+                // Commit transaction
                 fragmentTransaction.commit();
             }
         });
