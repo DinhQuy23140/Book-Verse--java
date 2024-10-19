@@ -9,4 +9,9 @@
     <string name="favorite_buttom">Yêu thích</string>
     <string name="theme">Chủ đề</string>
     <string name="themeBtnSelect">Chọn</string>
+    <string name="viewAll">Xem tất cả</string>
+    <string name="title_newBook">Mới</string>
+    <string name="title_mostpopular">Thịnh hành</string>
+    <string name="title_recent">Xem gần đây</string>
+    <string name="title_allBook">Tất cả</string>
 </resources>

@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -14,18 +15,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
+import com.example.bookverse.Class.Book;
 import com.example.bookverse.R;
+import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.databinding.FragmentHomeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +46,11 @@ public class HomeFragment extends Fragment {
     LinearLayout home_favorite;
     ImageButton btnSettings;
     FragmentHomeBinding binding;
+    RecyclerView recyclerViewAllBook;
+    ArrayList<Book> listAllBook;
+    HomeAdapterRecycle adapterAllBook;
+
+    TextView btnViewAllBook, tvTime;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -124,6 +137,32 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         home_favorite = binding.homeFavorite;
         btnSettings = binding.homeSettings;
+        btnViewAllBook = binding.btnViewAllBook;
+        tvTime = binding.tvTime;
+        recyclerViewAllBook = binding.recyclerAllBook;
+
+
+        recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        listAllBook = new ArrayList<Book>();
+        int[] listPathImage = {R.drawable.favorite, R.drawable.theme_alfomedeiros18926843,
+                R.drawable.theme_exel, R.drawable.theme_mati12509859, R.drawable.theme_mdsnmdsnmdsn1831234,
+                R.drawable.theme_padrinan19670, R.drawable.theme_pixabay459277, R.drawable.background_app};
+        String[] authorBook = {"book1", "book2", "book3", "book4", "book5", "book6", "book7", "book8"};
+
+        for (int i = 0; i < authorBook.length; i++){
+            Book item = new Book(authorBook[i], listPathImage[i]);
+            listAllBook.add(item);
+        }
+        int size = authorBook.length;
+        Toast.makeText(requireContext(), Integer.toString(size), Toast.LENGTH_SHORT).show();
+        adapterAllBook = new HomeAdapterRecycle(requireActivity(), listAllBook);
+        recyclerViewAllBook.setAdapter(adapterAllBook);
+
+        btnViewAllBook.setOnClickListener(view1 -> {
+            Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
+            startActivity(viewAllBook);
+
+        });
         home_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

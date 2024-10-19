@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Layer 1: Solid black base -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#000000" /> <!-- Màu đen thuần -->
+        </shape>
+    </item>
+
+    <!-- Layer 2: Glossy effect (light reflection) -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#00000000"
+                android:endColor="#33FFFFFF"
+                android:angle="90"
+            />
+        </shape>
+    </item>
+</layer-list>
