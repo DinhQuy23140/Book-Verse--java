@@ -14,4 +14,12 @@
     <string name="title_mostpopular">Thịnh hành</string>
     <string name="title_recent">Xem gần đây</string>
     <string name="title_allBook">Tất cả</string>
+    <string name="ViewAllBookTitle">Danh sách sách</string>
+
+    //time
+    <string name="setTimeMorining">Chào buổi sáng</string>
+    <string name="setTimeAfternoon">Chào buổi chiều</string>
+    <string name="setTimeEvening">Chào buổi tối</string>
+    <string name="setTimeNight">Đêm ngủ ngon</string>
+
 </resources>

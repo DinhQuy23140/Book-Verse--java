@@ -97,8 +97,8 @@ public class Book{
 //    }
 
 
-    public Book(String author, int pathImage) {
-        this.author = author;
+    public Book(String title, int pathImage) {
+        this.title = title;
         this.pathImage = pathImage;
     }
 

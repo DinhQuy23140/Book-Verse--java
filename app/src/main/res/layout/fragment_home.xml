@@ -77,11 +77,11 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="100dp"
-            android:layout_marginLeft="20dp">
+            android:layout_marginLeft="10dp">
 
             <Button
                 android:id="@+id/home_btn_comic"
-                android:layout_width="80dp"
+                android:layout_width="83dp"
                 android:layout_height="40dp"
                 android:backgroundTint="@color/brow_"
                 android:text="@string/story"
@@ -93,15 +93,14 @@
 
             <Button
                 android:id="@+id/home_btn_news"
-                android:layout_width="80dp"
+                android:layout_width="83dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="25dp"
                 android:backgroundTint="@color/brow_"
                 android:text="@string/news"
                 android:textColor="@color/text_buttom"
                 android:textSize="10sp"
                 app:cornerRadius="15dp"
-                app:layout_constraintStart_toEndOf="@+id/home_btn_comic"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
@@ -176,7 +175,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
+                            android:layout_margin="10dp"
                             android:text="@string/title_allBook"
                             android:textColor="@color/brow"
                             android:textSize="18sp"

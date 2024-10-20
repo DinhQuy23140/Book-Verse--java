@@ -34,6 +34,7 @@ import com.example.bookverse.databinding.FragmentHomeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -141,6 +142,21 @@ public class HomeFragment extends Fragment {
         tvTime = binding.tvTime;
         recyclerViewAllBook = binding.recyclerAllBook;
 
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        //Toast.makeText(requireContext(), Integer.toString(hour), Toast.LENGTH_SHORT).show();
+        if(hour >= 7 && hour <12) {
+            tvTime.setText(R.string.setTimeMorining);
+        }
+        else if(hour >=12 && hour < 18) {
+            tvTime.setText(R.string.setTimeAfternoon);
+        }
+        else if(hour>= 18 && hour < 21) {
+            tvTime.setText(R.string.setTimeEvening);
+        }
+        else {
+            tvTime.setText(R.string.setTimeNight);
+        }
 
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<Book>();
@@ -154,12 +170,12 @@ public class HomeFragment extends Fragment {
             listAllBook.add(item);
         }
         int size = authorBook.length;
-        Toast.makeText(requireContext(), Integer.toString(size), Toast.LENGTH_SHORT).show();
         adapterAllBook = new HomeAdapterRecycle(requireActivity(), listAllBook);
         recyclerViewAllBook.setAdapter(adapterAllBook);
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
+            viewAllBook.putExtra("key", "allBook");
             startActivity(viewAllBook);
 
         });
