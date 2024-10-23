@@ -15,10 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.bookverse.Class.Book;
+import com.example.bookverse.Class.Format;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.ViewBookActivity;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.CustomViewHolder> {
 
@@ -40,19 +42,19 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         Book itemPosition = listBook.get(position);
+        String url = getUrl(itemPosition);
         holder.title.setText(itemPosition.getTitle());
         holder.image.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 int width = holder.image.getWidth();
                 int height = holder.image.getHeight();
-                Glide.with(holder.itemView.getContext())
-                        .load(itemPosition.getPathImage())
-                        .override(width, height)
-                        .placeholder(R.drawable.ic_default_image)
-                        .error(R.drawable.ic_error_load_image)
-                        .into(holder.image);
-                holder.image.removeOnLayoutChangeListener(this);
+//                Glide.with(holder.itemView.getContext())
+//                        .load(url)
+//                        .override(width, height)
+//                        .placeholder(R.drawable.ic_default_image)
+//                        .error(R.drawable.ic_error_load_image)
+//                        .into(holder.image);
             }
         });
 
@@ -61,6 +63,10 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
             intent.putExtra("book", "valueBook");
             holder.itemView.getContext().startActivity(intent);
         });
+    }
+
+    public String getUrl(Book book){
+        return book.getFormats().getMimeUrlMap().get("image/jpeg");
     }
 
     @Override

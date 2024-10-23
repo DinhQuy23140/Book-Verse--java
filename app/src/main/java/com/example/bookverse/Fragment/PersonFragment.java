@@ -1,14 +1,19 @@
 package com.example.bookverse.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.bookverse.R;
+import com.example.bookverse.activities.TestCallApiActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +21,8 @@ import com.example.bookverse.R;
  * create an instance of this fragment.
  */
 public class PersonFragment extends Fragment {
+
+    Button person_view_btn;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,5 +69,15 @@ public class PersonFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_person, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        person_view_btn = view.findViewById(R.id.person_view_btn);
+        person_view_btn.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), TestCallApiActivity.class);
+            startActivity(intent);
+        });
     }
 }

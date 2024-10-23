@@ -58,12 +58,12 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 R.drawable.theme_padrinan19670, R.drawable.theme_pixabay459277, R.drawable.background_app};
         String[] authorBook = {"book1", "book2", "book3", "book4", "book5", "book6", "book7", "book8"};
         listBook = new ArrayList<>();
-        for (int i = 0; i < listPathImage.length; i++){
-            Book item = new Book(authorBook[i], listPathImage[i]);
-            listBook.add(item);
-        }
-        adapterRecycle = new HomeAdapterRecycle(this, listBook);
-        recycleBook.setAdapter(adapterRecycle);
+//        for (int i = 0; i < listPathImage.length; i++){
+//            Book item = new Book(authorBook[i], listPathImage[i]);
+//            listBook.add(item);
+//        }
+//        adapterRecycle = new HomeAdapterRecycle(this, listBook);
+//        recycleBook.setAdapter(adapterRecycle);
 
         viewAllbtnBack.setOnClickListener(viewBack ->{
             finish();

@@ -47,4 +47,11 @@ dependencies {
     //glide
     implementation (libs.glide) // Phiên bản Glide mới nhất
     annotationProcessor (libs.compiler)
+
+    //Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
+    //Gson
+    implementation ("com.google.code.gson:gson:2.9.0")
 }

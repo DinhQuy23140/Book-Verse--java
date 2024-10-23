@@ -5,56 +5,100 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
 public class Book{
-    private String title, author, publisher, genre, description, pathBook;
-    private int isbn, year, page, pathImage;
+    private float id, download_count;
+    private String title, media_type;
+    private String[] subjects, bookshelves, languages;
+    private ArrayList<Person> authors, translators;
+    private boolean copyright;
+    private Format formats;
 
-    public String getAuthor() {
-        return author;
+    public Book(ArrayList<Person> authors, String[] bookshelves, boolean copyright, float download_count, Format formats, float id, String[] languages, String media_type, String[] subjects, String title, ArrayList<Person> translators) {
+        this.authors = authors;
+        this.bookshelves = bookshelves;
+        this.copyright = copyright;
+        this.download_count = download_count;
+        this.formats = formats;
+        this.id = id;
+        this.languages = languages;
+        this.media_type = media_type;
+        this.subjects = subjects;
+        this.title = title;
+        this.translators = translators;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public ArrayList<Person> getAuthors() {
+        return authors;
     }
 
-    public String getDescription() {
-        return description;
+    public void setAuthors(ArrayList<Person> authors) {
+        this.authors = authors;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String[] getBookshelves() {
+        return bookshelves;
     }
 
-    public String getGenre() {
-        return genre;
+    public void setBookshelves(String[] bookshelves) {
+        this.bookshelves = bookshelves;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public boolean isCopyright() {
+        return copyright;
     }
 
-    public int getPage() {
-        return page;
+    public void setCopyright(boolean copyright) {
+        this.copyright = copyright;
     }
 
-    public void setPage(int page) {
-        this.page = page;
+    public float getDownload_count() {
+        return download_count;
     }
 
-    public int getIsbn() {
-        return isbn;
+    public void setDownload_count(float download_count) {
+        this.download_count = download_count;
     }
 
-    public void setIsbn(int isbn) {
-        this.isbn = isbn;
+    public Format getFormats() {
+        return formats;
     }
 
-    public String getPublisher() {
-        return publisher;
+    public void setFormats(Format formats) {
+        this.formats = formats;
     }
 
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
+    public float getId() {
+        return id;
+    }
+
+    public void setId(float id) {
+        this.id = id;
+    }
+
+    public String[] getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(String[] languages) {
+        this.languages = languages;
+    }
+
+    public String getMedia_type() {
+        return media_type;
+    }
+
+    public void setMedia_type(String media_type) {
+        this.media_type = media_type;
+    }
+
+    public String[] getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(String[] subjects) {
+        this.subjects = subjects;
     }
 
     public String getTitle() {
@@ -65,53 +109,16 @@ public class Book{
         this.title = title;
     }
 
-    public int getYear() {
-        return year;
+    public ArrayList<Person> getTranslators() {
+        return translators;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setTranslators(ArrayList<Person> translators) {
+        this.translators = translators;
     }
 
-    public String getPathBook() {
-        return pathBook;
-    }
-
-    public void setPathBook(String pathBook) {
-        this.pathBook = pathBook;
-    }
-
-    public int getPathImage() {
-        return pathImage;
-    }
-
-    public void setPathImage(int pathImage) {
-        this.pathImage = pathImage;
-    }
-
-
-//    public Book(String author, int pathImage) {
-//        super();
-//        this.author = author;
-//        this.pathImage = pathImage;
-//    }
-
-
-    public Book(String title, int pathImage) {
-        this.title = title;
-        this.pathImage = pathImage;
-    }
-
-    public Book(String author, String description, String genre, int isbn, int page, String pathBook, int pathImage, String publisher, String title, int year) {
-        this.author = author;
-        this.description = description;
-        this.genre = genre;
-        this.isbn = isbn;
-        this.page = page;
-        this.pathBook = pathBook;
-        this.pathImage = pathImage;
-        this.publisher = publisher;
-        this.title = title;
-        this.year = year;
+    @Override
+    public String toString() {
+        return "Title: " + title + ", Formats: " + (formats != null ? formats.toString() : "Not Available");
     }
 }

@@ -3,13 +3,12 @@ package com.example.bookverse.Fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +26,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bookverse.API.ApiService;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
+import com.example.bookverse.Class.ApiClient;
 import com.example.bookverse.Class.Book;
+import com.example.bookverse.Class.Format;
+import com.example.bookverse.Class.ListOfBook;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.databinding.FragmentHomeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,6 +61,7 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerViewAllBook;
     ArrayList<Book> listAllBook;
     HomeAdapterRecycle adapterAllBook;
+    ListOfBook resultApi;
 
     TextView btnViewAllBook, tvTime;
 
@@ -140,7 +152,6 @@ public class HomeFragment extends Fragment {
         btnSettings = binding.homeSettings;
         btnViewAllBook = binding.btnViewAllBook;
         tvTime = binding.tvTime;
-        recyclerViewAllBook = binding.recyclerAllBook;
 
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -158,6 +169,7 @@ public class HomeFragment extends Fragment {
             tvTime.setText(R.string.setTimeNight);
         }
 
+        recyclerViewAllBook = binding.recyclerAllBook;
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<Book>();
         int[] listPathImage = {R.drawable.favorite, R.drawable.theme_alfomedeiros18926843,
@@ -165,13 +177,67 @@ public class HomeFragment extends Fragment {
                 R.drawable.theme_padrinan19670, R.drawable.theme_pixabay459277, R.drawable.background_app};
         String[] authorBook = {"book1", "book2", "book3", "book4", "book5", "book6", "book7", "book8"};
 
-        for (int i = 0; i < authorBook.length; i++){
-            Book item = new Book(authorBook[i], listPathImage[i]);
-            listAllBook.add(item);
-        }
-        int size = authorBook.length;
-        adapterAllBook = new HomeAdapterRecycle(requireActivity(), listAllBook);
-        recyclerViewAllBook.setAdapter(adapterAllBook);
+//        for (int i = 0; i < authorBook.length; i++){
+//            Book item = new Book(authorBook[i], listPathImage[i]);
+//            listAllBook.add(item);
+//        }
+//        int size = authorBook.length;
+//        adapterAllBook = new HomeAdapterRecycle(requireActivity(), listAllBook);
+//        recyclerViewAllBook.setAdapter(adapterAllBook);
+
+        ApiService apiService = ApiClient.getApiService();
+        Call<ListOfBook> listOfBookCall = apiService.getListBook();
+        listOfBookCall.enqueue(new Callback<ListOfBook>() {
+            @Override
+            public void onResponse(Call<ListOfBook> call, Response<ListOfBook> response) {
+                //Toast.makeText(requireContext(), "Call Api success", Toast.LENGTH_SHORT).show();
+                Log.d("API Response", response.body().toString());
+                resultApi = response.body();
+                listAllBook = resultApi.getResults();
+//                Toast.makeText(requireContext(),    "Size" + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
+//                if (listAllBook != null && !listAllBook.isEmpty()) {
+//                    StringBuilder stringBuilder = new StringBuilder();
+//
+//                    // Xây dựng chuỗi thông tin từ listAllBook
+//                    for (Book book : listAllBook) {
+//                        // Kiểm tra book.getFormats() có phải là null không
+//                        if (book.getFormats() != null && book.getFormats().getMimeUrlMap() != null) {
+//                            stringBuilder.append("Title: ").append(book.getTitle()).append("\n");
+//                            String htmlUrl = book.getFormats().getMimeUrlMap().get("text/html");
+//                            if (htmlUrl != null) {
+//                                stringBuilder.append("URL: ").append(htmlUrl).append("\n\n");
+//                            } else {
+//                                stringBuilder.append("URL: Not Available\n\n");
+//                            }
+//                        } else {
+//                            stringBuilder.append("Formats: Not Available\n\n");
+//                        }
+//                    }
+//
+//                    // Lưu chuỗi vào SharedPreferences
+//                    saveToSharedPreferences(stringBuilder.toString(), requireContext());
+//                }
+//                if (!response.isSuccessful()) {
+//                    try {
+//                        String errorResponse = response.errorBody().string(); // Đọc nội dung lỗi
+//                        Log.e("API", "Error body: " + errorResponse);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+            }
+
+            @Override
+            public void onFailure(Call<ListOfBook> call, Throwable t) {
+                Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
+                if (t instanceof IOException){
+                    Log.e("API","Network failure: " + t.getMessage());
+                }
+                else{
+                    Log.e("API", "Conversion error: "+ t.getMessage());
+                }
+            }
+        });
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
@@ -245,8 +311,20 @@ public class HomeFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+    }
+    public String getUrl(Book book){
+        return book.getFormats().getMimeUrlMap().get("image/jpeg");
+    }
 
+    private void saveToSharedPreferences(String data, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("BookPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        // Lưu dữ liệu vào SharedPreferences
+        editor.putString("book_list", data);
+        editor.apply(); // Hoặc editor.commit(); để ghi ngay lập tức
+
+        Toast.makeText(context, "Data saved in SharedPreferences", Toast.LENGTH_SHORT).show();
     }
 
 }

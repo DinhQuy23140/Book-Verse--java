@@ -38,11 +38,11 @@ public class ViewAllAdapter extends RecyclerView.Adapter<ViewAllAdapter.CustomVi
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         Book itemPosion = listBook.get(position);
         holder.title.setText(itemPosion.getTitle());
-        Glide.with(holder.itemView.getContext())
-                .load(itemPosion.getPathImage())
-                .placeholder(R.drawable.loading_ic)
-                .error(R.drawable.ic_error_load_image)
-                .into(holder.imageView);
+//        Glide.with(holder.itemView.getContext())
+//                .load(itemPosion.getPathImage())
+//                .placeholder(R.drawable.loading_ic)
+//                .error(R.drawable.ic_error_load_image)
+//                .into(holder.imageView);
     }
 
     @Override
