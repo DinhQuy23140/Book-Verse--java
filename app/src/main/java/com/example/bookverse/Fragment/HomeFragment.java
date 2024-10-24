@@ -172,72 +172,7 @@ public class HomeFragment extends Fragment {
         recyclerViewAllBook = binding.recyclerAllBook;
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<Book>();
-        int[] listPathImage = {R.drawable.favorite, R.drawable.theme_alfomedeiros18926843,
-                R.drawable.theme_exel, R.drawable.theme_mati12509859, R.drawable.theme_mdsnmdsnmdsn1831234,
-                R.drawable.theme_padrinan19670, R.drawable.theme_pixabay459277, R.drawable.background_app};
-        String[] authorBook = {"book1", "book2", "book3", "book4", "book5", "book6", "book7", "book8"};
-
-//        for (int i = 0; i < authorBook.length; i++){
-//            Book item = new Book(authorBook[i], listPathImage[i]);
-//            listAllBook.add(item);
-//        }
-//        int size = authorBook.length;
-//        adapterAllBook = new HomeAdapterRecycle(requireActivity(), listAllBook);
-//        recyclerViewAllBook.setAdapter(adapterAllBook);
-
-        ApiService apiService = ApiClient.getApiService();
-        Call<ListOfBook> listOfBookCall = apiService.getListBook();
-        listOfBookCall.enqueue(new Callback<ListOfBook>() {
-            @Override
-            public void onResponse(Call<ListOfBook> call, Response<ListOfBook> response) {
-                //Toast.makeText(requireContext(), "Call Api success", Toast.LENGTH_SHORT).show();
-                Log.d("API Response", response.body().toString());
-                resultApi = response.body();
-                listAllBook = resultApi.getResults();
-//                Toast.makeText(requireContext(),    "Size" + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
-//                if (listAllBook != null && !listAllBook.isEmpty()) {
-//                    StringBuilder stringBuilder = new StringBuilder();
-//
-//                    // Xây dựng chuỗi thông tin từ listAllBook
-//                    for (Book book : listAllBook) {
-//                        // Kiểm tra book.getFormats() có phải là null không
-//                        if (book.getFormats() != null && book.getFormats().getMimeUrlMap() != null) {
-//                            stringBuilder.append("Title: ").append(book.getTitle()).append("\n");
-//                            String htmlUrl = book.getFormats().getMimeUrlMap().get("text/html");
-//                            if (htmlUrl != null) {
-//                                stringBuilder.append("URL: ").append(htmlUrl).append("\n\n");
-//                            } else {
-//                                stringBuilder.append("URL: Not Available\n\n");
-//                            }
-//                        } else {
-//                            stringBuilder.append("Formats: Not Available\n\n");
-//                        }
-//                    }
-//
-//                    // Lưu chuỗi vào SharedPreferences
-//                    saveToSharedPreferences(stringBuilder.toString(), requireContext());
-//                }
-//                if (!response.isSuccessful()) {
-//                    try {
-//                        String errorResponse = response.errorBody().string(); // Đọc nội dung lỗi
-//                        Log.e("API", "Error body: " + errorResponse);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-            }
-
-            @Override
-            public void onFailure(Call<ListOfBook> call, Throwable t) {
-                Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
-                if (t instanceof IOException){
-                    Log.e("API","Network failure: " + t.getMessage());
-                }
-                else{
-                    Log.e("API", "Conversion error: "+ t.getMessage());
-                }
-            }
-        });
+        getListBook();
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
@@ -312,19 +247,42 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-    public String getUrl(Book book){
-        return book.getFormats().getMimeUrlMap().get("image/jpeg");
-    }
 
-    private void saveToSharedPreferences(String data, Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("BookPreferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // Lưu dữ liệu vào SharedPreferences
-        editor.putString("book_list", data);
-        editor.apply(); // Hoặc editor.commit(); để ghi ngay lập tức
 
-        Toast.makeText(context, "Data saved in SharedPreferences", Toast.LENGTH_SHORT).show();
+    public void getListBook(){
+        ApiService apiService = ApiClient.getApiService();
+        Call<ListOfBook> listOfBookCall = apiService.getListBook(null, null);
+        listOfBookCall.enqueue(new Callback<ListOfBook>() {
+            @Override
+            public void onResponse(Call<ListOfBook> call, Response<ListOfBook> response) {
+                //Toast.makeText(requireContext(), "Call Api success", Toast.LENGTH_SHORT).show();
+                if (response.body() != null){
+                    Log.d("API Response", response.body().toString());
+                    resultApi = response.body();
+                    ArrayList<Book>currentListBook = resultApi.getResults();
+                    listAllBook.addAll(currentListBook);
+//                Toast.makeText(getContext(), "Size: " + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
+                    adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
+                    recyclerViewAllBook.setAdapter(adapterAllBook);
+                    if(resultApi.getNext() != null){
+                        getListBook();
+                    }
+                }
+                Log.e("API_RESPONSE", "Response is null or unsuccessful: " + response.code());
+            }
+
+            @Override
+            public void onFailure(Call<ListOfBook> call, Throwable t) {
+                Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
+                if (t instanceof IOException){
+                    Log.e("API","Network failure: " + t.getMessage());
+                }
+                else{
+                    Log.e("API", "Conversion error: "+ t.getMessage());
+                }
+            }
+        });
     }
 
 }

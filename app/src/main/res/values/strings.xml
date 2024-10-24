@@ -9,4 +9,8 @@
     <string name="title_dialogBackPress">Bạn có muốn thoát</string>
     <string name="dialogBackPressOk">Xác nhận</string>
     <string name="dialogBackPressCancel">Hủy</string>
+    <string name="searchTitleTv">Bạn muốn đọc gì</string>
+    <string name="searchTitle">Tìm kiếm</string>
+    <string name="searchCancel">Hủy</string>
+    <string name="searchHistoryTv">Lịch sử đọc</string>
 </resources>

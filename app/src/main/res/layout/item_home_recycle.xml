@@ -27,10 +27,12 @@
 
     <TextView
         android:id="@+id/tvTitleBook"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:ellipsize="end"
         android:gravity="center"
+        android:maxLines="5"
         android:text="TextView"
         android:textSize="18sp"
         android:textStyle="bold"

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1094226839998",
+    "firebase_url": "https://bookverse-bdfd3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "bookverse-bdfd3",
+    "storage_bucket": "bookverse-bdfd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094226839998:android:e1c5877cdd868d4dd4d1ef",
+        "android_client_info": {
+          "package_name": "com.example.bookverse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx7iZmj0Nyz7lAvYclj9cQfqxIj-dbm-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

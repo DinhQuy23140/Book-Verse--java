@@ -42,19 +42,19 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         Book itemPosition = listBook.get(position);
-        String url = getUrl(itemPosition);
+        String urlImage = getUrlImg(itemPosition.getFormats());
         holder.title.setText(itemPosition.getTitle());
         holder.image.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 int width = holder.image.getWidth();
                 int height = holder.image.getHeight();
-//                Glide.with(holder.itemView.getContext())
-//                        .load(url)
-//                        .override(width, height)
-//                        .placeholder(R.drawable.ic_default_image)
-//                        .error(R.drawable.ic_error_load_image)
-//                        .into(holder.image);
+                Glide.with(holder.itemView.getContext())
+                        .load(urlImage)
+                        .override(width, height)
+                        .placeholder(R.drawable.ic_default_image)
+                        .error(R.drawable.ic_error_load_image)
+                        .into(holder.image);
             }
         });
 
@@ -65,9 +65,10 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
         });
     }
 
-    public String getUrl(Book book){
-        return book.getFormats().getMimeUrlMap().get("image/jpeg");
+    public String getUrlImg(Map<String, String> format){
+        return format.get("image/jpeg");
     }
+
 
     @Override
     public int getItemCount() {

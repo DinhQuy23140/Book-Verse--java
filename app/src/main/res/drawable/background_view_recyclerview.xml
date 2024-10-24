@@ -11,6 +11,7 @@
                 android:centerColor="#900C3F"
                 android:type="linear"
             />
+            <corners android:radius="10dp"></corners>
         </shape>
     </item>
 

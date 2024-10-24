@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Book{
     private float id, download_count;
@@ -13,9 +14,9 @@ public class Book{
     private String[] subjects, bookshelves, languages;
     private ArrayList<Person> authors, translators;
     private boolean copyright;
-    private Format formats;
+    private Map<String, String> formats;
 
-    public Book(ArrayList<Person> authors, String[] bookshelves, boolean copyright, float download_count, Format formats, float id, String[] languages, String media_type, String[] subjects, String title, ArrayList<Person> translators) {
+    public Book(ArrayList<Person> authors, String[] bookshelves, boolean copyright, float download_count, Map<String, String> formats, float id, String[] languages, String media_type, String[] subjects, String title, ArrayList<Person> translators) {
         this.authors = authors;
         this.bookshelves = bookshelves;
         this.copyright = copyright;
@@ -61,11 +62,11 @@ public class Book{
         this.download_count = download_count;
     }
 
-    public Format getFormats() {
+    public Map<String, String> getFormats() {
         return formats;
     }
 
-    public void setFormats(Format formats) {
+    public void setFormats(Map<String, String> formats) {
         this.formats = formats;
     }
 

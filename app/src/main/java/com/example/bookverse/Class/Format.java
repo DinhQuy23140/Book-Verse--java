@@ -3,28 +3,25 @@ package com.example.bookverse.Class;
 import java.util.Map;
 
 public class Format {
+    private Map<String, String> formats;
 
-    private Map<String, String> mimeUrlMap;
-
-    public Format(Map<String, String> mimeUrlMap) {
-        this.mimeUrlMap = mimeUrlMap;
+    public Format(Map<String, String> formats) {
+        this.formats = formats;
     }
 
-    public Map<String, String> getMimeUrlMap() {
-        return mimeUrlMap;
+    public Map<String, String> getFormats() {
+        return formats;
     }
 
-    public void setMimeUrlMap(Map<String, String> mimeUrlMap) {
-        this.mimeUrlMap = mimeUrlMap;
+    public void setFormats(Map<String, String> formats) {
+        this.formats = formats;
     }
-
-
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (mimeUrlMap != null) {
-            for (Map.Entry<String, String> entry : mimeUrlMap.entrySet()) {
+        if (formats != null && !formats.isEmpty()) {
+            for (Map.Entry<String, String> entry : formats.entrySet()) {
                 sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
         } else {
