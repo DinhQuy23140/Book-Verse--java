@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background_app"
     tools:context=".activities.SearchActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,15 +15,19 @@
 
         <EditText
             android:id="@+id/search_inputSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="120dp"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/background_search"
+            android:drawableStart="@drawable/ic_search"
+            android:drawableEnd="@drawable/ic_cancel"
             android:ems="10"
             android:inputType="text"
-            android:textColor="@color/brow"
+            android:paddingStart="5dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,7 +35,7 @@
             android:id="@+id/search_cancelBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="10dp"
             android:text="@string/searchCancel"
             android:textColor="@color/brow"
             android:textSize="20sp"
@@ -60,12 +65,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:text="@string/searchHistoryTv"
@@ -117,7 +123,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/search_searchRelativeRv"
