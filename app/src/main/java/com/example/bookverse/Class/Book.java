@@ -5,10 +5,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class Book{
+public class Book implements Serializable {
     private float id, download_count;
     private String title, media_type;
     private String[] subjects, bookshelves, languages;
@@ -117,6 +118,8 @@ public class Book{
     public void setTranslators(ArrayList<Person> translators) {
         this.translators = translators;
     }
+
+
 
     @Override
     public String toString() {

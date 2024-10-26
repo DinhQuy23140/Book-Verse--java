@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.bookverse.AdapterCustom.SearchRecyclerAdapter;
 import com.example.bookverse.R;
+import com.example.bookverse.activities.InfBokkActivity;
 import com.example.bookverse.activities.SearchActivity;
 
 import java.util.ArrayList;
@@ -113,6 +114,13 @@ public class SearchFragment extends Fragment {
         }
         recyclerAdapter = new SearchRecyclerAdapter(requireContext(), listrandomBackgroundSearch, subjects);
         searchRecyclerSub.setAdapter(recyclerAdapter);
+        searchRecyclerSub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(requireContext(), InfBokkActivity.class);
+                startActivity(intent);
+            }
+        });
         searchViewSearch = view.findViewById(R.id.searchViewSearch);
         searchViewSearch.setOnClickListener(viewSearch ->{
             Log.d("SearchClick", "Search button clicked");
