@@ -109,7 +109,7 @@ public class SearchFragment extends Fragment {
         searchRecyclerSub.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         Random randomIndex = new Random();
         for (int i = 0; i < subjects.size(); i++){
-            int index = randomIndex.nextInt(pathList.length);
+            int index = i % pathList.length;
             listrandomBackgroundSearch.add(pathList[index]);
         }
         recyclerAdapter = new SearchRecyclerAdapter(requireContext(), listrandomBackgroundSearch, subjects);

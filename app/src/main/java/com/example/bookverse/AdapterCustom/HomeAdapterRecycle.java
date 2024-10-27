@@ -2,6 +2,7 @@ package com.example.bookverse.AdapterCustom;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -30,6 +31,14 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
     public HomeAdapterRecycle(Context context, ArrayList<Book> listBook) {
         this.context = context;
         this.listBook = listBook;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void clearData(){
+        if(!listBook.isEmpty()){
+            listBook.clear();
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull
