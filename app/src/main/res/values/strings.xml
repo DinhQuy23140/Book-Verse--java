@@ -13,4 +13,10 @@
     <string name="searchTitle">Tìm kiếm</string>
     <string name="searchCancel">Hủy</string>
     <string name="searchHistoryTv">Lịch sử đọc</string>
+    <string name="btnLogin">Đăng nhập</string>
+    <string name="btnSignup">Đăng ký</string>
+    <string name="selectAvatar">Chọn ảnh</string>
+    <string name="next">Tiếp</string>
+    <string name="complete">Hoaàn thành</string>
+    <string name="back">Quay lại</string>
 </resources>

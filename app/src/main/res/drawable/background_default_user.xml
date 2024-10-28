@@ -1,0 +1,20 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Nền trắng -->
+    <item
+        android:width="48dp"
+        android:height="48dp"
+        >
+        <shape>
+            <solid android:color="@color/white"/>
+
+        </shape>
+    </item>
+
+    <!-- Icon hình người -->
+    <item
+        android:drawable="@drawable/ic_person"
+        android:width="24dp"
+        android:height="24dp"
+        android:gravity="center"/>
+</layer-list>
