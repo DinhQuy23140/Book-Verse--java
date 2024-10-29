@@ -19,4 +19,17 @@
     <string name="next">Tiếp</string>
     <string name="complete">Hoaàn thành</string>
     <string name="back">Quay lại</string>
+    <string name="notifiloginSuccess">Đăng nhập thành công</string>
+    <string name="notifiLoginFailure">Kiểm tra lại thông tin</string>
+    <string name="notifiValiEmail">Email không hợp lệ</string>
+    <string name="notifiEmptyEmail">Email không được trống</string>
+    <string name="notifiValiPassword">Mật khẩu không hợp lệ</string>
+    <string name="notifiEmptyPassword">Mật khẩu không được bỏ trống</string>
+    <string name="hintUsername">Tên của bạn</string>
+    <string name="hintEmail">Email</string>
+    <string name="hintPassword">Mật khẩu</string>
+    <string name="hintConfirmPassword">Xác nhận mật khẩu</string>
+    <string name="hintPhone">Số điện thoại</string>
+    <string name="loginNote">Bạn chưa có tài khoản?</string>
+    <string name="signupNote">Bạn đã có tài khoản?</string>
 </resources>

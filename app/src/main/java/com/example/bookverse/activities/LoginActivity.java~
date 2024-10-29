@@ -103,10 +103,10 @@ public class LoginActivity extends AppCompatActivity {
             if(validateSignup()){
                 Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
                 Bundle newUser = new Bundle();
-                newUser.putString("username", signup_username.getText().toString());
+                newUser.putString("name", signup_username.getText().toString());
                 newUser.putString("email", signup_email.getText().toString());
                 newUser.putString("password", signup_password.getText().toString());
-                newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
+                newUser.putString("phone", signup_phoneNumber.getText().toString());
                 nextSignup.putExtra("newUser", newUser);
                 startActivity(nextSignup);
             }

@@ -9,30 +9,33 @@
     tools:context=".activities.LoginActivity">
 
     <LinearLayout
+        android:id="@+id/signup_nextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/signup_backIc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        app:srcCompat="@drawable/ic_back" />
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/next"
+            android:textColor="@color/brow"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/back"
-        android:textColor="@color/brow"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            app:srcCompat="@drawable/ic_forward" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -69,7 +72,7 @@
         android:layout_marginEnd="30dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,9 +93,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_input_login"
                 android:ems="10"
+                android:hint="Email"
                 android:inputType="text"
                 android:paddingLeft="10dp"
-                android:text="Email"
                 android:textColor="@color/brow"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -112,9 +115,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_input_login"
                 android:ems="10"
-                android:inputType="text"
+                android:hint="Password"
+                android:inputType="text|textPassword"
                 android:paddingLeft="10dp"
-                android:text="Password"
                 android:textColor="@color/brow"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -154,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Bạn chưa có tài khoản?"
+                android:text="@string/loginNote"
                 android:textSize="16dp" />
 
             <TextView
@@ -181,7 +184,7 @@
         android:layout_marginEnd="30dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -202,9 +205,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_input_login"
                 android:ems="10"
+                android:hint="@string/hintUsername"
                 android:inputType="text"
                 android:paddingLeft="10dp"
-                android:text="User name"
                 android:textColor="@color/brow"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -224,9 +227,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_input_login"
                 android:ems="10"
+                android:hint="@string/hintEmail"
                 android:inputType="text|textEmailAddress"
                 android:paddingLeft="10dp"
-                android:text="Email"
                 android:textColor="@color/brow"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -246,9 +249,31 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_input_login"
                 android:ems="10"
+                android:hint="@string/hintPassword"
                 android:inputType="text|textPassword"
                 android:paddingLeft="10dp"
-                android:text="Password"
+                android:textColor="@color/brow"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/signup_editConfirmPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_input_login"
+                android:ems="10"
+                android:hint="@string/hintConfirmPassword"
+                android:inputType="text|textPassword"
+                android:paddingStart="10dp"
                 android:textColor="@color/brow"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -268,35 +293,35 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_input_login"
                 android:ems="10"
+                android:hint="@string/hintPhone"
                 android:inputType="phone"
-                android:paddingLeft="10dp"
-                android:text="Phone"
+                android:paddingStart="10dp"
                 android:textColor="@color/brow"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp">-->
 
-            <Button
-                android:id="@+id/signup_btnSigup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:backgroundTint="@color/brow"
-                android:text="@string/btnSignup"
-                app:cornerRadius="10dp" />
+<!--            <Button-->
+<!--                android:id="@+id/signup_btnSigup"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_centerInParent="true"-->
+<!--                android:backgroundTint="@color/brow"-->
+<!--                android:text="@string/btnSignup"-->
+<!--                app:cornerRadius="10dp" />-->
 
-            <ProgressBar
-                android:id="@+id/signup_prbSignup"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+<!--            <ProgressBar-->
+<!--                android:id="@+id/signup_prbSignup"-->
+<!--                style="?android:attr/progressBarStyle"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:visibility="gone" />-->
 
-        </RelativeLayout>
+<!--        </RelativeLayout>-->
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -310,7 +335,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Bạn đã có tài khoản?"
+                android:text="@string/signupNote"
                 android:textSize="16dp" />
 
             <TextView
