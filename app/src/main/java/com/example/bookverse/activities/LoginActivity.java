@@ -110,6 +110,9 @@ public class LoginActivity extends AppCompatActivity {
                 nextSignup.putExtra("newUser", newUser);
                 startActivity(nextSignup);
             }
+            else{
+                Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
+            }
         });
 
         login_viewSignup.setOnClickListener(viewSignup->{
@@ -148,11 +151,37 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean validateSignup(){
-        String name = signup_username.getText().toString();
+        String username = signup_username.getText().toString();
         String email = signup_email.getText().toString();
         String password = signup_password.getText().toString();
         String confirmPassword = signup_confirmPassword.getText().toString();
         String phoneNumber = signup_phoneNumber.getText().toString();
+        if(username.isEmpty()){
+            showNotifi(R.string.notifiUsernameEmpty);
+            return false;
+        }
+        else if(email.isEmpty()){
+            showNotifi(R.string.notifiEmptyEmail);
+            return false;
+        }
+        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showNotifi(R.string.notifiValiEmail);
+            return false;
+        }
+        else if(password.isEmpty()) {
+            showNotifi(R.string.notifiEmptyPassword);
+            return false;
+        }
+        else if(password.length() < 8){
+            showNotifi(R.string.notifiValiPassword);
+            return false;
+        }
+        else if(!confirmPassword.equals(password)){
+            showNotifi(R.string.notifiConfirmPassword);
+        }
+        else if(phoneNumber.length() < 10){
+            showNotifi(R.string.notifiPhoneValid);
+        }
         return true;
     }
 
