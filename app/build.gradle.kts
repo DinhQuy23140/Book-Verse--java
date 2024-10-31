@@ -17,6 +17,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packaging {
+        resources {
+            excludes.add("META-INF/NOTICE.md")
+            excludes.add("META-INF/LICENSE.md")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -33,6 +40,7 @@ android {
     viewBinding{
         enable=true
     }
+
 }
 
 dependencies {
@@ -55,5 +63,9 @@ dependencies {
     implementation (libs.converter.gson)
 
     //Gson
-    implementation ("com.google.code.gson:gson:2.9.0")
+    implementation (libs.gson)
+
+    //javamail
+    implementation (libs.android.mail)
+    implementation (libs.android.activation)
 }

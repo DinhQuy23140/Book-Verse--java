@@ -19,23 +19,27 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
+import com.example.bookverse.sendMail.GetPassword;
+import com.example.bookverse.sendMail.SendMailTask;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginActivity extends AppCompatActivity {
     //login
     EditText login_editEmail, login_editPassword, signup_username, signup_email, signup_password,
-    signup_confirmPassword, signup_phoneNumber;
-    Button login_btnLogin, signup_btnSigup;
+    signup_confirmPassword, signup_phoneNumber, forgot_edtEmail;
+    Button login_btnLogin, forgot_btnSubmit;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     PreferenceManager preferenceManager;
     ProgressBar log_prbLoadin;
-    TextView login_viewSignup, signup_btnViewLogin;
-    LinearLayout signup_nextview;
+    TextView login_viewSignup, signup_btnViewLogin, signup_Title, login_viewForotPass;
 
     //signup
-    LinearLayout layout_signup, layout_login;
+    LinearLayout layout_signup, layout_login, signup_nextview, layout_forgotPass, forgot_close;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         login_viewSignup = findViewById(R.id.login_viewSignup);
         login_btnLogin = findViewById(R.id.log_btnLogin);
         log_prbLoadin = findViewById(R.id.log_prbLoadin);
+        login_viewForotPass = findViewById(R.id.login_viewForotPass);
 
         //signup
         layout_signup = findViewById(R.id.layout_signup);
@@ -64,6 +69,13 @@ public class LoginActivity extends AppCompatActivity {
         signup_confirmPassword = findViewById(R.id.signup_editConfirmPassword);
         signup_phoneNumber = findViewById(R.id.signup_editPhone);
         signup_nextview = findViewById(R.id.signup_nextview);
+        signup_Title = findViewById(R.id.signup_Title);
+
+        //forgot
+        forgot_edtEmail = findViewById(R.id.forgot_edtEmail);
+        forgot_btnSubmit = findViewById(R.id.forgot_btnsubmit);
+        forgot_close = findViewById(R.id.forgot_close);
+        layout_forgotPass = findViewById(R.id.layout_forgotPass);
 
         login_btnLogin.setOnClickListener(view->{
             login_btnLogin.setVisibility(ProgressBar.VISIBLE);
@@ -99,6 +111,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        login_viewForotPass.setOnClickListener(viewForgot->{
+            layout_login.setVisibility(View.GONE);
+            layout_forgotPass.setVisibility(View.VISIBLE);
+            forgot_close.setVisibility(View.VISIBLE);
+        });
+
         signup_nextview.setOnClickListener(view->{
             if(validateSignup()){
                 Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
@@ -119,12 +137,65 @@ public class LoginActivity extends AppCompatActivity {
             layout_signup.setVisibility(View.VISIBLE);
             signup_nextview.setVisibility(View.VISIBLE);
             layout_login.setVisibility(View.GONE);
+            //signup_Title.setVisibility(View.VISIBLE);
         });
 
         signup_btnViewLogin.setOnClickListener(viewLogin->{
             layout_signup.setVisibility(View.GONE);
             signup_nextview.setVisibility(View.GONE);
             layout_login.setVisibility(View.VISIBLE);
+            //signup_Title.setVisibility(View.GONE);
+        });
+
+        forgot_close.setOnClickListener(close->{
+            layout_login.setVisibility(View.VISIBLE);
+            forgot_close.setVisibility(View.GONE);
+            layout_forgotPass.setVisibility(View.GONE);
+        });
+
+        forgot_btnSubmit.setOnClickListener(submit->{
+            if(validateForgotPass()){
+                String email = forgot_edtEmail.getText().toString();
+                AtomicReference<String> name = new AtomicReference<>();
+                firestore.collection(Constants.KEY_COLLECTION_USERS)
+                        .whereEqualTo(Constants.KEY_EMAIL, email)
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if(task.isSuccessful() && !task.getResult().isEmpty()){
+                                DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
+                                name.set(documentSnapshot.getString(Constants.KEY_NAME));
+                            }
+                            else{
+                                name.set(String.valueOf(R.string.nameuserDefault));
+                            }
+                        });
+                GetPassword getPassword = new GetPassword();
+                getPassword.getPassword(email, new GetPassword.FirebaseCallback() {
+                    @Override
+                    public void onCallback(String password) {
+                        if(password != null){
+                            String username = "cloudcomputing@zohomail.com";
+                            String passwordMail = "dinhquy23";
+                            String smtpHost = "smtp.zoho.com";
+                            int smtpPort = 587; // Or "587" if using TLS
+                            String subject = "Yêu cầu đặt lại mật khẩu";
+                            String body = "Kính gửi " + name + ",\n\n"
+                                    + "Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho ứng dụng BookVerse của bạn.\n"
+                                    + "Mật khẩu của bạn là: " + password + "\n\n"
+                                    + "Nếu bạn không yêu cầu thay đổi này, vui lòng liên hệ với chúng tôi ngay lập tức.\n\n"
+                                    + "Trân trọng,\n"
+                                    + "Đội ngũ BookVerse";
+                            new SendMailTask(LoginActivity.this, email, subject, body, username, passwordMail, smtpHost, smtpPort).execute();
+                        }
+                        else{
+                            Toast.makeText(LoginActivity.this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+            else{
+                Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -181,6 +252,19 @@ public class LoginActivity extends AppCompatActivity {
         }
         else if(phoneNumber.length() < 10){
             showNotifi(R.string.notifiPhoneValid);
+        }
+        return true;
+    }
+
+    public boolean validateForgotPass(){
+        String email = forgot_edtEmail.getText().toString();
+        if(email.isEmpty()){
+            showNotifi(R.string.notifiEmptyEmail);
+            return false;
+        }
+        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showNotifi(R.string.notifiValiEmail);
+            return false;
         }
         return true;
     }

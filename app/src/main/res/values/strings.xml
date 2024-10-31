@@ -16,6 +16,8 @@
     <string name="btnLogin">Đăng nhập</string>
     <string name="btnSignup">Đăng ký</string>
     <string name="titleForgot">Quên mật khẩu</string>
+    <string name="submit">Gửi</string>
+    <string name="close">Đóng</string>
     <string name="selectAvatar">Chọn ảnh</string>
     <string name="next">Tiếp</string>
     <string name="complete">Hoaàn thành</string>
@@ -36,4 +38,5 @@
     <string name="hintPhone">Số điện thoại</string>
     <string name="loginNote">Bạn chưa có tài khoản?</string>
     <string name="signupNote">Bạn đã có tài khoản?</string>
+    <string name="nameuserDefault">Nguời dùng</string>
 </resources>
