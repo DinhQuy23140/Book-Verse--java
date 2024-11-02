@@ -23,8 +23,11 @@ import com.example.bookverse.sendMail.GetPassword;
 import com.example.bookverse.sendMail.SendMailTask;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -35,11 +38,11 @@ public class LoginActivity extends AppCompatActivity {
     Button login_btnLogin, forgot_btnSubmit;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     PreferenceManager preferenceManager;
-    ProgressBar log_prbLoadin;
+    ProgressBar log_prbLoadin, signin_loading, forgot_loading;
     TextView login_viewSignup, signup_btnViewLogin, signup_Title, login_viewForotPass;
 
     //signup
-    LinearLayout layout_signup, layout_login, signup_nextview, layout_forgotPass, forgot_close;
+    LinearLayout layout_signup, layout_login, signup_nextview, layout_forgotPass, forgot_close, layout_viewLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +73,16 @@ public class LoginActivity extends AppCompatActivity {
         signup_phoneNumber = findViewById(R.id.signup_editPhone);
         signup_nextview = findViewById(R.id.signup_nextview);
         signup_Title = findViewById(R.id.signup_Title);
+        layout_viewLogin = findViewById(R.id.layout_viewLogin);
+        signin_loading = findViewById(R.id.signin_loading);
+
 
         //forgot
         forgot_edtEmail = findViewById(R.id.forgot_edtEmail);
         forgot_btnSubmit = findViewById(R.id.forgot_btnsubmit);
         forgot_close = findViewById(R.id.forgot_close);
         layout_forgotPass = findViewById(R.id.layout_forgotPass);
+        forgot_loading = findViewById(R.id.forgot_loading);
 
         login_btnLogin.setOnClickListener(view->{
             login_btnLogin.setVisibility(ProgressBar.VISIBLE);
@@ -118,19 +125,41 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         signup_nextview.setOnClickListener(view->{
+            layout_viewLogin.setVisibility(View.GONE);
+            signin_loading.setVisibility(View.VISIBLE);
             if(validateSignup()){
-                Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
-                Bundle newUser = new Bundle();
-                newUser.putString("username", signup_username.getText().toString());
-                newUser.putString("email", signup_email.getText().toString());
-                newUser.putString("password", signup_password.getText().toString());
-                newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
-                nextSignup.putExtra("newUser", newUser);
-                startActivity(nextSignup);
+                Task<QuerySnapshot> queryUserName = firestore.collection(Constants.KEY_COLLECTION_USERS)
+                        .whereEqualTo(Constants.KEY_NAME, signup_username.getText().toString())
+                        .get();
+                Task<QuerySnapshot> queryEmail = firestore.collection(Constants.KEY_EMAIL)
+                        .whereEqualTo(Constants.KEY_EMAIL, signup_email.getText().toString())
+                        .get();
+                Tasks.whenAllComplete(queryUserName, queryEmail).addOnCompleteListener(task ->{
+                    boolean checkUsename = queryUserName.getResult().isEmpty();
+                    boolean checkEmail = queryEmail.getResult().isEmpty();
+                    if(checkUsename){
+                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
+                    }
+                    else if(checkEmail){
+                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
+                        Bundle newUser = new Bundle();
+                        newUser.putString("username", signup_username.getText().toString());
+                        newUser.putString("email", signup_email.getText().toString());
+                        newUser.putString("password", signup_password.getText().toString());
+                        newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
+                        nextSignup.putExtra("newUser", newUser);
+                        startActivity(nextSignup);
+                    }
+                });
             }
             else{
                 Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
             }
+            layout_viewLogin.setVisibility(View.VISIBLE);
+            signin_loading.setVisibility(View.GONE);
         });
 
         login_viewSignup.setOnClickListener(viewSignup->{
@@ -154,6 +183,8 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         forgot_btnSubmit.setOnClickListener(submit->{
+            forgot_btnSubmit.setVisibility(View.GONE);
+            forgot_loading.setVisibility(View.VISIBLE);
             if(validateForgotPass()){
                 String email = forgot_edtEmail.getText().toString();
                 AtomicReference<String> name = new AtomicReference<>();
@@ -174,8 +205,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onCallback(String password) {
                         if(password != null){
-                            String username = "cloudcomputing@zohomail.com";
-                            String passwordMail = "dinhquy23";
+                            String username = "";
+                            String passwordMail = "";
                             String smtpHost = "smtp.zoho.com";
                             int smtpPort = 587; // Or "587" if using TLS
                             String subject = "Yêu cầu đặt lại mật khẩu";
@@ -196,6 +227,8 @@ public class LoginActivity extends AppCompatActivity {
             else{
                 Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
             }
+            forgot_btnSubmit.setVisibility(View.VISIBLE);
+            forgot_loading.setVisibility(View.GONE);
         });
     }
 
