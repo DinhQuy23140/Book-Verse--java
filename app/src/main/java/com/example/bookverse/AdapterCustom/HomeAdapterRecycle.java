@@ -12,12 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.bookverse.Class.Book;
 import com.example.bookverse.Class.Format;
 import com.example.bookverse.R;
+import com.example.bookverse.activities.InfBokkActivity;
 import com.example.bookverse.activities.ViewBookActivity;
 
 import java.util.ArrayList;
@@ -67,8 +69,18 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
             }
         });
 
+        holder.book_favoriteImv.setOnClickListener(view -> {
+            if (!holder.book_favoriteImv.isActivated()) {
+                holder.book_favoriteImv.setImageResource(R.drawable.ic_favorite_click);
+                holder.book_favoriteImv.setActivated(true);
+            } else {
+                holder.book_favoriteImv.setImageResource(R.drawable.ic_favorite);
+                holder.book_favoriteImv.setActivated(false);
+            }
+        });
+
         holder.itemView.setOnClickListener(view -> {
-            Intent intent = new Intent(holder.itemView.getContext(), ViewBookActivity.class);
+            Intent intent = new Intent(holder.itemView.getContext(), InfBokkActivity.class);
             intent.putExtra("book", "valueBook");
             holder.itemView.getContext().startActivity(intent);
         });
@@ -88,11 +100,13 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
 
         TextView title;
         ImageView image;
+        ImageView book_favoriteImv;
 
         public CustomViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.tvTitleBook);
             image = itemView.findViewById(R.id.imvItem);
+            book_favoriteImv = itemView.findViewById(R.id.book_favoriteImv);
         }
     }
 }

@@ -172,7 +172,9 @@ public class HomeFragment extends Fragment {
         recyclerViewAllBook = binding.recyclerAllBook;
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<Book>();
+        adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
         getListBook();
+        recyclerViewAllBook.setAdapter(adapterAllBook);
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
@@ -262,9 +264,8 @@ public class HomeFragment extends Fragment {
                     resultApi = response.body();
                     ArrayList<Book>currentListBook = resultApi.getResults();
                     listAllBook.addAll(currentListBook);
+                    adapterAllBook.notifyItemRangeChanged(listAllBook.size(), currentListBook.size());
 //                Toast.makeText(getContext(), "Size: " + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
-                    adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
-                    recyclerViewAllBook.setAdapter(adapterAllBook);
                     if(resultApi.getNext() != null){
                         getListBook();
                     }

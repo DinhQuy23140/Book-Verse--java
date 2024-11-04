@@ -141,6 +141,9 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 ArrayList<Book> currentBook = resultApi.getResults();
                 listAllBook.addAll(currentBook);
                 adapterAllBook.notifyItemRangeChanged(listAllBook.size(), currentBook.size());
+                if(resultApi.getNext() != null){
+                    getListBook(keySearch, keyTopic);
+                }
             }
 
             @Override

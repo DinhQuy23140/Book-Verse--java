@@ -102,7 +102,7 @@
         android:layout_marginEnd="30dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -427,7 +427,7 @@
         android:layout_marginEnd="30dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -477,16 +477,16 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true" />
 
             <Button
                 android:id="@+id/forgot_btnsubmit"
                 android:layout_width="100dp"
                 android:layout_height="50dp"
+                android:layout_centerInParent="true"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="@color/brow"
-                android:layout_centerInParent="true"
                 android:text="@string/submit"
                 android:textSize="18sp" />
         </RelativeLayout>
