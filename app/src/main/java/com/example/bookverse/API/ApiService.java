@@ -13,8 +13,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ApiService {
     @GET("books")
     Call<ListOfBook> getListBook(@Query("search") String search, @Query("topic") String topic);
+
+    @GET
+    Call<ListOfBook> getListBookByUrl(@Url String url);
 }

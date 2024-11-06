@@ -39,4 +39,5 @@
     <string name="loginNote">Bạn chưa có tài khoản?</string>
     <string name="signupNote">Bạn đã có tài khoản?</string>
     <string name="nameuserDefault">Nguời dùng</string>
+    <string name="infBoookDowload">Tải xuống</string>
 </resources>

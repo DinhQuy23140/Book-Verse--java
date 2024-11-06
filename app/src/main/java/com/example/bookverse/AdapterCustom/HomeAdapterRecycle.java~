@@ -56,25 +56,19 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
         Book itemPosition = listBook.get(position);
         String urlImage = getUrlImg(itemPosition.getFormats());
         holder.title.setText(itemPosition.getTitle());
-//        holder.image.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-//            @Override
-//            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-//                int width = holder.image.getWidth();
-//                int height = holder.image.getHeight();
-//                Glide.with(holder.itemView.getContext())
-//                        .load(urlImage)
-//                        .override(width, height)
-//                        .placeholder(R.drawable.ic_default_image)
-//                        .error(R.drawable.ic_error_load_image)
-//                        .into(holder.image);
-//            }
-//        });
-
-        Glide.with(holder.itemView.getContext())
-                .load(urlImage)
-                .placeholder(R.drawable.ic_default_image)
-                .error(R.drawable.ic_error_load_image)
-                .into(holder.image);
+        holder.image.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                int width = holder.image.getWidth();
+                int height = holder.image.getHeight();
+                Glide.with(holder.itemView.getContext())
+                        .load(urlImage)
+                        .override(width, height)
+                        .placeholder(R.drawable.ic_default_image)
+                        .error(R.drawable.ic_error_load_image)
+                        .into(holder.image);
+            }
+        });
 
         holder.book_favoriteImv.setOnClickListener(view -> {
             if (!holder.book_favoriteImv.isActivated()) {
