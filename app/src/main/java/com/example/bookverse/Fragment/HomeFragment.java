@@ -3,12 +3,9 @@ package com.example.bookverse.Fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -30,17 +27,20 @@ import com.example.bookverse.API.ApiService;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
 import com.example.bookverse.Class.ApiClient;
 import com.example.bookverse.Class.Book;
-import com.example.bookverse.Class.Format;
 import com.example.bookverse.Class.ListOfBook;
+import com.example.bookverse.Class.Person;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.databinding.FragmentHomeBinding;
+import com.example.bookverse.utilities.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -65,6 +65,7 @@ public class HomeFragment extends Fragment {
 
     TextView btnViewAllBook, tvTime;
     private String nextPageUrl = null;
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -175,6 +176,7 @@ public class HomeFragment extends Fragment {
         listAllBook = new ArrayList<Book>();
         adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
         getListBook();
+        //writeToFirebase();
         recyclerViewAllBook.setAdapter(adapterAllBook);
 
         btnViewAllBook.setOnClickListener(view1 -> {
@@ -271,6 +273,70 @@ public class HomeFragment extends Fragment {
                     if(nextPageUrl != null){
                         getListBook();
                     }
+                }
+                Log.e("API_RESPONSE", "Response is null or unsuccessful: " + response.code());
+            }
+
+            @Override
+            public void onFailure(Call<ListOfBook> call, Throwable t) {
+                Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
+                if (t instanceof IOException){
+                    Log.e("API","Network failure: " + t.getMessage());
+                }
+                else{
+                    Log.e("API", "Conversion error: "+ t.getMessage());
+                }
+            }
+        });
+    }
+
+    public void writeToFirebase(){
+        ApiService apiService = ApiClient.getApiService();
+        Call<ListOfBook> listOfBookCall = nextPageUrl == null ? apiService.getListBook(null, null): apiService.getListBookByUrl(nextPageUrl);
+        listOfBookCall.enqueue(new Callback<ListOfBook>() {
+            @Override
+            public void onResponse(Call<ListOfBook> call, Response<ListOfBook> response) {
+                //Toast.makeText(requireContext(), "Call Api success", Toast.LENGTH_SHORT).show();
+                if (response.body() != null){
+                    Log.d("API Response", response.body().toString());
+                    resultApi = response.body();
+                    ArrayList<Book>currentListBook = resultApi.getResults();
+                    listAllBook.addAll(currentListBook);
+                    for(int i = 0; i < currentListBook.size(); i++){
+                        Book book = currentListBook.get(i);
+                        Map<String, String> formats = new HashMap<>();
+                        ArrayList<Person> authors = book.getAuthors();
+                        StringBuilder authorList = new StringBuilder();
+                        for(int index = 0; index < authors.size(); index++){
+                            authorList.append(authors.get(index).getName());
+                            if (index < authors.size()-1) authorList.append(", ");
+                        }
+                        formats.put("authors", String.valueOf(authorList));
+                        formats.put("bookshelves", Arrays.asList(book.getBookshelves()).toString());
+                        formats.put("copyright", String.valueOf(book.isCopyright()));
+                        formats.put("download_count", String.valueOf(book.getDownload_count()));
+                        formats.put("formats", String.valueOf(book.getFormats()));
+                        formats.put("languages", Arrays.toString(book.getLanguages()));
+                        formats.put("media_type", String.valueOf(book.getMedia_type()));
+                        formats.put("subjects", Arrays.toString(book.getSubjects()));
+                        formats.put("title", String.valueOf(book.getTitle()));
+
+                        StringBuilder translatorList = new StringBuilder();
+                        for(int index = 0; index < authors.size(); index++){
+                            translatorList.append(authors.get(index).getName());
+                            if (index < authors.size()-1) translatorList.append(", ");
+                        }
+                        formats.put("translators", String.valueOf(translatorList));
+
+                        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                                .document(String.valueOf(book.getId()))
+                                .set(formats);
+                    }
+//                Toast.makeText(getContext(), "Size: " + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
+                    nextPageUrl = resultApi.getNext();
+//                    if(nextPageUrl != null){
+//                        writeToFirebase();
+//                    }
                 }
                 Log.e("API_RESPONSE", "Response is null or unsuccessful: " + response.code());
             }

@@ -10,4 +10,5 @@ public class Constants {
     public static final String KEY_PREFERENCE_NAME = "bookVersePreference";
     public static final String KEY_IS_SIGNED_IN = "signIn";
     public static final String KEY_COLLECTION_USERS = "users";
+    public static final String KEY_COLLECTION_BOOKS = "books";
 }
