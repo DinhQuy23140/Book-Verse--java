@@ -52,8 +52,8 @@
                     android:id="@+id/imageView10"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center|end"
-                    android:layout_marginStart="40dp"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="15dp"
                     android:src="@drawable/ic_user" />
             </LinearLayout>
 
@@ -78,8 +78,8 @@
                     android:id="@+id/imageView11"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center|end"
-                    android:layout_marginStart="40dp"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="15dp"
                     android:src="@drawable/ic_favorite_click" />
             </LinearLayout>
 
@@ -104,8 +104,8 @@
                     android:id="@+id/imageView13"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center|end"
-                    android:layout_marginStart="40dp"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="15dp"
                     android:src="@drawable/ic_history" />
             </LinearLayout>
 
@@ -130,8 +130,8 @@
                     android:id="@+id/imageView14"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center|end"
-                    android:layout_marginStart="40dp"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="15dp"
                     android:src="@drawable/ic_verified_user" />
             </LinearLayout>
 
@@ -156,8 +156,8 @@
                     android:id="@+id/imageView15"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center|end"
-                    android:layout_marginStart="40dp"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="15dp"
                     android:src="@drawable/ic_setting" />
             </LinearLayout>
         </LinearLayout>

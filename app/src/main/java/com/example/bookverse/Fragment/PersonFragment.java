@@ -11,9 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.bookverse.R;
+import com.example.bookverse.activities.InfUserActivity;
+import com.example.bookverse.activities.SettingAppActivity;
 import com.example.bookverse.activities.TestCallApiActivity;
+import com.example.bookverse.activities.VertifiAccountActivity;
+import com.example.bookverse.activities.ViewFavoriteBookActivity;
+import com.example.bookverse.activities.ViewRecentBookActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +30,9 @@ import com.example.bookverse.activities.TestCallApiActivity;
 public class PersonFragment extends Fragment {
 
     Button person_view_btn;
+
+    ImageView person_imvAvatar;
+    LinearLayout person_infUser, person_favoriteBook, person_recentBook, person_vertifi, person_settingApp;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -74,10 +84,33 @@ public class PersonFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        person_view_btn = view.findViewById(R.id.person_view_btn);
-        person_view_btn.setOnClickListener(view1 -> {
-            Intent intent = new Intent(getActivity(), TestCallApiActivity.class);
-            startActivity(intent);
+        person_imvAvatar = view.findViewById(R.id.person_imvAvatar);
+        person_infUser = view.findViewById(R.id.person_infUser);
+        person_favoriteBook = view.findViewById(R.id.person_favoriteBook);
+        person_recentBook = view.findViewById(R.id.person_recentBook);
+        person_vertifi = view.findViewById(R.id.person_vertifi);
+        person_settingApp = view.findViewById(R.id.person_settingApp);
+
+        //event
+        person_infUser.setOnClickListener(viewInfUser -> {
+            Intent viewInf = new Intent(requireContext(), InfUserActivity.class);
+            startActivity(viewInf);
+        });
+        person_favoriteBook.setOnClickListener(viewFavoriteBook -> {
+            Intent viewInf = new Intent(requireContext(), ViewFavoriteBookActivity.class);
+            startActivity(viewInf);
+        });
+        person_recentBook.setOnClickListener(viewRecentBook -> {
+            Intent viewInf = new Intent(requireContext(), ViewRecentBookActivity.class);
+            startActivity(viewInf);
+        });
+        person_vertifi.setOnClickListener(viewVertifi -> {
+            Intent viewInf = new Intent(requireContext(), VertifiAccountActivity.class);
+            startActivity(viewInf);
+        });
+        person_settingApp.setOnClickListener(viewSettingApp -> {
+            Intent viewInf = new Intent(requireContext(), SettingAppActivity.class);
+            startActivity(viewInf);
         });
     }
 }

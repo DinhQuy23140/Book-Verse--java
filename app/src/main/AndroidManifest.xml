@@ -16,16 +16,29 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.SettingAppActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.VertifiAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ViewRecentBookActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ViewFavoriteBookActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.InfUserActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.SignupChooseImgActivity"
             android:exported="false" />
         <activity
             android:name=".activities.LoginActivity"
-            android:exported="true" >
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".activities.View"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".activities.InfBokkActivity"
             android:exported="false" />

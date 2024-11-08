@@ -40,4 +40,9 @@
     <string name="signupNote">Bạn đã có tài khoản?</string>
     <string name="nameuserDefault">Nguời dùng</string>
     <string name="infBoookDowload">Tải xuống</string>
+    <string name="infUser">Thông tin cá nhân</string>
+    <string name="favoriteBook">Sách yêu thích</string>
+    <string name="recentRead">Hoạt động đọc gần đây</string>
+    <string name="settingAccount">Thiết lập tài khoản</string>
+    <string name="settingApp">Cài đặt ứng dụng</string>
 </resources>
