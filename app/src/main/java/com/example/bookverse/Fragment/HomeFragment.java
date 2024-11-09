@@ -34,14 +34,19 @@ import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.databinding.FragmentHomeBinding;
 import com.example.bookverse.utilities.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -175,8 +180,9 @@ public class HomeFragment extends Fragment {
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<Book>();
         adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
-        getListBook();
+        //getListBook();
         //writeToFirebase();
+        getDataFirebase();
         recyclerViewAllBook.setAdapter(adapterAllBook);
 
         btnViewAllBook.setOnClickListener(view1 -> {
@@ -253,7 +259,22 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
+    public void getDataFirebase() {
+                firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() & !task.getResult().isEmpty()) {
+                        Gson gson = new Gson();
+                        for (DocumentSnapshot documentSnapshot : task.getResult()){
+                            Map<String, Object> data = documentSnapshot.getData();
+                            Book book = gson.fromJson(gson.toJson(data), Book.class);
+                            listAllBook.add(book);
+                            adapterAllBook.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
+                        }
+                        Toast.makeText(requireContext(), Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
     public void getListBook(){
         ApiService apiService = ApiClient.getApiService();
@@ -304,39 +325,18 @@ public class HomeFragment extends Fragment {
                     listAllBook.addAll(currentListBook);
                     for(int i = 0; i < currentListBook.size(); i++){
                         Book book = currentListBook.get(i);
-                        Map<String, String> formats = new HashMap<>();
-                        ArrayList<Person> authors = book.getAuthors();
-                        StringBuilder authorList = new StringBuilder();
-                        for(int index = 0; index < authors.size(); index++){
-                            authorList.append(authors.get(index).getName());
-                            if (index < authors.size()-1) authorList.append(", ");
-                        }
-                        formats.put("authors", String.valueOf(authorList));
-                        formats.put("bookshelves", Arrays.asList(book.getBookshelves()).toString());
-                        formats.put("copyright", String.valueOf(book.isCopyright()));
-                        formats.put("download_count", String.valueOf(book.getDownload_count()));
-                        formats.put("formats", String.valueOf(book.getFormats()));
-                        formats.put("languages", Arrays.toString(book.getLanguages()));
-                        formats.put("media_type", String.valueOf(book.getMedia_type()));
-                        formats.put("subjects", Arrays.toString(book.getSubjects()));
-                        formats.put("title", String.valueOf(book.getTitle()));
-
-                        StringBuilder translatorList = new StringBuilder();
-                        for(int index = 0; index < authors.size(); index++){
-                            translatorList.append(authors.get(index).getName());
-                            if (index < authors.size()-1) translatorList.append(", ");
-                        }
-                        formats.put("translators", String.valueOf(translatorList));
+                        Gson gson = new Gson();
+                        // Chuyển book object thành map
+                        Map<String, Object> bookMap = gson.fromJson(gson.toJson(book), new TypeToken<Map<String, Object>>(){}.getType());
 
                         firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
                                 .document(String.valueOf(book.getId()))
-                                .set(formats);
+                                .set(bookMap);
                     }
-//                Toast.makeText(getContext(), "Size: " + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
                     nextPageUrl = resultApi.getNext();
-//                    if(nextPageUrl != null){
-//                        writeToFirebase();
-//                    }
+                    if(nextPageUrl != null){
+                        writeToFirebase();
+                    }
                 }
                 Log.e("API_RESPONSE", "Response is null or unsuccessful: " + response.code());
             }
@@ -352,5 +352,27 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+    }
+    public ArrayList<String> convertArrayList(String input) {
+        String jsonArrayString = input.replaceAll("([a-zA-Z0-9]+)", "\"$1\"");
+
+        // Chuyển đổi bằng Gson
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<String>>(){}.getType();
+        ArrayList<String> arrayList = gson.fromJson(jsonArrayString, type);
+        return arrayList;
+    }
+
+    public Map<String, String> convertFormats(String input){
+        input = input.replace("=", ":");
+
+        // Thêm dấu ngoặc kép cho khóa và giá trị
+        input = input.replaceAll("([a-zA-Z0-9/;:+-]+)", "\"$1\"");
+
+        // Khởi tạo Gson và Type để chuyển thành Map
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        Map<String, String> resultMap = gson.fromJson(input, type);
+        return resultMap;
     }
 }
