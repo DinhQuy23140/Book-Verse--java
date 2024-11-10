@@ -16,6 +16,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ReadBookActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.SettingAppActivity"
             android:exported="false" />
         <activity
@@ -35,7 +41,8 @@
             android:exported="false" />
         <activity
             android:name=".activities.LoginActivity"
-            android:exported="true" />
+            android:exported="true">
+        </activity>
         <activity
             android:name=".activities.View"
             android:exported="true" />
