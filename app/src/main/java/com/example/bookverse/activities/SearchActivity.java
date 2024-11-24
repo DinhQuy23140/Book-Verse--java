@@ -114,7 +114,11 @@ public class SearchActivity extends AppCompatActivity {
                 else{
                     inputSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
                     layoutSearch.setVisibility(View.GONE);
-                    resultSearchAdapter.clearData();
+                    if (resultSearchAdapter != null) {
+                        resultSearchAdapter.clearData();
+                    } else {
+                        Log.e("Error", "resultSearchAdapter is null");
+                    }
                     errorNotify.setVisibility(View.GONE);
                     layoutHistory.setVisibility(View.VISIBLE);
                 }

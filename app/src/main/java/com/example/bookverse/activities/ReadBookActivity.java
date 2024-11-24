@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import java.util.Map;
 
 public class ReadBookActivity extends AppCompatActivity {
     TextView contentBook;
+    WebView webview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,8 @@ public class ReadBookActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        contentBook = findViewById(R.id.contentBook);
+        //contentBook = findViewById(R.id.contentBook);
+        webview= findViewById(R.id.webview);
         Intent intent = getIntent();
         String jsonStr = intent.getStringExtra("jsonBook");
         Gson gson = new Gson();
@@ -46,14 +49,16 @@ public class ReadBookActivity extends AppCompatActivity {
         if (book != null) {
             String url = getUrlImg(book.getFormats());
             String result = readTextFromUrl(url);
-            contentBook.setText(result);
+            //contentBook.setText(result);
+            webview.loadUrl(url);
+
 //            new DownloadTextTask(contentBook).execute(url);
             Toast.makeText(this, url, Toast.LENGTH_SHORT).show();
         }
     }
 
     public String getUrlImg(Map<String, String> format){
-        return format.get("text/plain; charset=us-ascii");
+        return format.get("text/html");
     }
 
     public String readTextFromUrl(String urlString) {
