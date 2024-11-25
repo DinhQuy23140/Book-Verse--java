@@ -28,25 +28,29 @@ import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
 import com.example.bookverse.Class.ApiClient;
 import com.example.bookverse.Class.Book;
 import com.example.bookverse.Class.ListOfBook;
-import com.example.bookverse.Class.Person;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.databinding.FragmentHomeBinding;
+import com.example.bookverse.interfaces.OnBookFetchListener;
 import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.Firebase;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SnapshotMetadata;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,14 +67,15 @@ public class HomeFragment extends Fragment {
     LinearLayout home_favorite;
     ImageButton btnSettings;
     FragmentHomeBinding binding;
-    RecyclerView recyclerViewAllBook;
-    ArrayList<Book> listAllBook;
-    HomeAdapterRecycle adapterAllBook;
+    RecyclerView recyclerViewAllBook, recyclerRecentView, recyclerMostPopular;
+    ArrayList<Book> listAllBook, listRecentBook, listMostPopular;
+    HomeAdapterRecycle adapterAllBook, adapterRecent;
     ListOfBook resultApi;
 
     TextView btnViewAllBook, tvTime;
     private String nextPageUrl = null;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    PreferenceManager preferenceManager;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -121,43 +126,13 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
-//    @Override
-//    public void onAttach(@NonNull Context context) {
-//        super.onAttach(context);
-//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-//            @Override
-//            public void handleOnBackPressed() {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setMessage(R.string.title_dialogBackPress)
-//                        .setPositiveButton(R.string.dialogBackPressOk, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                // Thoát ứng dụng
-//                                getActivity().finish();  // Đóng Activity hiện tại
-//                                System.exit(0);  // Thoát ứng dụng
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.dialogBackPressCancel, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                // Đóng dialog
-//                                dialogInterface.dismiss(); // Đóng dialog
-//                            }
-//                        });
-//                builder.show();
-//
-//            }
-//        };
-//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-//    }
-
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         home_favorite = binding.homeFavorite;
         btnSettings = binding.homeSettings;
         btnViewAllBook = binding.btnViewAllBook;
+        preferenceManager = new PreferenceManager(getContext());
         tvTime = binding.tvTime;
 
         Calendar calendar = Calendar.getInstance();
@@ -177,6 +152,7 @@ public class HomeFragment extends Fragment {
         }
 
         recyclerViewAllBook = binding.recyclerAllBook;
+        recyclerRecentView = binding.recyclerRecentView;
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<Book>();
         adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
@@ -184,12 +160,32 @@ public class HomeFragment extends Fragment {
         //writeToFirebase();
         getDataFirebase();
         recyclerViewAllBook.setAdapter(adapterAllBook);
+        recyclerRecentView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        listRecentBook = new ArrayList<Book>();
+        adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
+        getRecentBook();
+        recyclerRecentView.setAdapter(adapterRecent);
+
+//        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
+//                        .addSnapshotListener((querySnapshot, e)->{
+//                            if (e != null) {
+//                                Log.w("Firestore", "Listen failed.", e);
+//                                return;
+//                            }
+//
+//                            if (querySnapshot != null) {
+//                                // Gọi lại hàm getRecentBook() để tải dữ liệu mới từ Firestore
+//                                getRecentBook();
+//
+//                                // Cập nhật RecyclerView adapter
+//                                recyclerRecentView.setAdapter(adapterRecent);
+//                            }
+//                        });
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
             viewAllBook.putExtra("key", "allBook");
             startActivity(viewAllBook);
-
         });
         home_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -271,7 +267,7 @@ public class HomeFragment extends Fragment {
                             listAllBook.add(book);
                             adapterAllBook.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
                         }
-                        Toast.makeText(requireContext(), Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(requireContext(), Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -309,6 +305,57 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void getRecentBook(){
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
+                .document(preferenceManager.getString(Constants.KEY_EMAIL))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<Object> BookId = (List<Object>) task.getResult().get("BookId");
+                        if (BookId != null && !BookId.isEmpty()) {
+                            // Chuyển đổi tất cả các giá trị trong BookId thành String
+                            List<String> stringBookId = new ArrayList<>();
+                            for (Object id : BookId) {
+                                if (id instanceof Long) {
+                                    // Nếu ID là Long, chuyển thành String
+                                    stringBookId.add(String.valueOf(id));
+                                } else if (id instanceof String) {
+                                    stringBookId.add((String) id);
+                                }
+                            }
+
+                            // Tiến hành truy vấn với danh sách BookId dạng String
+                            firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                                    .whereIn(FieldPath.documentId(), stringBookId)
+                                    .get()
+                                    .addOnCompleteListener(bookTask -> {
+                                        if (bookTask.isSuccessful() && bookTask.getResult() != null) {
+                                            for (DocumentSnapshot documentSnapshot : bookTask.getResult()) {
+                                                Gson gson = new Gson();
+                                                Map<String, Object> data = documentSnapshot.getData();
+                                                if (data != null) {
+                                                    Book book = gson.fromJson(gson.toJson(data), Book.class);
+                                                    listRecentBook.add(book);
+                                                    adapterRecent.notifyItemInserted(listRecentBook.size() - 1); // Cập nhật item mới
+                                                }
+                                            }
+                                            // Thông báo về số lượng sách đã được tải
+                                            Toast.makeText(getContext(), "Size: " + listRecentBook.size(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Log.e("Firestore", "Error fetching books", bookTask.getException());
+                                        }
+                                    });
+                        } else {
+                            Log.w("Firestore", "No BookId found in the document");
+                        }
+                    } else {
+                        Log.e("Firestore", "Error fetching recent read document", task.getException());
+                    }
+                });
+
+
     }
 
     public void writeToFirebase(){
@@ -362,6 +409,7 @@ public class HomeFragment extends Fragment {
         ArrayList<String> arrayList = gson.fromJson(jsonArrayString, type);
         return arrayList;
     }
+
 
     public Map<String, String> convertFormats(String input){
         input = input.replace("=", ":");

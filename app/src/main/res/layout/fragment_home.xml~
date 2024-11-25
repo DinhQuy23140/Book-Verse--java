@@ -229,7 +229,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerMostPopular"
+                        android:id="@+id/recyclerNewBook"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp" />
@@ -272,7 +272,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerRecentView"
+                        android:id="@+id/recyclerMostPopular"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="5dp" />
@@ -294,6 +294,7 @@
                         android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerRecentView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="5dp" />
