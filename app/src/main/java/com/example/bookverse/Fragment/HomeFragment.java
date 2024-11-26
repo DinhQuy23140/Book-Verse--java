@@ -30,22 +30,17 @@ import com.example.bookverse.Class.Book;
 import com.example.bookverse.Class.ListOfBook;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.ViewAllRecyclerView;
-import com.example.bookverse.databinding.FragmentHomeBinding;
-import com.example.bookverse.interfaces.OnBookFetchListener;
+import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.Firebase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SnapshotMetadata;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,8 +60,8 @@ public class HomeFragment extends Fragment {
 
     BottomNavigationView bottomNavigationView;
     LinearLayout home_favorite;
-    ImageButton btnSettings;
-    FragmentHomeBinding binding;
+    ImageButton btnSettings, home_recent;
+    //FragmentHomeBinding binding;
     RecyclerView recyclerViewAllBook, recyclerRecentView, recyclerMostPopular;
     ArrayList<Book> listAllBook, listRecentBook, listMostPopular;
     HomeAdapterRecycle adapterAllBook, adapterRecent;
@@ -121,19 +116,26 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_home, container, false);
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.fragment_home, container, false);
+//        binding = FragmentHomeBinding.inflate(inflater, container, false);
+//        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        home_favorite = binding.homeFavorite;
-        btnSettings = binding.homeSettings;
-        btnViewAllBook = binding.btnViewAllBook;
+//        home_favorite = binding.homeFavorite;
+//        btnSettings = binding.homeSettings;
+//        btnViewAllBook = binding.btnViewAllBook;
+//        preferenceManager = new PreferenceManager(getContext());
+//        tvTime = binding.tvTime;
+
+        home_favorite = view.findViewById(R.id.home_favorite);
+        home_recent = view.findViewById(R.id.home_recent);
+        btnSettings = view.findViewById(R.id.home_settings);
+        btnViewAllBook = view.findViewById(R.id.btnViewAllBook);
         preferenceManager = new PreferenceManager(getContext());
-        tvTime = binding.tvTime;
+        tvTime = view.findViewById(R.id.tvTime);
 
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -151,8 +153,10 @@ public class HomeFragment extends Fragment {
             tvTime.setText(R.string.setTimeNight);
         }
 
-        recyclerViewAllBook = binding.recyclerAllBook;
-        recyclerRecentView = binding.recyclerRecentView;
+//        recyclerViewAllBook = binding.recyclerAllBook;
+//        recyclerRecentView = binding.recyclerRecentView;
+        recyclerViewAllBook = view.findViewById(R.id.recyclerAllBook);
+        recyclerRecentView = view.findViewById(R.id.recyclerRecentView);
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<Book>();
         adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
@@ -252,6 +256,11 @@ public class HomeFragment extends Fragment {
                 // Commit transaction
                 fragmentTransaction.commit();
             }
+        });
+
+        home_recent.setOnClickListener(viewRecent ->{
+            Intent viewRecentBook = new Intent(getActivity(), ViewRecentBookActivity.class);
+            startActivity(viewRecentBook);
         });
     }
 
