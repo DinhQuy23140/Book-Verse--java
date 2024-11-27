@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.InfUserActivity;
 import com.example.bookverse.activities.SettingAppActivity;
-import com.example.bookverse.activities.TestCallApiActivity;
 import com.example.bookverse.activities.VertifiAccountActivity;
 import com.example.bookverse.activities.ViewFavoriteBookActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
@@ -99,11 +98,13 @@ public class PersonFragment extends Fragment {
 
         preferenceManager = new PreferenceManager(requireContext());
         String strImg = preferenceManager.getString(Constants.KEY_IMAGE);
+        String email = preferenceManager.getString(Constants.KEY_EMAIL);
         person_imvAvatar.setImageBitmap(decodeBase64ToImage(strImg));
 
         //event
         person_infUser.setOnClickListener(viewInfUser -> {
             Intent viewInf = new Intent(requireContext(), InfUserActivity.class);
+            viewInf.putExtra(Constants.KEY_EMAIL, email); //pass email to next view
             startActivity(viewInf);
         });
         person_favoriteBook.setOnClickListener(viewFavoriteBook -> {
