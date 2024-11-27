@@ -99,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                                 preferenceManager.putString(Constants.KEY_EMAIL, email);
                                 preferenceManager.putString(Constants.KEY_PASSWORD, password);
                                 preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+                                preferenceManager.putString(Constants.KEY_IMAGE, task.getResult().getDocuments().get(0).getString("image"));
                                 Intent login = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(login);
                                 Toast.makeText(getApplicationContext(), R.string.notifiloginSuccess, Toast.LENGTH_SHORT).show();

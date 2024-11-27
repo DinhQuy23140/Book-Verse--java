@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -178,6 +179,16 @@ public class MainActivity extends AppCompatActivity {
                         layout.setBackgroundResource(R.drawable.ic_error_load_image);
                     }
                 });
+    }
+
+    public void hideBottomNavigationView() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setVisibility(                                                                                                              View.GONE);
+    }
+
+    public void showBottomNavigationView() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
     private Bitmap drawableToBitmap(Drawable drawable){

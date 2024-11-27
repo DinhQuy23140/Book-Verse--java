@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +29,11 @@ import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
 import com.example.bookverse.Class.ApiClient;
 import com.example.bookverse.Class.Book;
 import com.example.bookverse.Class.ListOfBook;
+import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.activities.ViewRecentBookActivity;
+import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,10 +41,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -57,14 +57,15 @@ import retrofit2.Response;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-
+    ActivityMainBinding bindingMain;
+    ScrollView home_fragment;
     BottomNavigationView bottomNavigationView;
     LinearLayout home_favorite;
     ImageButton btnSettings, home_recent;
     //FragmentHomeBinding binding;
     RecyclerView recyclerViewAllBook, recyclerRecentView, recyclerMostPopular;
     ArrayList<Book> listAllBook, listRecentBook, listMostPopular;
-    HomeAdapterRecycle adapterAllBook, adapterRecent;
+    HomeAdapterRecycle adapterAllBook, adapterRecent, adapterViral;
     ListOfBook resultApi;
 
     TextView btnViewAllBook, tvTime;
@@ -116,20 +117,18 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        bindingMain = ActivityMainBinding.inflate(getLayoutInflater());
         return inflater.inflate(R.layout.fragment_home, container, false);
-//        binding = FragmentHomeBinding.inflate(inflater, container, false);
-//        return binding.getRoot();
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        home_favorite = binding.homeFavorite;
-//        btnSettings = binding.homeSettings;
-//        btnViewAllBook = binding.btnViewAllBook;
-//        preferenceManager = new PreferenceManager(getContext());
-//        tvTime = binding.tvTime;
 
+        home_fragment = view.findViewById(R.id.home_fragment);
+        bottomNavigationView = bindingMain.bottomNavigation;
+        bottomNavigationView.setVisibility(View.GONE);
         home_favorite = view.findViewById(R.id.home_favorite);
         home_recent = view.findViewById(R.id.home_recent);
         btnSettings = view.findViewById(R.id.home_settings);
@@ -152,39 +151,26 @@ public class HomeFragment extends Fragment {
         else {
             tvTime.setText(R.string.setTimeNight);
         }
-
-//        recyclerViewAllBook = binding.recyclerAllBook;
-//        recyclerRecentView = binding.recyclerRecentView;
         recyclerViewAllBook = view.findViewById(R.id.recyclerAllBook);
         recyclerRecentView = view.findViewById(R.id.recyclerRecentView);
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        listAllBook = new ArrayList<Book>();
+        listAllBook = new ArrayList<>();
         adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
-        //getListBook();
-        //writeToFirebase();
+
         getDataFirebase();
         recyclerViewAllBook.setAdapter(adapterAllBook);
         recyclerRecentView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        listRecentBook = new ArrayList<Book>();
+        listRecentBook = new ArrayList<>();
         adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
         getRecentBook();
         recyclerRecentView.setAdapter(adapterRecent);
 
-//        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
-//                        .addSnapshotListener((querySnapshot, e)->{
-//                            if (e != null) {
-//                                Log.w("Firestore", "Listen failed.", e);
-//                                return;
-//                            }
-//
-//                            if (querySnapshot != null) {
-//                                // Gọi lại hàm getRecentBook() để tải dữ liệu mới từ Firestore
-//                                getRecentBook();
-//
-//                                // Cập nhật RecyclerView adapter
-//                                recyclerRecentView.setAdapter(adapterRecent);
-//                            }
-//                        });
+        recyclerMostPopular = view.findViewById(R.id.recyclerMostPopular);
+        recyclerMostPopular.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        listMostPopular = new ArrayList<>();
+        adapterViral = new HomeAdapterRecycle(requireContext(), listMostPopular);
+        getViralBook();
+        recyclerMostPopular.setAdapter(adapterViral);
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
@@ -261,6 +247,17 @@ public class HomeFragment extends Fragment {
         home_recent.setOnClickListener(viewRecent ->{
             Intent viewRecentBook = new Intent(getActivity(), ViewRecentBookActivity.class);
             startActivity(viewRecentBook);
+        });
+
+        home_fragment.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY > oldScrollY) {
+                    ((MainActivity)requireActivity()).hideBottomNavigationView();
+                } else {
+                    ((MainActivity)requireActivity()).showBottomNavigationView();
+                }
+            }
         });
     }
 
@@ -367,69 +364,21 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public void writeToFirebase(){
-        ApiService apiService = ApiClient.getApiService();
-        Call<ListOfBook> listOfBookCall = nextPageUrl == null ? apiService.getListBook(null, null): apiService.getListBookByUrl(nextPageUrl);
-        listOfBookCall.enqueue(new Callback<ListOfBook>() {
-            @Override
-            public void onResponse(Call<ListOfBook> call, Response<ListOfBook> response) {
-                //Toast.makeText(requireContext(), "Call Api success", Toast.LENGTH_SHORT).show();
-                if (response.body() != null){
-                    Log.d("API Response", response.body().toString());
-                    resultApi = response.body();
-                    ArrayList<Book>currentListBook = resultApi.getResults();
-                    listAllBook.addAll(currentListBook);
-                    for(int i = 0; i < currentListBook.size(); i++){
-                        Book book = currentListBook.get(i);
-                        Gson gson = new Gson();
-                        // Chuyển book object thành map
-                        Map<String, Object> bookMap = gson.fromJson(gson.toJson(book), new TypeToken<Map<String, Object>>(){}.getType());
-
-                        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                                .document(String.valueOf(book.getId()))
-                                .set(bookMap);
+    public void getViralBook(){
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .orderBy("download_count")
+                .limit(100)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && !task.getResult().isEmpty()){
+                        for(DocumentSnapshot documentSnapshot : task.getResult().getDocuments()){
+                            Gson gson = new Gson();
+                            Map<String, Object> data = documentSnapshot.getData();
+                            Book book = gson.fromJson(gson.toJson(data), Book.class);
+                            listMostPopular.add(book);
+                            adapterViral.notifyItemInserted(listMostPopular.size() - 1);
+                        }
                     }
-                    nextPageUrl = resultApi.getNext();
-                    if(nextPageUrl != null){
-                        writeToFirebase();
-                    }
-                }
-                Log.e("API_RESPONSE", "Response is null or unsuccessful: " + response.code());
-            }
-
-            @Override
-            public void onFailure(Call<ListOfBook> call, Throwable t) {
-                Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
-                if (t instanceof IOException){
-                    Log.e("API","Network failure: " + t.getMessage());
-                }
-                else{
-                    Log.e("API", "Conversion error: "+ t.getMessage());
-                }
-            }
-        });
-    }
-    public ArrayList<String> convertArrayList(String input) {
-        String jsonArrayString = input.replaceAll("([a-zA-Z0-9]+)", "\"$1\"");
-
-        // Chuyển đổi bằng Gson
-        Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<String>>(){}.getType();
-        ArrayList<String> arrayList = gson.fromJson(jsonArrayString, type);
-        return arrayList;
-    }
-
-
-    public Map<String, String> convertFormats(String input){
-        input = input.replace("=", ":");
-
-        // Thêm dấu ngoặc kép cho khóa và giá trị
-        input = input.replaceAll("([a-zA-Z0-9/;:+-]+)", "\"$1\"");
-
-        // Khởi tạo Gson và Type để chuyển thành Map
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, String>>(){}.getType();
-        Map<String, String> resultMap = gson.fromJson(input, type);
-        return resultMap;
+                });
     }
 }

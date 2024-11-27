@@ -1,12 +1,15 @@
 package com.example.bookverse.Fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,8 @@ import com.example.bookverse.activities.TestCallApiActivity;
 import com.example.bookverse.activities.VertifiAccountActivity;
 import com.example.bookverse.activities.ViewFavoriteBookActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
+import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.PreferenceManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +38,7 @@ public class PersonFragment extends Fragment {
 
     ImageView person_imvAvatar;
     LinearLayout person_infUser, person_favoriteBook, person_recentBook, person_vertifi, person_settingApp;
+    PreferenceManager preferenceManager;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -91,6 +97,10 @@ public class PersonFragment extends Fragment {
         person_vertifi = view.findViewById(R.id.person_vertifi);
         person_settingApp = view.findViewById(R.id.person_settingApp);
 
+        preferenceManager = new PreferenceManager(requireContext());
+        String strImg = preferenceManager.getString(Constants.KEY_IMAGE);
+        person_imvAvatar.setImageBitmap(decodeBase64ToImage(strImg));
+
         //event
         person_infUser.setOnClickListener(viewInfUser -> {
             Intent viewInf = new Intent(requireContext(), InfUserActivity.class);
@@ -112,5 +122,10 @@ public class PersonFragment extends Fragment {
             Intent viewInf = new Intent(requireContext(), SettingAppActivity.class);
             startActivity(viewInf);
         });
+    }
+
+    public Bitmap decodeBase64ToImage(String base64){
+        byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
     }
 }
