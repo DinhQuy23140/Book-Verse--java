@@ -99,7 +99,13 @@ public class PersonFragment extends Fragment {
         preferenceManager = new PreferenceManager(requireContext());
         String strImg = preferenceManager.getString(Constants.KEY_IMAGE);
         String email = preferenceManager.getString(Constants.KEY_EMAIL);
-        person_imvAvatar.setImageBitmap(decodeBase64ToImage(strImg));
+        //person_imvAvatar.setImageBitmap(decodeBase64ToImage(strImg));
+        if (strImg != null) {
+            person_imvAvatar.setImageBitmap(decodeBase64ToImage(strImg));
+        }
+        else {
+            person_imvAvatar.setImageResource(R.drawable.background_default_user);
+        }
 
         //event
         person_infUser.setOnClickListener(viewInfUser -> {

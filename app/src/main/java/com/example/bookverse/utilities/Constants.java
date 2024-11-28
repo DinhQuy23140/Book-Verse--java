@@ -7,6 +7,7 @@ public class Constants {
     public static final String KEY_PHONE = "phone";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_ID = "id";
+    public static final String KEY_BIRTH = "birthofdate";
     public static final String KEY_PREFERENCE_NAME = "bookVersePreference";
     public static final String KEY_IS_SIGNED_IN = "signIn";
     public static final String KEY_COLLECTION_USERS = "users";

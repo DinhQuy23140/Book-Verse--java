@@ -60,36 +60,28 @@ public class MainActivity extends AppCompatActivity {
                 updateBackground(newpathTheme);
             }
         };
-
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        int pathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app); // Sửa lỗi từ "pathThem" thành "pathTheme"
+        int pathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
         updateBackground(pathTheme);
 
-        Glide.with(this)
-                .load(pathTheme)  // Load trực tiếp từ pathTheme
-                .placeholder(R.drawable.ic_default_image)
-                .into(new CustomTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        layout.setBackground(resource);  // Sử dụng Drawable từ Glide
-                        layout.invalidate();
-                        layout.requestLayout();
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                        layout.setBackgroundResource(R.drawable.ic_error_load_image);
-                    }
-                });
-
-//        if (pathTheme == R.drawable.background_app) {
-//            editor.putInt("pathTheme", R.drawable.background_app);
-//            editor.apply();
-//        }
-
-
-
+//        Glide.with(this)
+//                .load(pathTheme)  // Load trực tiếp từ pathTheme
+//                .placeholder(R.drawable.ic_default_image)
+//                .into(new CustomTarget<Drawable>() {
+//                    @Override
+//                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+//                        layout.setBackground(resource);  // Sử dụng Drawable từ Glide
+//                        layout.invalidate();
+//                        layout.requestLayout();
+//                    }
+//
+//                    @Override
+//                    public void onLoadCleared(@Nullable Drawable placeholder) {
+//                        layout.setBackgroundResource(R.drawable.ic_error_load_image);
+//                    }
+//                });
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.bottom_home);
@@ -144,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
-    private void updateBackground(int pathTheme) {
+    public void updateBackground(int pathTheme) {
         Glide.with(this)
                 .load(pathTheme)  // Load trực tiếp từ pathTheme
                 .placeholder(R.drawable.ic_default_image)
@@ -170,8 +162,6 @@ public class MainActivity extends AppCompatActivity {
                         BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), scaleBitmap);
                         layout.setBackground(bitmapDrawable);  // Sử dụng Drawable từ Glide
                         layout.setBackground(resource);  // Sử dụng Drawable từ Glide
-//                        layout.invalidate();
-//                        layout.requestLayout();
                     }
 
                     @Override

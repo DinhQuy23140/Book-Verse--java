@@ -92,10 +92,10 @@ public class LoginActivity extends AppCompatActivity {
         layout_forgotPass = findViewById(R.id.layout_forgotPass);
         forgot_loading = findViewById(R.id.forgot_loading);
 
-//        Drawable background = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.background_login));
-//        ((BitmapDrawable) background).setTileModeXY(null, null); // Tắt chế độ lặp lại
-//        ((BitmapDrawable) background).setGravity(Gravity.FILL); // Kéo dãn để lấp đầy
-//        mainlayout.setBackground(background);
+        Drawable background = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.background_login));
+        ((BitmapDrawable) background).setTileModeXY(null, null); // Tắt chế độ lặp lại
+        ((BitmapDrawable) background).setGravity(Gravity.FILL); // Kéo dãn để lấp đầy
+        mainlayout.setBackground(background);
 
         login_btnLogin.setOnClickListener(view->{
             login_btnLogin.setVisibility(ProgressBar.VISIBLE);

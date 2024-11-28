@@ -97,7 +97,7 @@ public class ListThemeFragment extends Fragment {
         int presentPath = preferences.getInt("pathTheme", 0);
         layout = mainBinding.layoutmain;
         lvTheme = binding.lvTheme;
-        int[] listPathImage = {R.drawable.background_app, R.drawable.favorite, R.drawable.theme_alfomedeiros18926843,
+        int[] listPathImage = {R.drawable.background_app, R.drawable.background_login, R.drawable.favorite, R.drawable.theme_alfomedeiros18926843,
         R.drawable.theme_exel, R.drawable.theme_mati12509859, R.drawable.theme_mdsnmdsnmdsn1831234,
         R.drawable.theme_padrinan19670, R.drawable.theme_pixabay459277};
         listTheme = new ArrayList<Image>();

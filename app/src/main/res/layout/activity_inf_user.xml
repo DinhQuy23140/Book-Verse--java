@@ -140,9 +140,10 @@
                     android:id="@+id/infUser_emailedt"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
+                    android:background="#F2F0F0"
                     android:gravity="center|start"
+                    android:paddingStart="10dp"
                     android:text="Email"
                     android:textColor="@color/brow"
                     android:textSize="18sp"
@@ -170,10 +171,10 @@
                     android:id="@+id/infUser_phoneEdt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="text"
+                    android:paddingStart="10dp"
                     android:text="Phone"
                     android:textColor="@color/brow"
                     android:textStyle="bold" />
@@ -182,17 +183,35 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="15dp"
+                android:layout_marginBottom="40dp"
                 android:orientation="horizontal">
 
-                <CalendarView
-                    android:id="@+id/calendarView"
+                <TextView
+                    android:id="@+id/textView31"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center|start"
+                    android:text="@string/txtBirthOfDate"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/infUser_BirthOfDate"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:paddingStart="10dp"
+                    android:text="Birth of date"
+                    android:textColor="@color/brow"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+
             </LinearLayout>
 
         </LinearLayout>

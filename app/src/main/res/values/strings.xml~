@@ -24,6 +24,7 @@
     <string name="back">Quay lại</string>
     <string name="notifiloginSuccess">Đăng nhập thành công</string>
     <string name="notifiLoginFailure">Kiểm tra lại thông tin</string>
+    <string name="notifiUpdateSuccess">Cập nhập thành công</string>
     <string name="notifiUsernameEmpty">Tên người dùng không được trống</string>
     <string name="notifiValiEmail">Email không hợp lệ</string>
     <string name="notifiEmptyEmail">Email không được trống</string>
@@ -36,6 +37,7 @@
     <string name="hintPassword">Mật khẩu</string>
     <string name="hintConfirmPassword">Xác nhận mật khẩu</string>
     <string name="hintPhone">Số điện thoại</string>
+    <string name="txtBirthOfDate">Ngày sinh</string>
     <string name="loginNote">Bạn chưa có tài khoản?</string>
     <string name="signupNote">Bạn đã có tài khoản?</string>
     <string name="nameuserDefault">Nguời dùng</string>
@@ -45,4 +47,5 @@
     <string name="recentRead">Hoạt động đọc gần đây</string>
     <string name="settingAccount">Thiết lập tài khoản</string>
     <string name="settingApp">Cài đặt ứng dụng</string>
+    <string name="DescriptionBack">Back</string>
 </resources>
