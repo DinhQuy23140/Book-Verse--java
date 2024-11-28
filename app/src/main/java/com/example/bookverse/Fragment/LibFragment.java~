@@ -110,7 +110,7 @@ public class LibFragment extends Fragment {
         lib_viewSearchFrgavorite = view.findViewById(R.id.lib_viewSearchFrg);
         lib_viewFavorite = view.findViewById(R.id.lib_viewFavorite);
         lib_rvRecent = view.findViewById(R.id.lib_rvRecent);
-        lib_rvRecent.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        lib_rvRecent.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listBook = new ArrayList<>();
         adapter = new HistoAdapter(getContext(), listBook);
         getRecentBook();

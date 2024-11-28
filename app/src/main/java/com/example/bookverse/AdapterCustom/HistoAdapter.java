@@ -3,7 +3,6 @@ package com.example.bookverse.AdapterCustom;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +19,11 @@ import com.example.bookverse.activities.InfBokkActivity;
 
 import java.util.ArrayList;
 
-import kotlinx.coroutines.FlowPreview;
-
-public class histoAdapter extends RecyclerView.Adapter<histoAdapter.CustomHolder> {
+public class HistoAdapter extends RecyclerView.Adapter<HistoAdapter.CustomHolder> {
     ArrayList<Book> listBookrecent;
     Context context;
 
-    public histoAdapter(Context context, ArrayList<Book> listBookrecent) {
+    public HistoAdapter(Context context, ArrayList<Book> listBookrecent) {
         this.context = context;
         this.listBookrecent = listBookrecent;
     }
@@ -46,7 +43,7 @@ public class histoAdapter extends RecyclerView.Adapter<histoAdapter.CustomHolder
             holder.bookTitle.setText(itemPosition.getTitle());
             ArrayList<Person> listAuthor = itemPosition.getAuthors();
             for(int i = 0 ;i < listAuthor.size(); i++){
-                listAuthor_str += listAuthor.get(i);
+                listAuthor_str += listAuthor.get(i).getName();
                 if(i < listAuthor.size()) listAuthor_str += ", ";
             }
             holder.bookAuthor.setText(listAuthor_str);
@@ -81,8 +78,8 @@ public class histoAdapter extends RecyclerView.Adapter<histoAdapter.CustomHolder
 
         public CustomHolder(@NonNull View itemView) {
             super(itemView);
-            bookAuthor = itemView.findViewById(R.id.search_titlebooktv);
-            bookTitle = itemView.findViewById(R.id.search_authorstv);
+            bookAuthor = itemView.findViewById(R.id.search_authorstv);
+            bookTitle = itemView.findViewById(R.id.search_titlebooktv);
             bookImage = itemView.findViewById(R.id.search_image_iv);
             btnDelete = itemView.findViewById(R.id.search_btndeletehis);
         }
