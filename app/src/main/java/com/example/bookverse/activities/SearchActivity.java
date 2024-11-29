@@ -35,6 +35,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.API.ApiService;
+import com.example.bookverse.AdapterCustom.HistoAdapter;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
 import com.example.bookverse.AdapterCustom.KeyRelativeAdapter;
 import com.example.bookverse.AdapterCustom.ViewAllAdapter;
@@ -43,9 +44,17 @@ import com.example.bookverse.Class.Book;
 import com.example.bookverse.Class.GridSpacingItemDecoration;
 import com.example.bookverse.Class.ListOfBook;
 import com.example.bookverse.R;
+import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.PreferenceManager;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -56,8 +65,11 @@ public class SearchActivity extends AppCompatActivity {
     LinearLayout layout;
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    PreferenceManager preferenceManager;
     ListOfBook resultSearch;
     ArrayList<Book> listBook = new ArrayList<>();
+    ArrayList<Book> listRecentBook = new ArrayList<>();
+    HistoAdapter adapterRecent;
     TextView btnCancel;
     EditText inputSearch;
     Drawable[] drawable;
@@ -67,6 +79,7 @@ public class SearchActivity extends AppCompatActivity {
     RecyclerView searchHistoryRv, search_searchRelativeRv, search_searchResult;
     KeyRelativeAdapter keyRelativeAdapter;
     HomeAdapterRecycle resultSearchAdapter;
+    FirebaseFirestore firebaseFirestore;
 
     ArrayList<String> listKey = new ArrayList<>(Arrays.asList("Kết quả phù hợp nhất", "Sách", "Thể loại", "Tác giả"));
     private static final int[] path = {R.drawable.background_search, R.drawable.background_purple200,
@@ -99,6 +112,12 @@ public class SearchActivity extends AppCompatActivity {
         int pathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
         updateBackground(pathTheme);
 
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        preferenceManager = new PreferenceManager(getApplicationContext());
+        //String email = preferenceManager.getString(Constants.KEY_EMAIL);
+        //Toast.makeText(getApplicationContext(), "Email: " + email, Toast.LENGTH_SHORT).show();
+
+
         btnCancel = findViewById(R.id.search_cancelBtn);
         btnCancel.setOnClickListener(view->{
             finish();
@@ -118,6 +137,13 @@ public class SearchActivity extends AppCompatActivity {
         }
         keyRelativeAdapter = new KeyRelativeAdapter(getApplicationContext(), listKey, listPath);
         search_searchRelativeRv.setAdapter(keyRelativeAdapter);
+
+        searchHistoryRv = findViewById(R.id.searchHistoryRv);
+        getRecentBook();
+        adapterRecent = new HistoAdapter(getApplicationContext(), listRecentBook);
+        searchHistoryRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        searchHistoryRv.setAdapter(adapterRecent);
+
         layoutHistory = findViewById(R.id.search_historyLayout);
         layoutSearch = findViewById(R.id.search_searchLayout);
         inputSearch.addTextChangedListener(new TextWatcher() {
@@ -229,6 +255,59 @@ public class SearchActivity extends AppCompatActivity {
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    public void getRecentBook(){
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
+                .document(preferenceManager.getString(Constants.KEY_EMAIL))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<Object> BookId = (List<Object>) task.getResult().get("BookId");
+                        if (BookId != null && !BookId.isEmpty()) {
+                            // Chuyển đổi tất cả các giá trị trong BookId thành String
+                            List<String> stringBookId = new ArrayList<>();
+                            for (Object id : BookId) {
+                                if (id instanceof Long) {
+                                    // Nếu ID là Long, chuyển thành String
+                                    stringBookId.add(String.valueOf(id));
+                                } else if (id instanceof String) {
+                                    stringBookId.add((String) id);
+                                }
+                            }
+                            int sizeList = stringBookId.size();
+                            stringBookId = stringBookId.subList(0, Math.min(sizeList, 6));
+
+                            // Tiến hành truy vấn với danh sách BookId dạng String
+                            firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                                    .whereIn(FieldPath.documentId(), stringBookId)
+                                    .get()
+                                    .addOnCompleteListener(bookTask -> {
+                                        if (bookTask.isSuccessful() && bookTask.getResult() != null) {
+                                            for (DocumentSnapshot documentSnapshot : bookTask.getResult()) {
+                                                Gson gson = new Gson();
+                                                Map<String, Object> data = documentSnapshot.getData();
+                                                if (data != null) {
+                                                    Book book = gson.fromJson(gson.toJson(data), Book.class);
+                                                    listRecentBook.add(book);
+                                                    adapterRecent.notifyItemInserted(listRecentBook.size() - 1); // Cập nhật item mới
+                                                }
+                                            }
+                                            // Thông báo về số lượng sách đã được tải
+                                            Toast.makeText(getApplicationContext(), "Size: " + listRecentBook.size(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Log.e("Firestore", "Error fetching books", bookTask.getException());
+                                        }
+                                    });
+                        } else {
+                            Log.w("Firestore", "No BookId found in the document");
+                        }
+                    } else {
+                        Log.e("Firestore", "Error fetching recent read document", task.getException());
+                    }
+                });
+
+
     }
 
     public void getListBook(String keySearch){
