@@ -171,16 +171,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void hideBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-        bottomNavigationView.setVisibility(                                                                                                              View.GONE);
-    }
-
-    public void showBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-        bottomNavigationView.setVisibility(View.VISIBLE);
-    }
-
     private Bitmap drawableToBitmap(Drawable drawable){
         if(drawable instanceof BitmapDrawable){
             return ((BitmapDrawable) drawable).getBitmap();
@@ -192,4 +182,16 @@ public class MainActivity extends AppCompatActivity {
         drawable.draw(canvas);
         return bitmap;
     }
+
+    public void hideBottomNavigationView() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setVisibility(                                                                                                              View.GONE);
+    }
+
+    public void showBottomNavigationView() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setVisibility(View.VISIBLE);
+    }
+
+
 }
