@@ -147,7 +147,9 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                     break;
                 }
                 case "ViewFavorite": {
-                    titleViewAll.setText(R.string.txtFavorite);
+                    titleViewAll.setText(R.string.favoriteBook);
+                    getFavoriteBook();
+                    break;
                 }
                 default: {
                     titleViewAll.setText(R.string.ViewAllBookTitle);
@@ -177,9 +179,9 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == listAllBook.size() - 1) {
                     // Người dùng đã cuộn đến cuối, tải thêm dữ liệu ở đây
-                    if (resultApi.getNext()!= null){
-                        getListBook(getkey, null);
-                    }
+//                    if (resultApi.getNext()!= null){
+//                        getListBook(getkey, null);
+//                    }
                 }
             }
         });
@@ -340,5 +342,19 @@ public class ViewAllRecyclerView extends AppCompatActivity {
     }
 
     public void getFavoriteBook() {
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .whereArrayContains("users", preferenceManager.getString(Constants.KEY_EMAIL))
+                .get()
+                .addOnCompleteListener(taskGetFavorite -> {
+                    if(taskGetFavorite.isSuccessful() && !taskGetFavorite.getResult().isEmpty()) {
+                        for(DocumentSnapshot documentSnapshot : taskGetFavorite.getResult().getDocuments()) {
+                            Gson gson = new Gson();
+                            Map<String, Object> data = documentSnapshot.getData();
+                            Book book = gson.fromJson(gson.toJson(data), Book.class);
+                            listAllBook.add(book);
+                            adapterAllBook.notifyItemInserted(listAllBook.size() - 1); // Cập nhật item mới
+                        }
+                    }
+                });
     }
 }

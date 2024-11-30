@@ -192,6 +192,7 @@ public class HomeFragment extends Fragment {
            viewRecent.putExtra("keyView", "ViewRecent");
            startActivity(viewRecent);
         });
+
         home_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,7 +238,8 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
-                Intent viewFavorite = new Intent(requireContext(), ViewFavoriteBookActivity.class);
+                Intent viewFavorite = new Intent(requireContext(), ViewAllRecyclerView.class);
+                viewFavorite.putExtra("keyView", "ViewFavorite");
                 startActivity(viewFavorite);
             }
         });
@@ -264,6 +266,7 @@ public class HomeFragment extends Fragment {
 
         home_recent.setOnClickListener(viewRecent ->{
             Intent viewRecentBook = new Intent(getActivity(), ViewRecentBookActivity.class);
+            viewRecentBook.putExtra("keyView", "ViewRecent");
             startActivity(viewRecentBook);
         });
 
