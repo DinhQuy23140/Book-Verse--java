@@ -12,12 +12,12 @@ import java.util.Map;
 public class Book implements Serializable {
     private int id, download_count;
     private String title, media_type;
-    private String[] subjects, bookshelves, languages;
+    private String[] subjects, bookshelves, languages, users;
     private ArrayList<Person> authors, translators;
     private boolean copyright;
     private Map<String, String> formats;
 
-    public Book(ArrayList<Person> authors, String[] bookshelves, boolean copyright, int download_count, Map<String, String> formats, int id, String[] languages, String media_type, String[] subjects, String title, ArrayList<Person> translators) {
+    public Book(ArrayList<Person> authors, String[] bookshelves, boolean copyright, int download_count, Map<String, String> formats, int id, String[] languages, String media_type, String[] subjects, String title, ArrayList<Person> translators, String[] users) {
         this.authors = authors;
         this.bookshelves = bookshelves;
         this.copyright = copyright;
@@ -29,6 +29,7 @@ public class Book implements Serializable {
         this.subjects = subjects;
         this.title = title;
         this.translators = translators;
+        this.users = users;
     }
 
     public ArrayList<Person> getAuthors() {
@@ -119,7 +120,13 @@ public class Book implements Serializable {
         this.translators = translators;
     }
 
+    public String[] getUsers() {
+        return users;
+    }
 
+    public void setUsers(String[] users) {
+        this.users = users;
+    }
 
     @Override
     public String toString() {

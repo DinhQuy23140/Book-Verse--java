@@ -32,6 +32,7 @@ import com.example.bookverse.Class.ListOfBook;
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.ViewAllRecyclerView;
+import com.example.bookverse.activities.ViewFavoriteBookActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.utilities.Constants;
@@ -221,6 +222,9 @@ public class HomeFragment extends Fragment {
                         scaleUpY.start();
                     }
                 });
+
+                Intent viewFavorite = new Intent(requireContext(), ViewFavoriteBookActivity.class);
+                startActivity(viewFavorite);
             }
         });
 

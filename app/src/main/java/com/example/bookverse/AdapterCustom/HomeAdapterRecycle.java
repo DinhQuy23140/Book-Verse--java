@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -21,10 +22,21 @@ import com.example.bookverse.Class.Format;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.InfBokkActivity;
 import com.example.bookverse.activities.ViewBookActivity;
+import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.PreferenceManager;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.CustomViewHolder> {
 
@@ -53,6 +65,10 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
 
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        PreferenceManager preferenceManager = new PreferenceManager(holder.itemView.getContext());
+        String email = preferenceManager.getString(Constants.KEY_EMAIL);
+        Toast.makeText(holder.itemView.getContext(), "Email: " + email, Toast.LENGTH_SHORT).show();
         Book itemPosition = listBook.get(position);
         String urlImage = getUrlImg(itemPosition.getFormats());
         holder.title.setText(itemPosition.getTitle());
@@ -76,13 +92,38 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
                 .error(R.drawable.ic_error_load_image)
                 .into(holder.image);
 
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                        .document(String.valueOf(itemPosition.getId()))
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if(task.isSuccessful() && task.getResult() != null){
+                                List<String> users = (List<String>) task.getResult().get("users");
+                                if(users != null){
+                                    Set<String> set = new HashSet<>(users);
+                                    if(set.contains(email)){
+                                        holder.book_favoriteImv.setImageResource(R.drawable.ic_favorite_click);
+                                        holder.book_favoriteImv.setActivated(true);
+                                    }
+                                }
+                            }
+                        });
+
         holder.book_favoriteImv.setOnClickListener(view -> {
             if (!holder.book_favoriteImv.isActivated()) {
                 holder.book_favoriteImv.setImageResource(R.drawable.ic_favorite_click);
                 holder.book_favoriteImv.setActivated(true);
+                Map<String, Object> data = new HashMap<>();
+                data.put("users", FieldValue.arrayUnion(email));
+                firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                        .document(String.valueOf(itemPosition.getId()))
+                        .set(data, SetOptions.merge());
+
             } else {
                 holder.book_favoriteImv.setImageResource(R.drawable.ic_favorite);
                 holder.book_favoriteImv.setActivated(false);
+                firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                        .document(String.valueOf(itemPosition.getId()))
+                        .update("users", FieldValue.arrayRemove(email));
             }
         });
 

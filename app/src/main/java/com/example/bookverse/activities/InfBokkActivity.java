@@ -37,7 +37,10 @@ import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class InfBokkActivity extends AppCompatActivity {
     LinearLayout layout;
@@ -48,6 +51,8 @@ public class InfBokkActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    String jsonBook;
+    Book getBook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +87,8 @@ public class InfBokkActivity extends AppCompatActivity {
         infB_countDown = findViewById(R.id.infB_countDown);
         infB_readB = findViewById(R.id.infB_readB);
         Gson gson = new Gson();
-        String jsonBook = getIntent().getStringExtra("jsonBook");
-        Book getBook = gson.fromJson(jsonBook, Book.class);
+        jsonBook = getIntent().getStringExtra("jsonBook");
+        getBook = gson.fromJson(jsonBook, Book.class);
         assert getBook != null;
         String title = getBook.getTitle();
         ArrayList<Person> authors = getBook.getAuthors();
@@ -111,13 +116,35 @@ public class InfBokkActivity extends AppCompatActivity {
                 Map<String, Object> data = new HashMap<>();
                 data.put("BookId", FieldValue.arrayUnion(getBook.getId()));
                 firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
-                        .document(String.valueOf(email))
+                        .document(email)
                         .set(data, SetOptions.merge());
             }
             //Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(InfBokkActivity.this, ReadBookActivity.class);
             intent.putExtra("jsonBook", jsonBook);
             startActivity(intent);
+        });
+        isFavorite();
+
+        infB_favoriteB.setOnClickListener(clickFavo -> {
+            if(email != null){
+                if(!infB_favoriteB.isActivated()){
+                    infB_favoriteB.setImageResource(R.drawable.ic_favorite_click);
+                    infB_favoriteB.setActivated(true);
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("users", FieldValue.arrayUnion(email));
+                    firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                            .document(String.valueOf(getBook.getId()))
+                            .set(data, SetOptions.merge());
+                }
+                else{
+                    infB_favoriteB.setImageResource(R.drawable.ic_favorite);
+                    infB_favoriteB.setActivated(false);
+                    firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                            .document(String.valueOf(getBook.getId()))
+                            .update("users", FieldValue.arrayRemove(email));
+                }
+            }
         });
     }
 
@@ -170,5 +197,23 @@ public class InfBokkActivity extends AppCompatActivity {
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    private void isFavorite(){
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .document(String.valueOf(getBook.getId()))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null){
+                        List<String> users = (List<String>) task.getResult().get("users");
+                        if(users != null){
+                            Set<String> set = new HashSet<>(users);
+                            if(set.contains(preferenceManager.getString(Constants.KEY_EMAIL))){
+                                infB_favoriteB.setImageResource(R.drawable.ic_favorite_click);
+                                infB_favoriteB.setActivated(true);
+                            }
+                        }
+                    }
+                });
     }
 }
