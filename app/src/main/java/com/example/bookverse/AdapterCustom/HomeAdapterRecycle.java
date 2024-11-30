@@ -72,6 +72,7 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
         Book itemPosition = listBook.get(position);
         String urlImage = getUrlImg(itemPosition.getFormats());
         holder.title.setText(itemPosition.getTitle());
+
 //        holder.image.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
 //            @Override
 //            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {

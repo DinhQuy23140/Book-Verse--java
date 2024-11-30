@@ -41,9 +41,21 @@ import com.example.bookverse.Class.GridSpacingItemDecoration;
 import com.example.bookverse.Class.ListOfBook;
 import com.example.bookverse.Fragment.HomeFragment;
 import com.example.bookverse.R;
+import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.PreferenceManager;
+import com.google.firebase.Firebase;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,6 +69,9 @@ public class ViewAllRecyclerView extends AppCompatActivity {
     TextView titleViewAll;
     RecyclerView recycleBook;
     ImageView viewAllbtnBack;
+    FirebaseFirestore firebaseFirestore;
+    PreferenceManager preferenceManager;
+    String emailUser;
 
     //api
     ListOfBook resultApi;
@@ -85,8 +100,8 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 updateBackground(newpathTheme);
             }
         };
-        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         int pathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
         updateBackground(pathTheme);
@@ -106,13 +121,37 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         //Toast.makeText(getApplicationContext(), "width: " + spacingInPixels, Toast.LENGTH_SHORT).show();
         recycleBook.addItemDecoration(new GridSpacingItemDecoration(60));
 
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        preferenceManager = new PreferenceManager(getApplicationContext());
+        emailUser = preferenceManager.getString(Constants.KEY_EMAIL);
+        listAllBook = new ArrayList<>();
+        adapterAllBook = new HomeAdapterRecycle(getApplicationContext(), listAllBook);
         Intent getIntent = getIntent();
-        String value = getIntent.getStringExtra("key");
+        String value = getIntent.getStringExtra("keyView");
         String getkey = getIntent.getStringExtra("keySearch");
         if(value != null){
             switch (value){
-                case "allBook":{
+                case "ViewAllBook": {
                     titleViewAll.setText(R.string.ViewAllBookTitle);
+                    getAllBook();
+                    break;
+                }
+                case "ViewViral": {
+                    titleViewAll.setText(R.string.txtViral);
+                    getViralBook();
+                    break;
+                }
+                case "ViewRecent": {
+                    titleViewAll.setText(R.string.txtRecent);
+                    getRecentBook();
+                    break;
+                }
+                case "ViewFavorite": {
+                    titleViewAll.setText(R.string.txtFavorite);
+                }
+                default: {
+                    titleViewAll.setText(R.string.ViewAllBookTitle);
+                    getAllBook();
                     break;
                 }
             }
@@ -120,12 +159,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         else if(getkey != null){
             titleViewAll.setText(getkey);
         }
-        Toast.makeText(this, currentkey, Toast.LENGTH_SHORT).show();
-
-        listAllBook = new ArrayList<>();
-        adapterAllBook = new HomeAdapterRecycle(getApplicationContext(), listAllBook);
-
-        getListBook(getkey, null);
+        //Toast.makeText(this, currentkey, Toast.LENGTH_SHORT).show();
         recycleBook.setAdapter(adapterAllBook);
         recycleBook.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -230,5 +264,81 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void getAllBook(){
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .get()
+                .addOnCompleteListener(taskGetBook -> {
+                    if (taskGetBook.isSuccessful() && !taskGetBook.getResult().isEmpty()){
+                        for(DocumentSnapshot documentSnapshot : taskGetBook.getResult()){
+                            Gson gson = new Gson();
+                            Map<String, Object> data = documentSnapshot.getData();
+                            Book book = gson.fromJson(gson.toJson(data), Book.class);
+                            listAllBook.add(book);
+                            adapterAllBook.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
+                        }
+                    }
+                });
+    }
+
+    public void getViralBook(){
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .orderBy("download_count")
+                .limit(100)
+                .get()
+                .addOnCompleteListener(taskViral -> {
+                    if(taskViral.isSuccessful() && !taskViral.getResult().isEmpty()){
+                        for(DocumentSnapshot documentSnapshot : taskViral.getResult().getDocuments()){
+                            Gson gson = new Gson();
+                            Map<String, Object> data = documentSnapshot.getData();
+                            Book book = gson.fromJson(gson.toJson(data), Book.class);
+                            listAllBook.add(book);
+                            adapterAllBook.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
+                        }
+                    }
+                });
+    }
+
+    public void getRecentBook() {
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
+                .document(preferenceManager.getString(Constants.KEY_EMAIL))
+                .get()
+                .addOnCompleteListener(taskGetId -> {
+                    if(taskGetId.isSuccessful() && taskGetId.getResult() != null) {
+                        List<Object> listBookId = (List<Object>) taskGetId.getResult().get("BookId");
+                        if(listBookId != null && !listBookId.isEmpty()) {
+                            List<String> strBookId = new ArrayList<>();
+                            for (Object id : listBookId) {
+                                if(id instanceof Long) {
+                                    strBookId.add(String.valueOf(id));
+                                }
+                                else if(id instanceof String) {
+                                    strBookId.add((String) id);
+                                }
+                            }
+
+                            firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                                    .whereIn(FieldPath.documentId(), strBookId)
+                                    .get()
+                                    .addOnCompleteListener(taskGetRecent -> {
+                                        if(taskGetRecent.isSuccessful() && !taskGetRecent.getResult().isEmpty()) {
+                                            for (DocumentSnapshot documentSnapshot : taskGetRecent.getResult().getDocuments()) {
+                                                Gson gson = new Gson();
+                                                Map<String, Object> data = documentSnapshot.getData();
+                                                if (data != null) {
+                                                    Book book = gson.fromJson(gson.toJson(data), Book.class);
+                                                    listAllBook.add(book);
+                                                    adapterAllBook.notifyItemInserted(listAllBook.size() - 1); // Cập nhật item mới
+                                                }
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
+    }
+
+    public void getFavoriteBook() {
     }
 }

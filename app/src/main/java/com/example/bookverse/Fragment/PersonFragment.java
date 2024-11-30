@@ -21,6 +21,7 @@ import com.example.bookverse.R;
 import com.example.bookverse.activities.InfUserActivity;
 import com.example.bookverse.activities.SettingAppActivity;
 import com.example.bookverse.activities.VertifiAccountActivity;
+import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.activities.ViewFavoriteBookActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.utilities.Constants;
@@ -114,7 +115,8 @@ public class PersonFragment extends Fragment {
             startActivity(viewInf);
         });
         person_favoriteBook.setOnClickListener(viewFavoriteBook -> {
-            Intent viewInf = new Intent(requireContext(), ViewFavoriteBookActivity.class);
+            Intent viewInf = new Intent(requireContext(), ViewAllRecyclerView.class);
+            viewInf.putExtra("keyView", "ViewFavorite");
             startActivity(viewInf);
         });
         person_recentBook.setOnClickListener(viewRecentBook -> {

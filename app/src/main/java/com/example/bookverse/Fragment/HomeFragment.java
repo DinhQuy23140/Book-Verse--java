@@ -69,7 +69,7 @@ public class HomeFragment extends Fragment {
     HomeAdapterRecycle adapterAllBook, adapterRecent, adapterViral;
     ListOfBook resultApi;
 
-    TextView btnViewAllBook, tvTime;
+    TextView btnViewAllBook, frgHome_viewRecent, frgHome_viewViral, tvTime;
     private String nextPageUrl = null;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     PreferenceManager preferenceManager;
@@ -134,6 +134,8 @@ public class HomeFragment extends Fragment {
         home_recent = view.findViewById(R.id.home_recent);
         btnSettings = view.findViewById(R.id.home_settings);
         btnViewAllBook = view.findViewById(R.id.btnViewAllBook);
+        frgHome_viewRecent = view.findViewById(R.id.frgHome_viewRecent);
+        frgHome_viewViral = view.findViewById(R.id.frgHome_viewViral);
         preferenceManager = new PreferenceManager(getContext());
         tvTime = view.findViewById(R.id.tvTime);
 
@@ -175,8 +177,20 @@ public class HomeFragment extends Fragment {
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
-            viewAllBook.putExtra("key", "allBook");
+            viewAllBook.putExtra("keyView", "ViewAllBook");
             startActivity(viewAllBook);
+        });
+
+        frgHome_viewViral.setOnClickListener(frgHome_viewViral -> {
+            Intent viewViral = new Intent(getActivity(), ViewAllRecyclerView.class);
+            viewViral.putExtra("keyView", "ViewViral");
+            startActivity(viewViral);
+        });
+
+        frgHome_viewRecent.setOnClickListener(frgHome_viewRecent -> {
+           Intent viewRecent = new Intent(getActivity(), ViewAllRecyclerView.class);
+           viewRecent.putExtra("keyView", "ViewRecent");
+           startActivity(viewRecent);
         });
         home_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
