@@ -1,5 +1,6 @@
 package com.example.bookverse.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -7,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,19 +25,19 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.R;
 
-public class SettingAppActivity extends AppCompatActivity {
+public class PreviewThemeActivity extends AppCompatActivity {
 
+    TextView Setting_previewThemeBtn;
+    ImageView Setting_preViewThemeImageView;
     ConstraintLayout layout;
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
-    TextView settings_theme;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_setting_app);
+        setContentView(R.layout.activity_preview_theme);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -43,7 +45,6 @@ public class SettingAppActivity extends AppCompatActivity {
         });
 
         layout = findViewById(R.id.main);
-        settings_theme = findViewById(R.id.settings_theme);
         sharedPreferences = getSharedPreferences("MySharePref", MODE_PRIVATE);
         preferenceChangeListener = (sharedPreferences, key)->{
             if(key.equals("pathTheme")){
@@ -53,13 +54,27 @@ public class SettingAppActivity extends AppCompatActivity {
         };
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        //SharedPreferences.Editor editor = sharedPreferences.edit();
         int pathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
         updateBackground(pathTheme);
 
-        settings_theme.setOnClickListener(viewTheme -> {
-            Intent viewThemeActivity = new Intent(getApplicationContext(), ViewThemeActivity.class);
-            startActivity(viewThemeActivity);
+        Setting_previewThemeBtn = findViewById(R.id.Setting_previewThemeBtn);
+        Setting_preViewThemeImageView = findViewById(R.id.Setting_preViewThemeImageView);
+        Intent getImgPath = getIntent();
+        int imgPath = getImgPath.getIntExtra("pathTheme", R.drawable.background_login);
+        Glide.with(this)
+                .load(imgPath)
+                .placeholder(R.drawable.ic_default_image)
+                .error(R.drawable.ic_error_load_image)
+                .into(Setting_preViewThemeImageView);
+
+        Setting_previewThemeBtn.setOnClickListener(setupTheme -> {
+            layout.setBackgroundResource(imgPath);
+            sharedPreferences = getSharedPreferences("MySharePref", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("pathTheme", imgPath);
+            editor.apply();
+            finish();
         });
     }
 
@@ -109,6 +124,4 @@ public class SettingAppActivity extends AppCompatActivity {
         drawable.draw(canvas);
         return bitmap;
     }
-
-
 }
