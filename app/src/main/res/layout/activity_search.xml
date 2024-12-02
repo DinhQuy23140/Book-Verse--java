@@ -98,12 +98,12 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/search_searchRelativeRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/search_searchRelativeRv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -112,7 +112,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/search_searchResult"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="15dp" />
 
                 <LinearLayout
                     android:id="@+id/search_error"

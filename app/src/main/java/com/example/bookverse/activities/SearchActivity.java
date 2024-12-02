@@ -69,6 +69,7 @@ public class SearchActivity extends AppCompatActivity {
     ListOfBook resultSearch;
     ArrayList<Book> listBook = new ArrayList<>();
     ArrayList<Book> listRecentBook = new ArrayList<>();
+    ArrayList<Book> listResult = new ArrayList<>();
     HistoAdapter adapterRecent;
     TextView btnCancel;
     EditText inputSearch;
@@ -146,6 +147,15 @@ public class SearchActivity extends AppCompatActivity {
 
         layoutHistory = findViewById(R.id.search_historyLayout);
         layoutSearch = findViewById(R.id.search_searchLayout);
+
+        //search event
+        search_searchResult = findViewById(R.id.search_searchResult);
+        search_searchResult.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+        search_searchResult.addItemDecoration(new GridSpacingItemDecoration(60));
+        resultSearchAdapter = new HomeAdapterRecycle(getApplicationContext(), listResult);
+        search_searchResult.setAdapter(resultSearchAdapter);
+        errorNotify = findViewById(R.id.search_error);
+
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -159,9 +169,10 @@ public class SearchActivity extends AppCompatActivity {
                     layoutSearch.setVisibility(View.VISIBLE);
                     layoutHistory.setVisibility(View.GONE);
                     drawable = inputSearch.getCompoundDrawables();
-                    for (int i = 0; i < drawable.length; i++) {
-                        Log.d("Drawable Check", "Drawable " + i + ": " + (drawable[i] != null ? "Exists" : "Null"));
-                    }
+//                    for (int i = 0; i < drawable.length; i++) {
+//                        Log.d("Drawable Check", "Drawable " + i + ": " + (drawable[i] != null ? "Exists" : "Null"));
+//                    }
+                    searchBook(inputSearch.getText().toString());
                 }
                 else{
                     inputSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
@@ -193,20 +204,15 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        //search event
-        search_searchResult = findViewById(R.id.search_searchResult);
-        search_searchResult.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
-        search_searchResult.addItemDecoration(new GridSpacingItemDecoration(60));
-        errorNotify = findViewById(R.id.search_error);
         btnSearch.setOnClickListener(searchClick->{
-            String textSearch = inputSearch.getText().toString();
-            if(!textSearch.isEmpty()) {
-                getListBook(textSearch);
-                Toast.makeText(getApplicationContext(), "Search", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Toast.makeText(getApplicationContext(), "Input is required", Toast.LENGTH_SHORT).show();
-            }
+//            String textSearch = inputSearch.getText().toString();
+//            if(!textSearch.isEmpty()) {
+//                getListBook(textSearch);
+//                Toast.makeText(getApplicationContext(), "Search", Toast.LENGTH_SHORT).show();
+//            }
+//            else{
+//                Toast.makeText(getApplicationContext(), "Input is required", Toast.LENGTH_SHORT).show();
+//            }
         });
     }
 
@@ -294,7 +300,7 @@ public class SearchActivity extends AppCompatActivity {
                                                 }
                                             }
                                             // Thông báo về số lượng sách đã được tải
-                                            Toast.makeText(getApplicationContext(), "Size: " + listRecentBook.size(), Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(getApplicationContext(), "Size: " + listRecentBook.size(), Toast.LENGTH_SHORT).show();
                                         } else {
                                             Log.e("Firestore", "Error fetching books", bookTask.getException());
                                         }
@@ -319,12 +325,12 @@ public class SearchActivity extends AppCompatActivity {
                 resultSearch = response.body();
                 if(resultSearch.getResults().isEmpty()){
                     errorNotify.setVisibility(View.VISIBLE);
-                    Toast.makeText(getApplicationContext(), "List null", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "List null", Toast.LENGTH_SHORT).show();
                 }
                 else{
                     listBook = resultSearch.getResults();
                     resultSearchAdapter = new HomeAdapterRecycle(getApplicationContext(), listBook);
-                    Toast.makeText(getApplicationContext(), Integer.toString(resultSearch.getResults().size()), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), Integer.toString(resultSearch.getResults().size()), Toast.LENGTH_SHORT).show();
                     search_searchResult.setAdapter(resultSearchAdapter);
                     errorNotify.setVisibility(View.GONE);
                 }
@@ -335,5 +341,28 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void searchBook(String keySearch){
+        if(listResult != null){
+            listResult.clear();
+        }
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .get()
+                .addOnCompleteListener(taskSearch -> {
+                   if(taskSearch.isSuccessful() && !taskSearch.getResult().isEmpty()) {
+                       for (DocumentSnapshot documentSnapshot : taskSearch.getResult()) {
+                           Map<String, Object> data = documentSnapshot.getData();
+                           String title = (String) data.get("title");
+                           if(title != null && title.toLowerCase().contains(keySearch.toLowerCase())){
+                               Gson gson = new Gson();
+                               Book book = gson.fromJson(gson.toJson(data), Book.class);
+                               listResult.add(book);
+                               resultSearchAdapter.notifyDataSetChanged();
+                           }
+                       }
+                       //Toast.makeText(getApplicationContext(), "Size: " + listResult.size(), Toast.LENGTH_SHORT).show();
+                   }
+                });
     }
 }
