@@ -43,7 +43,7 @@ public class SearchRecyclerAdapter extends RecyclerView.Adapter<SearchRecyclerAd
         holder.searchViewBookTopic.setBackgroundResource(path);
         holder.itemView.setOnClickListener(view1 ->{
             Intent viewResultSearch = new Intent(holder.itemView.getContext(), ViewAllRecyclerView.class);
-            viewResultSearch.putExtra("keySearch", keySub);
+            viewResultSearch.putExtra("keyView", keySub);
             holder.itemView.getContext().startActivity(viewResultSearch);
             //Toast.makeText(context, keySub, Toast.LENGTH_SHORT).show();
         });

@@ -68,7 +68,7 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         PreferenceManager preferenceManager = new PreferenceManager(holder.itemView.getContext());
         String email = preferenceManager.getString(Constants.KEY_EMAIL);
-        Toast.makeText(holder.itemView.getContext(), "Email: " + email, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(holder.itemView.getContext(), "Email: " + email, Toast.LENGTH_SHORT).show();
         Book itemPosition = listBook.get(position);
         String urlImage = getUrlImg(itemPosition.getFormats());
         holder.title.setText(itemPosition.getTitle());

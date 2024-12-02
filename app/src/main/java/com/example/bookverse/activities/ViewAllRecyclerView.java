@@ -77,8 +77,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
     ListOfBook resultApi;
     ArrayList<Book> listAllBook;
     HomeAdapterRecycle adapterAllBook;
-    String key_default = "books";
-    String currentkey;
+    String value, getkey;
 
 
     @Override
@@ -127,8 +126,8 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         listAllBook = new ArrayList<>();
         adapterAllBook = new HomeAdapterRecycle(getApplicationContext(), listAllBook);
         Intent getIntent = getIntent();
-        String value = getIntent.getStringExtra("keyView");
-        String getkey = getIntent.getStringExtra("keySearch");
+        value = getIntent.getStringExtra("keyView");
+        getkey = getIntent.getStringExtra("keySearch");
         if(value != null){
             switch (value){
                 case "ViewAllBook": {
@@ -152,15 +151,15 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                     break;
                 }
                 default: {
-                    titleViewAll.setText(R.string.ViewAllBookTitle);
-                    getAllBook();
+                    titleViewAll.setText(value);
+                    getBookByTopic(value);
                     break;
                 }
             }
         }
-        else if(getkey != null){
-            titleViewAll.setText(getkey);
-        }
+//        else if(getkey != null){
+//            titleViewAll.setText(getkey);
+//        }
         //Toast.makeText(this, currentkey, Toast.LENGTH_SHORT).show();
         recycleBook.setAdapter(adapterAllBook);
         recycleBook.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -356,5 +355,32 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void getBookByTopic(String keyTopic){
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
+                            Map<String, Object> data = documentSnapshot.getData();
+                            if (data != null) {
+                                List<String> listTopic = (List<String>) data.get("bookshelves");
+                                if (listTopic != null) {
+                                    boolean match = listTopic.stream()
+                                            .anyMatch(topic -> topic.toLowerCase().contains(keyTopic.toLowerCase()));
+                                    if (match) {
+                                        Gson gson = new Gson();
+                                        Book book = gson.fromJson(gson.toJson(data), Book.class);
+                                        listAllBook.add(book);
+                                    }
+                                }
+                            }
+                        }
+                        adapterAllBook.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(), "Size: " + listAllBook.size(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 }

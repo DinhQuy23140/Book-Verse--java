@@ -37,16 +37,10 @@ public class SearchFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final ArrayList<String> subjects = new ArrayList<>(Arrays.asList(
-            "Fiction",
-            "Science Fiction",
-            "History",
-            "Biography",
-            "Adventure",
-            "Philosophy",
-            "Poetry",
-            "Mystery",
-            "Children's literature",
-            "Religion"
+            "Adventure", "Biography", "Children's Literature", "Classic", "Cooking",
+            "Drama", "Fantasy", "History", "Humor", "Law", "Music",
+            "Mystery", "Philosophy", "Poetry", "Politics", "Religion",
+            "Romance", "Science", "Science Fiction", "War"
     ));
 
     private static final int[] pathList = {R.drawable.background_search, R.drawable.background_purple200,

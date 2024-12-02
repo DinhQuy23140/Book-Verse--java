@@ -369,7 +369,7 @@ public class HomeFragment extends Fragment {
                                                 }
                                             }
                                             // Thông báo về số lượng sách đã được tải
-                                            Toast.makeText(getContext(), "Size: " + listRecentBook.size(), Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(getContext(), "Size: " + listRecentBook.size(), Toast.LENGTH_SHORT).show();
                                         } else {
                                             Log.e("Firestore", "Error fetching books", bookTask.getException());
                                         }
