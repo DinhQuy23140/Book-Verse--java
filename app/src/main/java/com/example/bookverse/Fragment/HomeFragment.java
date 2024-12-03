@@ -31,6 +31,7 @@ import com.example.bookverse.Class.Book;
 import com.example.bookverse.Class.ListOfBook;
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
+import com.example.bookverse.activities.SettingAppActivity;
 import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.activities.ViewFavoriteBookActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
@@ -247,20 +248,22 @@ public class HomeFragment extends Fragment {
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                // Tạo một instance của SettingsFragment
-                SettingsFragment settingsFragment = new SettingsFragment();
-
-                // Thay thế fragment hiện tại trong fragment_container bằng SettingsFragment
-                fragmentTransaction.replace(R.id.fragment_container, settingsFragment, "SettingsFragment");
-
-                // Thêm transaction vào backstack để quay lại được fragment trước đó
-                fragmentTransaction.addToBackStack(null);
-
-                // Commit transaction
-                fragmentTransaction.commit();
+//                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//                // Tạo một instance của SettingsFragment
+//                SettingsFragment settingsFragment = new SettingsFragment();
+//
+//                // Thay thế fragment hiện tại trong fragment_container bằng SettingsFragment
+//                fragmentTransaction.replace(R.id.fragment_container, settingsFragment, "SettingsFragment");
+//
+//                // Thêm transaction vào backstack để quay lại được fragment trước đó
+//                fragmentTransaction.addToBackStack(null);
+//
+//                // Commit transaction
+//                fragmentTransaction.commit();
+                Intent viewSetting = new Intent(getActivity(), SettingAppActivity.class);
+                startActivity(viewSetting);
             }
         });
 
