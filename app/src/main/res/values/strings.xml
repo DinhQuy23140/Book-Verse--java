@@ -51,4 +51,5 @@
     <string name="settingApp">Cài đặt ứng dụng</string>
     <string name="DescriptionBack">Back</string>
     <string name="txtViral">Thinh hành</string>
+    <string name="txtLogout">Đăng xuất</string>
 </resources>

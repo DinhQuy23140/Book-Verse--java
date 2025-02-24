@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -29,7 +30,7 @@ public class SettingAppActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     TextView settings_theme;
-
+    ImageButton settingsA_backbtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,9 @@ public class SettingAppActivity extends AppCompatActivity {
             Intent viewThemeActivity = new Intent(getApplicationContext(), ViewThemeActivity.class);
             startActivity(viewThemeActivity);
         });
+
+        settingsA_backbtn = findViewById(R.id.settingsA_backbtn);
+        settingsA_backbtn.setOnClickListener(view -> finish());
     }
 
     public void updateBackground(int pathTheme) {

@@ -165,9 +165,9 @@ public class HomeFragment extends Fragment {
         recyclerViewAllBook.setAdapter(adapterAllBook);
         recyclerRecentView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listRecentBook = new ArrayList<>();
-        adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
-        getRecentBook();
-        recyclerRecentView.setAdapter(adapterRecent);
+//        adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
+//        getRecentBook();
+//        recyclerRecentView.setAdapter(adapterRecent);
 
         recyclerMostPopular = view.findViewById(R.id.recyclerMostPopular);
         recyclerMostPopular.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));

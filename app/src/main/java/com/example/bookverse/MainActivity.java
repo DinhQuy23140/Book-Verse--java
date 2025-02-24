@@ -64,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         int pathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
+        if(pathTheme == R.drawable.background_app){
+            editor.putInt("pathTheme", R.drawable.background_app);
+            editor.apply();
+        }
         updateBackground(pathTheme);
 
 //        Glide.with(this)

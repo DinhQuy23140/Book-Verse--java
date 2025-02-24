@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -34,6 +35,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
 import com.example.bookverse.utilities.Constants;
 import com.google.firebase.Firebase;
@@ -52,6 +54,7 @@ public class InfUserActivity extends AppCompatActivity {
     TextView infUser_emailedt, infUser_BirthOfDate;
     EditText infUser_fullnameEdt, infUser_phoneEdt;
     ImageButton infUser_save;
+    Button infUser_bthLogout;
     String endcodeedImage;
     ScrollView layout;
     SharedPreferences sharedPreferences;
@@ -88,6 +91,7 @@ public class InfUserActivity extends AppCompatActivity {
         infUser_phoneEdt = findViewById(R.id.infUser_phoneEdt);
         infUser_BirthOfDate = findViewById(R.id.infUser_BirthOfDate);
         infUser_save = findViewById(R.id.infUser_save);
+        infUser_bthLogout = findViewById(R.id.infUser_bthLogout);
         
         Intent getInfUser = getIntent();
         String email = getInfUser.getStringExtra(Constants.KEY_EMAIL);
@@ -165,6 +169,12 @@ public class InfUserActivity extends AppCompatActivity {
             }
         });
 
+        infUser_bthLogout.setOnClickListener(LogoutTask -> {
+            Intent logout = new Intent(this, MainActivity.class);
+            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(logout);
+
+        });
 
     }
 
