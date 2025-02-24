@@ -92,10 +92,12 @@ public class LoginActivity extends AppCompatActivity {
         layout_forgotPass = findViewById(R.id.layout_forgotPass);
         forgot_loading = findViewById(R.id.forgot_loading);
 
-//        Drawable background = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.background_login));
-//        ((BitmapDrawable) background).setTileModeXY(null, null); // Tắt chế độ lặp lại
-//        ((BitmapDrawable) background).setGravity(Gravity.FILL); // Kéo dãn để lấp đầy
-//        mainlayout.setBackground(background);
+
+        Boolean isSignin = preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
+        if (isSignin) {
+            Intent viewMain = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(viewMain);
+        }
 
         login_btnLogin.setOnClickListener(view->{
             login_btnLogin.setVisibility(ProgressBar.VISIBLE);

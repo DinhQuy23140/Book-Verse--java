@@ -38,6 +38,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
 import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.PreferenceManager;
 import com.google.firebase.Firebase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -59,6 +60,7 @@ public class InfUserActivity extends AppCompatActivity {
     ScrollView layout;
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    PreferenceManager preferenceManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +94,7 @@ public class InfUserActivity extends AppCompatActivity {
         infUser_BirthOfDate = findViewById(R.id.infUser_BirthOfDate);
         infUser_save = findViewById(R.id.infUser_save);
         infUser_bthLogout = findViewById(R.id.infUser_bthLogout);
+        preferenceManager = new PreferenceManager(getApplicationContext());
         
         Intent getInfUser = getIntent();
         String email = getInfUser.getStringExtra(Constants.KEY_EMAIL);
@@ -170,10 +173,10 @@ public class InfUserActivity extends AppCompatActivity {
         });
 
         infUser_bthLogout.setOnClickListener(LogoutTask -> {
-            Intent logout = new Intent(this, MainActivity.class);
+            Intent logout = new Intent(this, LoginActivity.class);
             logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(logout);
-
+            preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
         });
 
     }
