@@ -1,9 +1,4 @@
-package com.example.bookverse.Class;
-
-import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+package com.example.bookverse.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;

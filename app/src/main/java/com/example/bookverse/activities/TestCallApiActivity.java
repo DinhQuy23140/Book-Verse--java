@@ -1,8 +1,6 @@
 package com.example.bookverse.activities;
 
-import android.app.admin.DevicePolicyIdentifiers;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,17 +11,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookverse.API.ApiService;
 import com.example.bookverse.AdapterCustom.TestCallApiAdapter;
-import com.example.bookverse.Class.User;
+import com.example.bookverse.models.User;
 import com.example.bookverse.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class TestCallApiActivity extends AppCompatActivity {
     private RecyclerView recyclerView;

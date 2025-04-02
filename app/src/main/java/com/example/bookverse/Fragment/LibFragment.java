@@ -21,13 +21,12 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.bookverse.AdapterCustom.HistoAdapter;
-import com.example.bookverse.Class.Book;
+import com.example.bookverse.models.Book;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.SearchActivity;
 import com.example.bookverse.activities.ViewFavoriteBookActivity;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;

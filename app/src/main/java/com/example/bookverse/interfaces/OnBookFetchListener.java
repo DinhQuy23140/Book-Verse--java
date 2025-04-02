@@ -2,7 +2,7 @@ package com.example.bookverse.interfaces;
 
 import android.util.Log;
 
-import com.example.bookverse.Class.Book;
+import com.example.bookverse.models.Book;
 import com.example.bookverse.utilities.Constants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
