@@ -1,7 +1,5 @@
 package com.example.bookverse.activities;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -34,26 +32,20 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.API.ApiService;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
-import com.example.bookverse.AdapterCustom.ViewAllAdapter;
-import com.example.bookverse.Class.ApiClient;
-import com.example.bookverse.Class.Book;
-import com.example.bookverse.Class.GridSpacingItemDecoration;
-import com.example.bookverse.Class.ListOfBook;
-import com.example.bookverse.Fragment.HomeFragment;
+import com.example.bookverse.models.ApiClient;
+import com.example.bookverse.models.Book;
+import com.example.bookverse.models.GridSpacingItemDecoration;
+import com.example.bookverse.models.ListOfBook;
 import com.example.bookverse.R;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
-import com.google.firebase.Firebase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
-import org.w3c.dom.Document;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,7 +108,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         // get with and chang pixel to dp;
         float width = (displayMetrics.widthPixels);
         float desity = getApplicationContext().getResources().getDisplayMetrics().density;
-        int spacingInPixels = (int)Math.floor((width - 150 * 2 * desity) / 4);
+        int spacingInPixels = (int)Math.floor((width - 150 * 2 * desity) / 4);  
         //Toast.makeText(getApplicationContext(), "width: " + spacingInPixels, Toast.LENGTH_SHORT).show();
         recycleBook.addItemDecoration(new GridSpacingItemDecoration(60));
 

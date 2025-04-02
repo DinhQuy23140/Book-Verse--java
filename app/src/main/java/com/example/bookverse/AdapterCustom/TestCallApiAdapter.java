@@ -9,10 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookverse.Class.User;
+import com.example.bookverse.models.User;
 import com.example.bookverse.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TestCallApiAdapter extends RecyclerView.Adapter<TestCallApiAdapter.CustomViewHolder> {
@@ -35,9 +34,6 @@ public class TestCallApiAdapter extends RecyclerView.Adapter<TestCallApiAdapter.
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         User userPosition = listUser.get(position);
         if(userPosition != null){
-            holder.userId.setText(userPosition.getUserId());
-            holder.title.setText(userPosition.getTitle());
-            holder.body.setText(userPosition.getBody());
         }
     }
 

@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -150,13 +151,27 @@ public class MainActivity extends AppCompatActivity {
                         int layoutWidth = layout.getWidth();
                         int layoutHeight = layout.getHeight();
 
+                        // Đảm bảo layout đã được vẽ (kích thước > 0)
+                        if (layoutWidth <= 0 || layoutHeight <= 0) {
+                            // Layout chưa được vẽ, có thể xử lý lại sau
+                            layout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                                @Override
+                                public boolean onPreDraw() {
+                                    layout.getViewTreeObserver().removeOnPreDrawListener(this);
+                                    updateBackground(pathTheme); // Gọi lại phương thức khi layout đã được vẽ
+                                    return true;
+                                }
+                            });
+                            return;
+                        }
+
                         Bitmap bitmap = drawableToBitmap(resource);
 
                         int imageWidth = bitmap.getWidth();
                         int imageHeight = bitmap.getHeight();
 
-                        float scaleX = (float)layoutWidth/imageWidth;
-                        float scaleY = (float)layoutHeight/imageHeight;
+                        float scaleX = (float)layoutWidth / imageWidth;
+                        float scaleY = (float)layoutHeight / imageHeight;
                         float scale = Math.min(scaleX, scaleY);
 
                         int newWidth = Math.round(imageWidth * scale);
@@ -164,8 +179,9 @@ public class MainActivity extends AppCompatActivity {
 
                         Bitmap scaleBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
                         BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), scaleBitmap);
-                        layout.setBackground(bitmapDrawable);  // Sử dụng Drawable từ Glide
-                        layout.setBackground(resource);  // Sử dụng Drawable từ Glide
+
+                        // Set background chỉ một lần
+                        layout.setBackground(bitmapDrawable);
                     }
 
                     @Override
@@ -174,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     private Bitmap drawableToBitmap(Drawable drawable){
         if(drawable instanceof BitmapDrawable){

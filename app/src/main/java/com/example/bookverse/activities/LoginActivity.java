@@ -16,18 +16,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
+import com.example.bookverse.databinding.ActivityLoginBinding;
+import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.sendMail.GetPassword;
 import com.example.bookverse.sendMail.SendMailTask;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
+import com.example.bookverse.viewmodels.LoginViewModels;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -61,8 +68,21 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        mainlayout = findViewById(R.id.main);
         preferenceManager = new PreferenceManager(getApplicationContext());
+        ActivityLoginBinding loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+// Khởi tạo LoginViewModels thủ công
+        LoginViewModels loginViewModels = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new LoginViewModels(getApplication(), preferenceManager);
+            }
+        }).get(LoginViewModels.class);
+        loginBinding.setLoginViewModel(loginViewModels);
+        loginBinding.setLifecycleOwner(this); // Đảm bảo LiveData và DataBinding cập nhật tự động
+
+
+        mainlayout = findViewById(R.id.main);
         login_editEmail = findViewById(R.id.login_editEmail);
         login_editPassword = findViewById(R.id.login_edtPassword);
         login_viewSignup = findViewById(R.id.login_viewSignup);
@@ -99,39 +119,34 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(viewMain);
         }
 
-        login_btnLogin.setOnClickListener(view->{
+
+        login_btnLogin.setOnClickListener(layout_viewLogin -> {
             login_btnLogin.setVisibility(ProgressBar.VISIBLE);
             login_btnLogin.setVisibility(View.GONE);
-            if (validateLogin()) {
-                String email = login_editEmail.getText().toString();
-                String password = login_editPassword.getText().toString();
-                firestore.collection("users")
-                        .whereEqualTo(Constants.KEY_EMAIL, email)
-                        .whereEqualTo(Constants.KEY_PASSWORD, password)
-                        .get()
-                        .addOnCompleteListener(task -> {
-                            if(task.isSuccessful() && !task.getResult().isEmpty()){
-                                preferenceManager.putString(Constants.KEY_EMAIL, email);
-                                preferenceManager.putString(Constants.KEY_PASSWORD, password);
-                                preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                preferenceManager.putString(Constants.KEY_IMAGE, task.getResult().getDocuments().get(0).getString("image"));
-                                Intent login = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(login);
-                                Toast.makeText(getApplicationContext(), R.string.notifiloginSuccess, Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                            else{
-                                Toast.makeText(getApplicationContext(), R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
-                                login_btnLogin.setVisibility(ProgressBar.GONE);
-                                login_btnLogin.setVisibility(View.VISIBLE);
-                            }
-                        });
-            }
-            else{
-                Toast.makeText(getApplicationContext(), R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
-                login_btnLogin.setVisibility(ProgressBar.GONE);
-                login_btnLogin.setVisibility(View.VISIBLE);
-            }
+            loginViewModels.login();
+
+            loginViewModels.isLoggingIn.observe(this, isLoggingIn -> {
+                if (isLoggingIn) {
+                    log_prbLoadin.setVisibility(ProgressBar.VISIBLE);
+                    login_btnLogin.setVisibility(View.GONE);
+                } else {
+                    log_prbLoadin.setVisibility(ProgressBar.VISIBLE);
+                    login_btnLogin.setVisibility(View.GONE);
+                }
+            });
+
+            loginViewModels.loginSuccess.observe(this, loginSuccess -> {
+                if (loginSuccess) {
+                    Intent login = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(login);
+                    Toast.makeText(getApplicationContext(), R.string.notifiloginSuccess, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
+                    login_btnLogin.setVisibility(ProgressBar.GONE);
+                    login_btnLogin.setVisibility(View.VISIBLE);
+                }
+            });
         });
 
         login_viewForotPass.setOnClickListener(viewForgot->{

@@ -1,4 +1,4 @@
-package com.example.bookverse.Class;
+package com.example.bookverse.models;
 
 import java.util.ArrayList;
 

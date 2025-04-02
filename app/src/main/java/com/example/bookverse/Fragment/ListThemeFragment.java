@@ -12,13 +12,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.bookverse.AdapterCustom.ThemeAdapter;
-import com.example.bookverse.Class.Image;
+import com.example.bookverse.models.Image;
 import com.example.bookverse.R;
 import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.databinding.FragmentListThemeBinding;

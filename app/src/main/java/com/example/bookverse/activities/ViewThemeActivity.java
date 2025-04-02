@@ -17,16 +17,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.AdapterCustom.ThemeAdapter;
-import com.example.bookverse.Class.Image;
+import com.example.bookverse.models.Image;
 import com.example.bookverse.R;
-import com.example.bookverse.databinding.ActivityMainBinding;
-import com.example.bookverse.databinding.FragmentListThemeBinding;
 
 import java.util.ArrayList;
 

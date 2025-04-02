@@ -10,11 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.example.bookverse.Class.Book;
+import com.example.bookverse.models.Book;
 import com.example.bookverse.R;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 

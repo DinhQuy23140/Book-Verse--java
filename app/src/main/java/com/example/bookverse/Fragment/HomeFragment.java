@@ -9,8 +9,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,14 +24,13 @@ import android.widget.Toast;
 
 import com.example.bookverse.API.ApiService;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
-import com.example.bookverse.Class.ApiClient;
-import com.example.bookverse.Class.Book;
-import com.example.bookverse.Class.ListOfBook;
+import com.example.bookverse.models.ApiClient;
+import com.example.bookverse.models.Book;
+import com.example.bookverse.models.ListOfBook;
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.SettingAppActivity;
 import com.example.bookverse.activities.ViewAllRecyclerView;
-import com.example.bookverse.activities.ViewFavoriteBookActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.utilities.Constants;
