@@ -1,5 +1,7 @@
 package com.example.bookverse.activities;
 
+import static android.view.View.VISIBLE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -33,6 +36,8 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.R;
 import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.PreferenceManager;
+import com.example.bookverse.viewmodels.LoginViewModels;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -50,6 +55,7 @@ import android.widget.Toast;
 public class SignupChooseImgActivity extends AppCompatActivity {
     ConstraintLayout layout;
     SharedPreferences sharedPreferences;
+    PreferenceManager preferenceManager;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     FirebaseFirestore firebaseFirestore;
     String endcodeedImage;
@@ -57,6 +63,18 @@ public class SignupChooseImgActivity extends AppCompatActivity {
     ImageView signup_avatar;
     LinearLayout layout_chooseImg;
     Button signup_btnSignup;
+    ProgressBar log_prbLoadin;
+    private LoginViewModels loginViewModels;
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri imageuri = result.getData().getData();
+                    loginViewModels.selectImage(imageuri);
+                }
+            }
+    );
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,13 +87,17 @@ public class SignupChooseImgActivity extends AppCompatActivity {
         });
 
         layout = findViewById(R.id.main);
+        log_prbLoadin = findViewById(R.id.log_prbLoadin);
+        preferenceManager = new PreferenceManager(this);
         sharedPreferences = getSharedPreferences("MySharePref", MODE_PRIVATE);
+        loginViewModels = new LoginViewModels(getApplication(), preferenceManager);
         preferenceChangeListener = (sharedPreferences, key)->{
             if(key.equals("pathTheme")){
                 int newpathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
                 updateBackground(newpathTheme);
             }
         };
+
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -96,37 +118,45 @@ public class SignupChooseImgActivity extends AppCompatActivity {
         layout_chooseImg.setOnClickListener(view->{
             Intent chooseImage = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
             chooseImage.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            launcher.launch(chooseImage);
+            activityResultLauncher.launch(chooseImage);
+        });
+
+        loginViewModels.getImageBitmap().observe(this, bitmap -> {
+            if (bitmap != null) {
+                signup_avatar.setImageBitmap(bitmap);
+            } else {
+                signup_avatar.setImageResource(R.drawable.background_default_user);
+            }
         });
 
         signup_btnSignup = findViewById(R.id.signup_btnSignup);
         signup_btnSignup.setOnClickListener(view->{
-            HashMap<String, String> newuser = new HashMap<>();
-            newuser.put(Constants.KEY_NAME, username);
-            newuser.put(Constants.KEY_EMAIL, email);
-            newuser.put(Constants.KEY_PASSWORD, password);
-            newuser.put(Constants.KEY_PHONE, phoneNumber);
-            newuser.put(Constants.KEY_IMAGE, endcodeedImage);
-            firebaseFirestore.collection(Constants.KEY_COLLECTION_USERS)
-                    .add(newuser)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Toast.makeText(SignupChooseImgActivity.this, "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(), "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            loginViewModels.signupChooseImg();
+            loginViewModels.getIsSignUpLoad().observe(this, isSignUpLoad -> {
+                if (isSignUpLoad) {
+                    signup_btnSignup.setVisibility(View.GONE);
+                    log_prbLoadin.setVisibility(VISIBLE);
+                } else {
+                    signup_btnSignup.setVisibility(VISIBLE);
+                    log_prbLoadin.setVisibility(View.GONE);
+                }
+            });
+            loginViewModels.getSignupSuccess().observe(this, signupSuccess -> {
+                if (signupSuccess) {
+                    Intent intent = new Intent(SignupChooseImgActivity.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            });
+            loginViewModels.getSignUpMessage().observe(this, message ->{
+                Toast.makeText(SignupChooseImgActivity.this, message, Toast.LENGTH_SHORT).show();
+            });
         });
+    }
 
-
+    public void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        launcher.launch(intent);
     }
 
     public void updateBackground(int pathTheme) {
@@ -176,19 +206,6 @@ public class SignupChooseImgActivity extends AppCompatActivity {
         return bitmap;
     }
 
-    private String enCodeImage(Bitmap bitmap){
-        //set with
-        int previewWith = 150;
-        //set height
-        int previewHeight = bitmap.getHeight() * previewWith / bitmap.getWidth();
-        //scale image
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWith, previewHeight, false);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
     private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result->{
@@ -214,6 +231,20 @@ public class SignupChooseImgActivity extends AppCompatActivity {
                 }
             }
     );
+
+    private String enCodeImage(Bitmap bitmap){
+        //set with
+        int previewWith = 150;
+        //set height
+        int previewHeight = bitmap.getHeight() * previewWith / bitmap.getWidth();
+        //scale image
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWith, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
     public Bitmap getBitmapFromResource(Context context, int id){
         return BitmapFactory.decodeResource(context.getResources(), id);
     }

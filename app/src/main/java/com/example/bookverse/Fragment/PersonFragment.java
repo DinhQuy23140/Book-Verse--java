@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.util.Base64;
@@ -37,7 +38,7 @@ public class PersonFragment extends Fragment {
     Button person_view_btn;
 
     ImageView person_imvAvatar;
-    LinearLayout person_infUser, person_favoriteBook, person_recentBook, person_vertifi, person_settingApp;
+    ConstraintLayout person_infUser, person_favoriteBook, person_recentBook, person_vertifi, person_settingApp;
     PreferenceManager preferenceManager;
 
     // TODO: Rename parameter arguments, choose names that match

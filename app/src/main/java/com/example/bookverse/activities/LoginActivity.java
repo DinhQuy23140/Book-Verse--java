@@ -70,7 +70,6 @@ public class LoginActivity extends AppCompatActivity {
         });
         preferenceManager = new PreferenceManager(getApplicationContext());
         ActivityLoginBinding loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-// Khởi tạo LoginViewModels thủ công
         LoginViewModels loginViewModels = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
@@ -80,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
         }).get(LoginViewModels.class);
         loginBinding.setLoginViewModel(loginViewModels);
         loginBinding.setLifecycleOwner(this); // Đảm bảo LiveData và DataBinding cập nhật tự động
-
 
         mainlayout = findViewById(R.id.main);
         login_editEmail = findViewById(R.id.login_editEmail);
@@ -104,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
         layout_viewLogin = findViewById(R.id.layout_viewLogin);
         signin_loading = findViewById(R.id.signin_loading);
 
-
         //forgot
         forgot_edtEmail = findViewById(R.id.forgot_edtEmail);
         forgot_btnSubmit = findViewById(R.id.forgot_btnsubmit);
@@ -121,31 +118,34 @@ public class LoginActivity extends AppCompatActivity {
 
 
         login_btnLogin.setOnClickListener(layout_viewLogin -> {
-            login_btnLogin.setVisibility(ProgressBar.VISIBLE);
-            login_btnLogin.setVisibility(View.GONE);
+//            login_btnLogin.setVisibility(ProgressBar.VISIBLE);
+//            login_btnLogin.setVisibility(View.GONE);
             loginViewModels.login();
 
-            loginViewModels.isLoggingIn.observe(this, isLoggingIn -> {
+            loginViewModels.getIsLoggingIn().observe(this, isLoggingIn -> {
                 if (isLoggingIn) {
-                    log_prbLoadin.setVisibility(ProgressBar.VISIBLE);
+                    log_prbLoadin.setVisibility(View.VISIBLE);
                     login_btnLogin.setVisibility(View.GONE);
                 } else {
-                    log_prbLoadin.setVisibility(ProgressBar.VISIBLE);
-                    login_btnLogin.setVisibility(View.GONE);
+                    log_prbLoadin.setVisibility(View.GONE);
+                    login_btnLogin.setVisibility(View.VISIBLE);
                 }
             });
 
-            loginViewModels.loginSuccess.observe(this, loginSuccess -> {
+            loginViewModels.getLoginSuccess().observe(this, loginSuccess -> {
                 if (loginSuccess) {
                     Intent login = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(login);
-                    Toast.makeText(getApplicationContext(), R.string.notifiloginSuccess, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), R.string.notifiloginSuccess, Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
                     login_btnLogin.setVisibility(ProgressBar.GONE);
                     login_btnLogin.setVisibility(View.VISIBLE);
                 }
+            });
+            loginViewModels.getMessage().observe(this, message -> {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             });
         });
 
@@ -155,42 +155,72 @@ public class LoginActivity extends AppCompatActivity {
             forgot_close.setVisibility(View.VISIBLE);
         });
 
-        signup_nextview.setOnClickListener(view->{
-            layout_viewLogin.setVisibility(View.GONE);
-            signin_loading.setVisibility(View.VISIBLE);
-            if(validateSignup()){
-                Task<QuerySnapshot> queryUserName = firestore.collection(Constants.KEY_COLLECTION_USERS)
-                        .whereEqualTo(Constants.KEY_NAME, signup_username.getText().toString())
-                        .get();
-                Task<QuerySnapshot> queryEmail = firestore.collection(Constants.KEY_EMAIL)
-                        .whereEqualTo(Constants.KEY_EMAIL, signup_email.getText().toString())
-                        .get();
-                Tasks.whenAllComplete(queryUserName, queryEmail).addOnCompleteListener(task ->{
-                    boolean checkUsename = queryUserName.getResult().isEmpty();
-                    boolean checkEmail = queryEmail.getResult().isEmpty();
-                    if(checkUsename){
-                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(checkEmail){
-                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
-                        Bundle newUser = new Bundle();
-                        newUser.putString("username", signup_username.getText().toString());
-                        newUser.putString("email", signup_email.getText().toString());
-                        newUser.putString("password", signup_password.getText().toString());
-                        newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
-                        nextSignup.putExtra("newUser", newUser);
-                        startActivity(nextSignup);
-                    }
-                });
-            }
-            else{
-                Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
-            }
-            layout_viewLogin.setVisibility(View.VISIBLE);
-            signin_loading.setVisibility(View.GONE);
+//        signup_nextview.setOnClickListener(view->{
+//            layout_viewLogin.setVisibility(View.GONE);
+//            signin_loading.setVisibility(View.VISIBLE);
+//            if(validateSignup()){
+//                Task<QuerySnapshot> queryUserName = firestore.collection(Constants.KEY_COLLECTION_USERS)
+//                        .whereEqualTo(Constants.KEY_NAME, signup_username.getText().toString())
+//                        .get();
+//                Task<QuerySnapshot> queryEmail = firestore.collection(Constants.KEY_EMAIL)
+//                        .whereEqualTo(Constants.KEY_EMAIL, signup_email.getText().toString())
+//                        .get();
+//                Tasks.whenAllComplete(queryUserName, queryEmail).addOnCompleteListener(task ->{
+//                    boolean checkUsename = queryUserName.getResult().isEmpty();
+//                    boolean checkEmail = queryEmail.getResult().isEmpty();
+//                    if(checkUsename){
+//                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else if(checkEmail){
+//                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else{
+//                        Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
+//                        Bundle newUser = new Bundle();
+//                        newUser.putString("username", signup_username.getText().toString());
+//                        newUser.putString("email", signup_email.getText().toString());
+//                        newUser.putString("password", signup_password.getText().toString());
+//                        newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
+//                        nextSignup.putExtra("newUser", newUser);
+//                        startActivity(nextSignup);
+//                    }
+//                });
+//            }
+//            else{
+//                Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
+//            }
+//            layout_viewLogin.setVisibility(View.VISIBLE);
+//            signin_loading.setVisibility(View.GONE);
+//        });
+
+        signup_nextview.setOnClickListener(nextViewSignUp -> {
+            loginViewModels.signup();
+            loginViewModels.getIsSignupIn().observe(this, isSignup -> {
+                if (isSignup) {
+                    layout_viewLogin.setVisibility(View.GONE);
+                    signin_loading.setVisibility(View.VISIBLE);
+                } else {
+                    layout_viewLogin.setVisibility(View.VISIBLE);
+                    signin_loading.setVisibility(View.GONE);
+                }
+            });
+
+            loginViewModels.getSignupSuccess().observe(this, signUpSuccess -> {
+                if (signUpSuccess) {
+                    Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
+                    Bundle newUser = new Bundle();
+                    newUser.putString("username", signup_username.getText().toString());
+                    newUser.putString("email", signup_email.getText().toString());
+                    newUser.putString("password", signup_password.getText().toString());
+                    newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
+                    nextSignup.putExtra("newUser", newUser);
+                    startActivity(nextSignup);
+                }
+            });
+
+            loginViewModels.getSignupMessage().observe(this, signUpMessage -> {
+                Toast.makeText(getApplicationContext(), loginViewModels.getSignupMessage().getValue(), Toast.LENGTH_SHORT).show();
+            });
         });
 
         login_viewSignup.setOnClickListener(viewSignup->{
@@ -261,63 +291,6 @@ public class LoginActivity extends AppCompatActivity {
             forgot_btnSubmit.setVisibility(View.VISIBLE);
             forgot_loading.setVisibility(View.GONE);
         });
-    }
-
-    public boolean validateLogin(){
-        String email = login_editEmail.getText().toString();
-        String password = login_editPassword.getText().toString();
-        if(email.isEmpty()){
-            showNotifi(R.string.notifiEmptyEmail);
-            return false;
-        }
-        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            showNotifi(R.string.notifiValiEmail);
-            return false;
-        }
-        else if(password.isEmpty()){
-            showNotifi(R.string.notifiEmptyPassword);
-            return false;
-        }
-        else if(password.length() < 8){
-            showNotifi(R.string.notifiValiPassword);
-            return false;
-        }
-        return true;
-    }
-
-    public boolean validateSignup(){
-        String username = signup_username.getText().toString();
-        String email = signup_email.getText().toString();
-        String password = signup_password.getText().toString();
-        String confirmPassword = signup_confirmPassword.getText().toString();
-        String phoneNumber = signup_phoneNumber.getText().toString();
-        if(username.isEmpty()){
-            showNotifi(R.string.notifiUsernameEmpty);
-            return false;
-        }
-        else if(email.isEmpty()){
-            showNotifi(R.string.notifiEmptyEmail);
-            return false;
-        }
-        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            showNotifi(R.string.notifiValiEmail);
-            return false;
-        }
-        else if(password.isEmpty()) {
-            showNotifi(R.string.notifiEmptyPassword);
-            return false;
-        }
-        else if(password.length() < 8){
-            showNotifi(R.string.notifiValiPassword);
-            return false;
-        }
-        else if(!confirmPassword.equals(password)){
-            showNotifi(R.string.notifiConfirmPassword);
-        }
-        else if(phoneNumber.length() < 10){
-            showNotifi(R.string.notifiPhoneValid);
-        }
-        return true;
     }
 
     public boolean validateForgotPass(){
