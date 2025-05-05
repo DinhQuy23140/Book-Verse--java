@@ -13,35 +13,36 @@
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <ImageButton
                 android:id="@+id/settings_backbtn"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="false"
-                android:layout_alignParentBottom="false"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="3dp"
+                android:layout_marginStart="20dp"
                 android:background="@android:color/transparent"
                 android:scaleX="1.2"
                 android:scaleY="1.2"
-                android:src="@drawable/ic_back" />
+                android:src="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:layout_alignParentTop="false"
                 android:gravity="center"
                 android:text="@string/settings_title"
                 android:textSize="25dp"
-                android:textStyle="bold" />
-        </RelativeLayout>
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/nameGroupSettings"

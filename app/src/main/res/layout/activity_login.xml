@@ -275,7 +275,8 @@
                     android:inputType="text"
                     android:paddingLeft="10dp"
                     android:textColor="@color/brow"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:text="@={LoginViewModel.username}"/>
             </LinearLayout>
 
             <LinearLayout
@@ -297,7 +298,8 @@
                     android:inputType="text|textEmailAddress"
                     android:paddingLeft="10dp"
                     android:textColor="@color/brow"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:text="@={LoginViewModel.email}"/>
             </LinearLayout>
 
             <LinearLayout
@@ -319,7 +321,8 @@
                     android:inputType="text|textPassword"
                     android:paddingLeft="10dp"
                     android:textColor="@color/brow"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:text="@={LoginViewModel.password}"/>
             </LinearLayout>
 
             <LinearLayout
@@ -341,7 +344,8 @@
                     android:inputType="text|textPassword"
                     android:paddingStart="10dp"
                     android:textColor="@color/brow"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:text="@={LoginViewModel.confirmPass}"/>
             </LinearLayout>
 
             <LinearLayout
@@ -360,6 +364,7 @@
                     android:background="@drawable/background_input_login"
                     android:ems="10"
                     android:hint="@string/hintPhone"
+                    android:text="@={LoginViewModel.phoneNumber}"
                     android:inputType="phone"
                     android:paddingStart="10dp"
                     android:textColor="@color/brow"

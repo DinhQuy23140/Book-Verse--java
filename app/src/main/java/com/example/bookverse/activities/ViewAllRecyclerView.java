@@ -23,6 +23,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +39,7 @@ import com.example.bookverse.models.GridSpacingItemDecoration;
 import com.example.bookverse.models.ListOfBook;
 import com.example.bookverse.R;
 import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.GridSpaceDecoration;
 import com.example.bookverse.utilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
@@ -110,7 +112,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         float desity = getApplicationContext().getResources().getDisplayMetrics().density;
         int spacingInPixels = (int)Math.floor((width - 150 * 2 * desity) / 4);  
         //Toast.makeText(getApplicationContext(), "width: " + spacingInPixels, Toast.LENGTH_SHORT).show();
-        recycleBook.addItemDecoration(new GridSpacingItemDecoration(60));
+        recycleBook.addItemDecoration(new GridSpaceDecoration(numberOfColumns, 5));
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(getApplicationContext());

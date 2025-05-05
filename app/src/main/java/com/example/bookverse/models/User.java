@@ -10,6 +10,13 @@ public class User {
         this.password = password;
     }
 
+    public User(String username, String email, String password, String phoneNumber) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+    }
+
     public User(String birthDay, String email, String idUser, String image, String password, String phoneNumber, String username) {
         this.birthDay = birthDay;
         this.email = email;
@@ -88,4 +95,9 @@ public class User {
         return phoneNumber.length() >= 10 && Patterns
                 .PHONE.matcher(phoneNumber).matches();
     }
+
+    public boolean isValidUseName() {
+        return !username.isEmpty();
+    }
+
 }
