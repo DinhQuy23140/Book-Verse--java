@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -57,7 +58,7 @@ import retrofit2.Response;
  */
 public class HomeFragment extends Fragment {
     ActivityMainBinding bindingMain;
-    ScrollView home_fragment;
+    NestedScrollView home_fragment;
     BottomNavigationView bottomNavigationView;
     LinearLayout home_favorite;
     ImageButton btnSettings, home_recent;

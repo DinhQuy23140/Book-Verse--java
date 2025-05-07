@@ -1,5 +1,6 @@
 package com.example.bookverse.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -104,15 +106,8 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         recycleBook = findViewById(R.id.recycleBook);
         int numberOfColumns = 2; // Số cột bạn muốn hiển thị
         recycleBook.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
-        // Thêm khoảng cách cho item
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getApplicationContext().getSystemService(WindowManager.class).getDefaultDisplay().getMetrics(displayMetrics);
-        // get with and chang pixel to dp;
-        float width = (displayMetrics.widthPixels);
-        float desity = getApplicationContext().getResources().getDisplayMetrics().density;
-        int spacingInPixels = (int)Math.floor((width - 150 * 2 * desity) / 4);  
         //Toast.makeText(getApplicationContext(), "width: " + spacingInPixels, Toast.LENGTH_SHORT).show();
-        recycleBook.addItemDecoration(new GridSpaceDecoration(numberOfColumns, 5));
+        recycleBook.addItemDecoration(new GridSpaceDecoration(numberOfColumns, dpToPx(this, 10)));
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(getApplicationContext());
@@ -151,10 +146,6 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 }
             }
         }
-//        else if(getkey != null){
-//            titleViewAll.setText(getkey);
-//        }
-        //Toast.makeText(this, currentkey, Toast.LENGTH_SHORT).show();
         recycleBook.setAdapter(adapterAllBook);
         recycleBook.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -171,10 +162,6 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Vt: " + Integer.toString(vt), Toast.LENGTH_SHORT).show();
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == listAllBook.size() - 1) {
-                    // Người dùng đã cuộn đến cuối, tải thêm dữ liệu ở đây
-//                    if (resultApi.getNext()!= null){
-//                        getListBook(getkey, null);
-//                    }
                 }
             }
         });
@@ -376,5 +363,9 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                     }
                 });
 
+    }
+
+    public int dpToPx(Context context, int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 }

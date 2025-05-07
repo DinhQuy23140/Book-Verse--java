@@ -26,4 +26,5 @@ public class Constants {
     public static final String KEY_BOOK_SUBJECTS = "subjects";
     public static final String KEY_BOOK_TITLE = "title";
     public static final String KEY_BOOK_TRANSLATORS = "translators";
+    public static final String KEY_STATE = "state";
 }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookverse.R;
@@ -59,7 +60,7 @@ public class SearchRecyclerAdapter extends RecyclerView.Adapter<SearchRecyclerAd
 
     class CustomHolder extends RecyclerView.ViewHolder {
         TextView searchSubTitle;
-        LinearLayout searchViewBookTopic;
+        ConstraintLayout searchViewBookTopic;
         public CustomHolder(@NonNull View itemView) {
             super(itemView);
             searchSubTitle = itemView.findViewById(R.id.searchSubKey);
