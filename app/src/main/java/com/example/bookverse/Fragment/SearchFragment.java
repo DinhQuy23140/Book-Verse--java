@@ -1,6 +1,7 @@
 package com.example.bookverse.Fragment;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.example.bookverse.AdapterCustom.SearchRecyclerAdapter;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.InfBokkActivity;
 import com.example.bookverse.activities.SearchActivity;
+import com.example.bookverse.utilities.GridSpaceDecoration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,14 +96,27 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = (int) (metrics.widthPixels/metrics.density);
+        Configuration config = getResources().getConfiguration();
+        if (width > 600 && config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return inflater.inflate(R.layout.fragment_search_landscape, container, false);
+        } else {
+            return inflater.inflate(R.layout.fragment_search, container, false);
+        }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         searchRecyclerSub = view.findViewById(R.id.searchRecyclerSub);
-        searchRecyclerSub.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = (int) (metrics.widthPixels/metrics.density);
+        int numColmn;
+        if (width > 600) numColmn = 4;
+        else numColmn = 2;
+        searchRecyclerSub.setLayoutManager(new GridLayoutManager(requireContext(), numColmn));
+        searchRecyclerSub.addItemDecoration(new GridSpaceDecoration(numColmn, 10));
         Random randomIndex = new Random();
         for (int i = 0; i < subjects.size(); i++){
             int index = i % pathList.length;

@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -33,6 +34,7 @@ import com.example.bookverse.Fragment.HomeFragment;
 import com.example.bookverse.Fragment.LibFragment;
 import com.example.bookverse.Fragment.PersonFragment;
 import com.example.bookverse.Fragment.SearchFragment;
+import com.example.bookverse.utilities.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layoutmain), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(0, 0, 0, 0);
             return insets;
         });
 
@@ -71,29 +74,17 @@ public class MainActivity extends AppCompatActivity {
         }
         updateBackground(pathTheme);
 
-//        Glide.with(this)
-//                .load(pathTheme)  // Load trực tiếp từ pathTheme
-//                .placeholder(R.drawable.ic_default_image)
-//                .into(new CustomTarget<Drawable>() {
-//                    @Override
-//                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-//                        layout.setBackground(resource);  // Sử dụng Drawable từ Glide
-//                        layout.invalidate();
-//                        layout.requestLayout();
-//                    }
-//
-//                    @Override
-//                    public void onLoadCleared(@Nullable Drawable placeholder) {
-//                        layout.setBackgroundResource(R.drawable.ic_error_load_image);
-//                    }
-//                });
-
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.bottom_home);
-        FragmentTransaction fragmentTransaction;
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new HomeFragment()).commit();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        if (savedInstanceState != null) {
+            int selectedId = savedInstanceState.getInt(Constants.KEY_STATE);
+            bottomNavigationView.setSelectedItemId(selectedId);
+        } else {
+            FragmentTransaction fragmentTransaction;
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, new HomeFragment()).commit();
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.bottom_home){
@@ -214,5 +205,9 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
-
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt(Constants.KEY_STATE, bottomNavigationView.getSelectedItemId());
+    }
 }
