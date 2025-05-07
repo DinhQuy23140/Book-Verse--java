@@ -3,6 +3,7 @@ package com.example.bookverse.AdapterCustom;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.bookverse.models.Book;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.InfBokkActivity;
+import com.example.bookverse.models.Book;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
 import com.google.firebase.firestore.FieldValue;
@@ -30,12 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.CustomViewHolder> {
-
+public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     private Context context;
     private ArrayList<Book> listBook;
 
-    public HomeAdapterRecycle(Context context, ArrayList<Book> listBook) {
+    public BookAdapter(Context context, ArrayList<Book> listBook) {
         this.context = context;
         this.listBook = listBook;
     }
@@ -48,15 +48,14 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
         }
     }
 
-    @NonNull
     @Override
-    public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home_recycle, parent, false);
-        return new CustomViewHolder(view);
+    public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_book, parent, false);
+        return new BookViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         PreferenceManager preferenceManager = new PreferenceManager(holder.itemView.getContext());
         String email = preferenceManager.getString(Constants.KEY_EMAIL);
@@ -72,20 +71,20 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
                 .into(holder.image);
 
         firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                        .document(String.valueOf(itemPosition.getId()))
-                        .get()
-                        .addOnCompleteListener(task -> {
-                            if(task.isSuccessful() && task.getResult() != null){
-                                List<String> users = (List<String>) task.getResult().get("users");
-                                if(users != null){
-                                    Set<String> set = new HashSet<>(users);
-                                    if(set.contains(email)){
-                                        holder.book_favoriteImv.setImageResource(R.drawable.ic_favorite_click);
-                                        holder.book_favoriteImv.setActivated(true);
-                                    }
-                                }
+                .document(String.valueOf(itemPosition.getId()))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null){
+                        List<String> users = (List<String>) task.getResult().get("users");
+                        if(users != null){
+                            Set<String> set = new HashSet<>(users);
+                            if(set.contains(email)){
+                                holder.book_favoriteImv.setImageResource(R.drawable.ic_favorite_click);
+                                holder.book_favoriteImv.setActivated(true);
                             }
-                        });
+                        }
+                    }
+                });
 
         holder.book_favoriteImv.setOnClickListener(view -> {
             if (!holder.book_favoriteImv.isActivated()) {
@@ -125,13 +124,11 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
         return listBook.size();
     }
 
-    class CustomViewHolder extends RecyclerView.ViewHolder {
-
+    public class BookViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView image;
         ImageView book_favoriteImv;
-
-        public CustomViewHolder(@NonNull View itemView) {
+        public BookViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.tvTitleBook);
             image = itemView.findViewById(R.id.imvItem);
@@ -139,5 +136,3 @@ public class HomeAdapterRecycle extends RecyclerView.Adapter<HomeAdapterRecycle.
         }
     }
 }
-
-

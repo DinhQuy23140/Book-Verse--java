@@ -14,10 +14,12 @@ import android.util.TypedValue;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +36,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.API.ApiService;
+import com.example.bookverse.AdapterCustom.BookAdapter;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
 import com.example.bookverse.models.ApiClient;
 import com.example.bookverse.models.Book;
@@ -73,6 +76,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
     ListOfBook resultApi;
     ArrayList<Book> listAllBook;
     HomeAdapterRecycle adapterAllBook;
+    BookAdapter bookAdapter;
     String value, getkey;
 
 
@@ -104,16 +108,21 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         viewAllbtnBack = findViewById(R.id.viewAllbtnBack);
         titleViewAll = findViewById(R.id.view_all_title);
         recycleBook = findViewById(R.id.recycleBook);
-        int numberOfColumns = 2; // Số cột bạn muốn hiển thị
+        int numberOfColumns; // Số cột bạn muốn hiển thị
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = (int) (metrics.widthPixels/metrics.density);
+        if (width > 600) numberOfColumns = 4;
+        else numberOfColumns = 2;
         recycleBook.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
         //Toast.makeText(getApplicationContext(), "width: " + spacingInPixels, Toast.LENGTH_SHORT).show();
-        recycleBook.addItemDecoration(new GridSpaceDecoration(numberOfColumns, dpToPx(this, 10)));
+        recycleBook.addItemDecoration(new GridSpaceDecoration(numberOfColumns, dpToPx(this, 5)));
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(getApplicationContext());
         emailUser = preferenceManager.getString(Constants.KEY_EMAIL);
         listAllBook = new ArrayList<>();
         adapterAllBook = new HomeAdapterRecycle(getApplicationContext(), listAllBook);
+        bookAdapter = new BookAdapter(getApplicationContext(), listAllBook);
         Intent getIntent = getIntent();
         value = getIntent.getStringExtra("keyView");
         getkey = getIntent.getStringExtra("keySearch");
@@ -146,23 +155,24 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 }
             }
         }
-        recycleBook.setAdapter(adapterAllBook);
+//        recycleBook.setAdapter(adapterAllBook);
+        recycleBook.setAdapter(bookAdapter);
+        Toast.makeText(this, Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
         recycleBook.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int init = 600;
-                int vt = recyclerView.computeVerticalScrollOffset();
-                int newHeight = init - vt;
-                newHeight = Math.max(newHeight, 10 );
-                LinearLayout viewall_background = findViewById(R.id.viewall_background);
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewall_background.getLayoutParams();
-                layoutParams.height = newHeight;
-                viewall_background.setLayoutParams(layoutParams);
-                //Toast.makeText(getApplicationContext(), "Vt: " + Integer.toString(vt), Toast.LENGTH_SHORT).show();
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == listAllBook.size() - 1) {
-                }
+//                super.onScrolled(recyclerView, dx, dy);
+//                int init = 600;
+//                int vt = recyclerView.computeVerticalScrollOffset();
+//                int newHeight = init - vt;
+//                newHeight = Math.max(newHeight, 10 );
+//                LinearLayout viewall_background = findViewById(R.id.viewall_background);
+//                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewall_background.getLayoutParams();
+//                layoutParams.height = newHeight;
+//                viewall_background.setLayoutParams(layoutParams);
+//                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+//                if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == listAllBook.size() - 1) {
+//                }
             }
         });
 
@@ -258,7 +268,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                             Map<String, Object> data = documentSnapshot.getData();
                             Book book = gson.fromJson(gson.toJson(data), Book.class);
                             listAllBook.add(book);
-                            adapterAllBook.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
+                            bookAdapter.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
                         }
                     }
                 });
