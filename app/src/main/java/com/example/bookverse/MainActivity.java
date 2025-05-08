@@ -56,16 +56,14 @@ public class MainActivity extends AppCompatActivity {
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 //            return insets;
 //        });
-        View layoutV = findViewById(R.id.layoutmain);
+        View layoutV = findViewById(R.id.fragment_container);
         ViewCompat.setOnApplyWindowInsetsListener(layoutV, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
             // Dùng padding để tránh bị che
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-
             return insets;
         });
-// Quan trọng: Cho phép layout xử lý insets
         ViewCompat.setFitsSystemWindows(layoutV, true);
 
 

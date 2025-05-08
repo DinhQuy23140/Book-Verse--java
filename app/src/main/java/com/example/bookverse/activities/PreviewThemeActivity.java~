@@ -28,8 +28,8 @@ import com.example.bookverse.R;
 public class PreviewThemeActivity extends AppCompatActivity {
 
     TextView Setting_previewThemeBtn;
-    ImageView Setting_preViewThemeImageView;
-    ConstraintLayout layout, cstrBackTheme;
+    ImageView Setting_preViewThemeImageView, btnBackTheme;
+    ConstraintLayout layout;
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
@@ -77,8 +77,8 @@ public class PreviewThemeActivity extends AppCompatActivity {
             finish();
         });
 
-        cstrBackTheme = findViewById(R.id.cstr_back_theme);
-        cstrBackTheme.setOnClickListener(back -> {
+        btnBackTheme = findViewById(R.id.btn_back_theme);
+        btnBackTheme.setOnClickListener(back -> {
             finish();
         });
     }

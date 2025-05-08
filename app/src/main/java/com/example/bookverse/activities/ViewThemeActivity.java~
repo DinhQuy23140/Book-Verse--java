@@ -14,7 +14,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -35,7 +34,6 @@ public class ViewThemeActivity extends AppCompatActivity {
     ArrayList<Image> listTheme;
     ThemeAdapter adapter;
     SharedPreferences preferences;
-    ConstraintLayout ctrBackTheme;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
     @Override
@@ -82,9 +80,6 @@ public class ViewThemeActivity extends AppCompatActivity {
         adapter = new ThemeAdapter(getApplicationContext(), listTheme);
         lvTheme.setAdapter(adapter);
         lvTheme.setClickable(true);
-
-        ctrBackTheme = findViewById(R.id.cstr_back_theme);
-        ctrBackTheme.setOnClickListener(back -> finish());
     }
 
     public void updateBackground(int pathTheme) {
