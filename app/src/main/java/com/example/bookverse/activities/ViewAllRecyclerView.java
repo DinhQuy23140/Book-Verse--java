@@ -239,7 +239,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                 resultApi = response.body();
                 ArrayList<Book> currentBook = resultApi.getResults();
                 listAllBook.addAll(currentBook);
-                adapterAllBook.notifyItemRangeChanged(listAllBook.size(), currentBook.size());
+                bookAdapter.notifyItemRangeChanged(listAllBook.size(), currentBook.size());
                 if(resultApi.getNext() != null){
                     getListBook(keySearch, keyTopic);
                 }
@@ -286,7 +286,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                             Map<String, Object> data = documentSnapshot.getData();
                             Book book = gson.fromJson(gson.toJson(data), Book.class);
                             listAllBook.add(book);
-                            adapterAllBook.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
+                            bookAdapter.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
                         }
                     }
                 });
@@ -321,7 +321,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                                                 if (data != null) {
                                                     Book book = gson.fromJson(gson.toJson(data), Book.class);
                                                     listAllBook.add(book);
-                                                    adapterAllBook.notifyItemInserted(listAllBook.size() - 1); // Cập nhật item mới
+                                                    bookAdapter.notifyItemInserted(listAllBook.size() - 1); // Cập nhật item mới
                                                 }
                                             }
                                         }
@@ -342,7 +342,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                             Map<String, Object> data = documentSnapshot.getData();
                             Book book = gson.fromJson(gson.toJson(data), Book.class);
                             listAllBook.add(book);
-                            adapterAllBook.notifyItemInserted(listAllBook.size() - 1); // Cập nhật item mới
+                            bookAdapter.notifyItemInserted(listAllBook.size() - 1); // Cập nhật item mới
                         }
                     }
                 });
@@ -368,7 +368,7 @@ public class ViewAllRecyclerView extends AppCompatActivity {
                                 }
                             }
                         }
-                        adapterAllBook.notifyDataSetChanged();
+                        bookAdapter.notifyDataSetChanged();
                         Toast.makeText(getApplicationContext(), "Size: " + listAllBook.size(), Toast.LENGTH_SHORT).show();
                     }
                 });

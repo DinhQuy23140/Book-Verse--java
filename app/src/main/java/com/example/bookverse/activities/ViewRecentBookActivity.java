@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -22,10 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.bookverse.AdapterCustom.BookAdapter;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
 import com.example.bookverse.models.Book;
 import com.example.bookverse.R;
 import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.utilities.GridSpaceDecoration;
 import com.example.bookverse.utilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
@@ -41,7 +45,7 @@ public class ViewRecentBookActivity extends AppCompatActivity {
     LinearLayout layoutmain;
     RecyclerView recent_recyclerBook;
     ArrayList<Book> listBook;
-    HomeAdapterRecycle adapter;
+    BookAdapter adapter;
     PreferenceManager preferenceManager;
     FirebaseFirestore firebaseFirestore;
     SharedPreferences sharedPreferences;
@@ -76,9 +80,15 @@ public class ViewRecentBookActivity extends AppCompatActivity {
         Toast.makeText(ViewRecentBookActivity.this, "Email: " + email, Toast.LENGTH_SHORT).show();
         firebaseFirestore = FirebaseFirestore.getInstance();
         recent_recyclerBook = findViewById(R.id.recent_recyclerBook);
-        recent_recyclerBook.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+        int numColmn;
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int dp = (int) (metrics.widthPixels / metrics.density);
+        if (dp > 600) numColmn = 4;
+        else numColmn = 2;
+        recent_recyclerBook.setLayoutManager(new GridLayoutManager(getApplicationContext(), numColmn));
+        recent_recyclerBook.addItemDecoration(new GridSpaceDecoration(numColmn, 10));
         listBook = new ArrayList<>();
-        adapter = new HomeAdapterRecycle(getApplicationContext(), listBook);
+        adapter = new BookAdapter(getApplicationContext(), listBook);
         getData(email);
         recent_recyclerBook.setAdapter(adapter);
     }

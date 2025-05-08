@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -60,6 +61,7 @@ public class HomeFragment extends Fragment {
     ActivityMainBinding bindingMain;
     NestedScrollView home_fragment;
     BottomNavigationView bottomNavigationView;
+    FrameLayout frameLayout;
     LinearLayout home_favorite;
     ImageButton btnSettings, home_recent;
     //FragmentHomeBinding binding;
@@ -128,6 +130,7 @@ public class HomeFragment extends Fragment {
 
         home_fragment = view.findViewById(R.id.home_fragment);
         bottomNavigationView = bindingMain.bottomNavigation;
+        frameLayout = bindingMain.fragmentContainer;
         bottomNavigationView.setVisibility(View.GONE);
         home_favorite = view.findViewById(R.id.home_favorite);
         home_recent = view.findViewById(R.id.home_recent);
@@ -163,9 +166,9 @@ public class HomeFragment extends Fragment {
         recyclerViewAllBook.setAdapter(adapterAllBook);
         recyclerRecentView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listRecentBook = new ArrayList<>();
-//        adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
-//        getRecentBook();
-//        recyclerRecentView.setAdapter(adapterRecent);
+        adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
+        getRecentBook();
+        recyclerRecentView.setAdapter(adapterRecent);
 
         recyclerMostPopular = view.findViewById(R.id.recyclerMostPopular);
         recyclerMostPopular.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -195,17 +198,6 @@ public class HomeFragment extends Fragment {
         home_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                home_favorite.setScaleX(0.9F);
-//                home_favorite.setScaleY(0.9F);
-//
-//                //set lai kich thuoc sau khi click
-//                home_favorite.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        home_favorite.setScaleX(1.0F);
-//                        home_favorite.setScaleY(1.0F);
-//                    }
-//                }, 150);
 
                 //tao doi tuong amination co ten phan tu, hieu ung, kich thuoc sau khi ap dung hieu ung
                 ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(home_favorite, "scaleX", 0.9F);
@@ -243,26 +235,9 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        btnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//                // Tạo một instance của SettingsFragment
-//                SettingsFragment settingsFragment = new SettingsFragment();
-//
-//                // Thay thế fragment hiện tại trong fragment_container bằng SettingsFragment
-//                fragmentTransaction.replace(R.id.fragment_container, settingsFragment, "SettingsFragment");
-//
-//                // Thêm transaction vào backstack để quay lại được fragment trước đó
-//                fragmentTransaction.addToBackStack(null);
-//
-//                // Commit transaction
-//                fragmentTransaction.commit();
-                Intent viewSetting = new Intent(getActivity(), SettingAppActivity.class);
-                startActivity(viewSetting);
-            }
+        btnSettings.setOnClickListener(view2 -> {
+            Intent viewSetting = new Intent(getActivity(), SettingAppActivity.class);
+            startActivity(viewSetting);
         });
 
         home_recent.setOnClickListener(viewRecent ->{
@@ -271,15 +246,17 @@ public class HomeFragment extends Fragment {
             startActivity(viewRecentBook);
         });
 
-        home_fragment.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
-                    ((MainActivity)requireActivity()).hideBottomNavigationView();
-                } else {
-                    ((MainActivity)requireActivity()).showBottomNavigationView();
-                }
-            }
+        home_fragment.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams();
+//            if (scrollY > oldScrollY) {
+//                ((MainActivity)requireActivity()).hideBottomNavigationView();
+//                params.setMargins(0, 0, 0, 0);
+//                frameLayout.setLayoutParams(params);
+//            } else {
+//                ((MainActivity)requireActivity()).showBottomNavigationView();
+//                params.setMargins(0, 0, 0, 60);
+//                frameLayout.setLayoutParams(params);
+//            }
         });
     }
 

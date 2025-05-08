@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     DrawerLayout layout;
+    FrameLayout frameLayout;
     SharedPreferences sharedPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
@@ -49,13 +51,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layoutmain), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layoutmain), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            v.setPadding(0, 0, 0, 0);
+//            return insets;
+//        });
+        View layoutV = findViewById(R.id.layoutmain);
+        ViewCompat.setOnApplyWindowInsetsListener(layoutV, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Dùng padding để tránh bị che
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
             return insets;
         });
+// Quan trọng: Cho phép layout xử lý insets
+        ViewCompat.setFitsSystemWindows(layoutV, true);
 
+
+        frameLayout = findViewById(R.id.fragment_container);
         layout = findViewById(R.id.layoutmain);
         sharedPreferences = getSharedPreferences("MySharePref", MODE_PRIVATE);
         preferenceChangeListener = (sharedPreferences, key)->{

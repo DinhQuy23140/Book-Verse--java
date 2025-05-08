@@ -32,6 +32,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -58,7 +59,7 @@ public class InfUserActivity extends AppCompatActivity {
     ImageButton infUser_save;
     Button infUser_bthLogout;
     String endcodeedImage;
-    ScrollView layout;
+    NestedScrollView layout;
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     PreferenceManager preferenceManager;
