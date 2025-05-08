@@ -10,32 +10,60 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/previewThemeBtn"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="4dp"
-            android:gravity="center"
-            android:text="@string/themeBtnSelect"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#8A3939">
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_back_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/searchCancel"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView8"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/previewThemeBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="@string/themeBtnSelect"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/preViewThemeImageView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="130dp"
+            android:layout_marginTop="10dp"
             android:elevation="3dp"
             android:scaleType="center"
             android:src="@drawable/ic_default_image"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/previewThemeBtn"
-            app:layout_constraintVertical_bias="0.8" />
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

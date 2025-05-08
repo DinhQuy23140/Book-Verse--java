@@ -56,7 +56,7 @@ public class InfUserActivity extends AppCompatActivity {
     ImageView infUser_avatar;
     TextView infUser_emailedt, infUser_BirthOfDate;
     EditText infUser_fullnameEdt, infUser_phoneEdt;
-    ImageButton infUser_save;
+    ImageButton infUser_save, btnBack;
     Button infUser_bthLogout;
     String endcodeedImage;
     NestedScrollView layout;
@@ -95,6 +95,7 @@ public class InfUserActivity extends AppCompatActivity {
         infUser_phoneEdt = findViewById(R.id.infUser_phoneEdt);
         infUser_BirthOfDate = findViewById(R.id.infUser_BirthOfDate);
         infUser_save = findViewById(R.id.infUser_save);
+        btnBack = findViewById(R.id.btn_back);
         infUser_bthLogout = findViewById(R.id.infUser_bthLogout);
         preferenceManager = new PreferenceManager(getApplicationContext());
         
@@ -179,6 +180,10 @@ public class InfUserActivity extends AppCompatActivity {
             logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(logout);
             preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
+        });
+
+        btnBack.setOnClickListener(back -> {
+            finish();
         });
 
     }
