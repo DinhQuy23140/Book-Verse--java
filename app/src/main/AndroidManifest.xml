@@ -35,13 +35,14 @@
             android:exported="false" />
         <activity
             android:name=".activities.ViewRecentBookActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.ViewFavoriteBookActivity"
             android:exported="false" />
         <activity
             android:name=".activities.InfUserActivity"
-            android:exported="false" />
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true" />
         <activity
             android:name=".activities.SignupChooseImgActivity"
             android:exported="false" />

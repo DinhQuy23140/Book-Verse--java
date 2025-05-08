@@ -151,6 +151,7 @@ public class SearchActivity extends AppCompatActivity {
         search_searchResult.setAdapter(resultSearchAdapter);
         errorNotify = findViewById(R.id.search_error);
 
+        drawable = inputSearch.getCompoundDrawables();
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -163,10 +164,6 @@ public class SearchActivity extends AppCompatActivity {
                     inputSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, R.drawable.ic_cancel, 0);
                     layoutSearch.setVisibility(View.VISIBLE);
                     layoutHistory.setVisibility(View.GONE);
-                    drawable = inputSearch.getCompoundDrawables();
-//                    for (int i = 0; i < drawable.length; i++) {
-//                        Log.d("Drawable Check", "Drawable " + i + ": " + (drawable[i] != null ? "Exists" : "Null"));
-//                    }
                     searchBook(inputSearch.getText().toString());
                 }
                 else{
@@ -218,24 +215,24 @@ public class SearchActivity extends AppCompatActivity {
                 .into(new CustomTarget<Drawable>() {
                     @Override
                     public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        int layoutWidth = layout.getWidth();
-                        int layoutHeight = layout.getHeight();
-
-                        Bitmap bitmap = drawableToBitmap(resource);
-
-                        int imageWidth = bitmap.getWidth();
-                        int imageHeight = bitmap.getHeight();
-
-                        float scaleX = (float)layoutWidth/imageWidth;
-                        float scaleY = (float)layoutHeight/imageHeight;
-                        float scale = Math.min(scaleX, scaleY);
-
-                        int newWidth = Math.round(imageWidth * scale);
-                        int newHeight = Math.round(imageHeight * scale);
-
-                        Bitmap scaleBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
-                        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), scaleBitmap);
-                        layout.setBackground(bitmapDrawable);  // Sử dụng Drawable từ Glide
+//                        int layoutWidth = layout.getWidth();
+//                        int layoutHeight = layout.getHeight();
+//
+//                        Bitmap bitmap = drawableToBitmap(resource);
+//
+//                        int imageWidth = bitmap.getWidth();
+//                        int imageHeight = bitmap.getHeight();
+//
+//                        float scaleX = (float)layoutWidth/imageWidth;
+//                        float scaleY = (float)layoutHeight/imageHeight;
+//                        float scale = Math.min(scaleX, scaleY);
+//
+//                        int newWidth = Math.round(imageWidth * scale);
+//                        int newHeight = Math.round(imageHeight * scale);
+//
+//                        Bitmap scaleBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+//                        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), scaleBitmap);
+                        //layout.setBackground(bitmapDrawable);  // Sử dụng Drawable từ Glide
                         layout.setBackground(resource);  // Sử dụng Drawable từ Glide
                     }
 
