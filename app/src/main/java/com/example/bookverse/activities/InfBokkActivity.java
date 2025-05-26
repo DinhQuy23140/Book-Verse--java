@@ -124,12 +124,15 @@ public class InfBokkActivity extends AppCompatActivity {
                         .document(email)
                         .set(data, SetOptions.merge());
             }
-            //Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
 //            Intent intent = new Intent(InfBokkActivity.this, ReadBookActivity.class);
 //            intent.putExtra("jsonBook", jsonBook);
 //            startActivity(intent);
-            String url = getBook.getFormats().get("application/epub+zip");
-            downloadAndReadEpub(url);
+//            String url = getBook.getFormats().get("application/epub+zip");
+//            downloadAndReadEpub(url);
+            Intent intent = new Intent(this, EpubFolioActivity.class);
+            intent.putExtra(Constants.KEY_EPUB_PATH, getBook.getFormats().get(Constants.KEY_TEXT_HTML));
+            startActivity(intent);
         });
         isFavorite();
 
