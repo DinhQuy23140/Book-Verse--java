@@ -14,6 +14,7 @@ public class Constants {
     public static final String KEY_COLLECTION_USERS = "users";
     public static final String KEY_COLLECTION_BOOKS = "books";
     public static final String KEY_COLLECTION_RECENTREAD = "recentRead";
+    public static final String KEY_EPUB_PATH = "epubPath";
 
     public static final String KEY_BOOK_AUTHOR = "authors";
     public static final String KEY_BOOK_BOOKSHELVES = "bookshelves";
@@ -27,4 +28,11 @@ public class Constants {
     public static final String KEY_BOOK_TITLE = "title";
     public static final String KEY_BOOK_TRANSLATORS = "translators";
     public static final String KEY_STATE = "state";
+    public static final String KEY_TEXT_HTML = "text/html";
+    public static final String KEY_APP_EPUB = "application/epub+zip";
+    public static final String KEY_APP_MOBI = "application/x-mobipocket-ebook";
+    public static final String KEY_TEXT_PLAIN = "text/plain; charset=us-ascii";
+    public static final String KEY_APP_RDF = "application/rdf+xml";
+    public static final String KEY_IMAGE_JPEG = "image/jpeg";
+    public static final String KEY_APP_OCTET = "application/octet-stream";
 }
