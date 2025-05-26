@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 
+
 android {
     namespace = "com.example.bookverse"
     compileSdk = 34
@@ -74,6 +75,12 @@ dependencies {
     implementation (libs.android.mail)
     implementation (libs.android.activation)
 
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"    )
     implementation ("com.squareup.okhttp3:okhttp:4.9.0")
+
+    //folio
+    //implementation("com.github.FolioReader:FolioReader-Android:0.5.4")
+
+    implementation (libs.fuel)
+    implementation (libs.fuel.android)
 }

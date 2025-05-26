@@ -1,11 +1,17 @@
 package com.example.bookverse.activities;
 
+import android.annotation.SuppressLint;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -118,9 +125,11 @@ public class InfBokkActivity extends AppCompatActivity {
                         .set(data, SetOptions.merge());
             }
             //Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(InfBokkActivity.this, ReadBookActivity.class);
-            intent.putExtra("jsonBook", jsonBook);
-            startActivity(intent);
+//            Intent intent = new Intent(InfBokkActivity.this, ReadBookActivity.class);
+//            intent.putExtra("jsonBook", jsonBook);
+//            startActivity(intent);
+            String url = getBook.getFormats().get("application/epub+zip");
+            downloadAndReadEpub(url);
         });
         isFavorite();
 
@@ -214,4 +223,36 @@ public class InfBokkActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private void downloadAndReadEpub(String epubUrl) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(epubUrl));
+        request.setTitle("Downloading book...");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+        // Đường dẫn lưu
+        File epubFile = new File(getExternalFilesDir(null), "downloaded_book.epub");
+        request.setDestinationUri(Uri.fromFile(epubFile));
+
+        DownloadManager dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        long downloadId = dm.enqueue(request);
+
+        // Đăng ký nhận sự kiện khi tải xong
+        BroadcastReceiver onComplete = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (id == downloadId) {
+                    // Mở sách
+                    Intent openIntent = new Intent(context, EpubFolioActivity.class);
+                    openIntent.putExtra("epub_path", epubFile.getAbsolutePath());
+                    startActivity(openIntent);
+                    unregisterReceiver(this);
+                }
+            }
+        };
+
+        registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
 }
