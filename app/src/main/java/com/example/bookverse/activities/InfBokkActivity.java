@@ -32,8 +32,11 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.models.Book;
 import com.example.bookverse.models.Person;
 import com.example.bookverse.R;
+import com.example.bookverse.repository.BookRepository;
+import com.example.bookverse.sharepreference.SharedPrefManage;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
+import com.example.bookverse.viewmodels.InfBookViewModel;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -58,6 +61,9 @@ public class InfBokkActivity extends AppCompatActivity {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     String jsonBook;
     Book getBook;
+    BookRepository bookRepository;
+    InfBookViewModel infBookViewModel;
+    SharedPrefManage sharedPrefManage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +75,9 @@ public class InfBokkActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        bookRepository = new BookRepository(this);
+        sharedPrefManage  = new SharedPrefManage(this);
+        infBookViewModel = new InfBookViewModel( bookRepository, sharedPrefManage);
         layout = findViewById(R.id.main);
         sharedPreferences = getSharedPreferences("MySharePref", MODE_PRIVATE);
         preferenceChangeListener = (sharedPreferences, key)->{
@@ -117,19 +126,7 @@ public class InfBokkActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         String email = preferenceManager.getString(Constants.KEY_EMAIL);
         infB_readB.setOnClickListener(infB_readB -> {
-            if(email != null) {
-                Map<String, Object> data = new HashMap<>();
-                data.put("BookId", FieldValue.arrayUnion(getBook.getId()));
-                firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
-                        .document(email)
-                        .set(data, SetOptions.merge());
-            }
-//            Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
-//            Intent intent = new Intent(InfBokkActivity.this, ReadBookActivity.class);
-//            intent.putExtra("jsonBook", jsonBook);
-//            startActivity(intent);
-//            String url = getBook.getFormats().get("application/epub+zip");
-//            downloadAndReadEpub(url);
+            infBookViewModel.addRecentBook(getBook);
             Intent intent = new Intent(this, EpubFolioActivity.class);
             intent.putExtra(Constants.KEY_EPUB_PATH, getBook.getFormats().get(Constants.KEY_TEXT_HTML));
             startActivity(intent);
@@ -137,23 +134,15 @@ public class InfBokkActivity extends AppCompatActivity {
         isFavorite();
 
         infB_favoriteB.setOnClickListener(clickFavo -> {
-            if(email != null){
-                if(!infB_favoriteB.isActivated()){
-                    infB_favoriteB.setImageResource(R.drawable.ic_favorite_click);
-                    infB_favoriteB.setActivated(true);
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("users", FieldValue.arrayUnion(email));
-                    firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                            .document(String.valueOf(getBook.getId()))
-                            .set(data, SetOptions.merge());
-                }
-                else{
-                    infB_favoriteB.setImageResource(R.drawable.ic_favorite);
-                    infB_favoriteB.setActivated(false);
-                    firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                            .document(String.valueOf(getBook.getId()))
-                            .update("users", FieldValue.arrayRemove(email));
-                }
+            if(!infB_favoriteB.isActivated()){
+                infB_favoriteB.setImageResource(R.drawable.ic_favorite_click);
+                infB_favoriteB.setActivated(true);
+                infBookViewModel.addFavoriteBook(getBook, false);
+            }
+            else{
+                infB_favoriteB.setImageResource(R.drawable.ic_favorite);
+                infB_favoriteB.setActivated(false);
+                infBookViewModel.addFavoriteBook(getBook, true);
             }
         });
     }

@@ -20,37 +20,22 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.bookverse.API.ApiService;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
-import com.example.bookverse.models.ApiClient;
 import com.example.bookverse.models.Book;
 import com.example.bookverse.models.ListOfBook;
-import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.SettingAppActivity;
 import com.example.bookverse.activities.ViewAllRecyclerView;
 import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.databinding.ActivityMainBinding;
-import com.example.bookverse.utilities.Constants;
+import com.example.bookverse.repository.BookRepository;
 import com.example.bookverse.utilities.PreferenceManager;
+import com.example.bookverse.viewmodels.HomeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,6 +43,9 @@ import retrofit2.Response;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+
+    HomeViewModel homeViewModel;
+    BookRepository bookRepository;
     ActivityMainBinding bindingMain;
     NestedScrollView home_fragment;
     BottomNavigationView bottomNavigationView;
@@ -128,6 +116,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        bookRepository = new BookRepository(getContext());
+        homeViewModel = new HomeViewModel(getContext(), bookRepository);
         home_fragment = view.findViewById(R.id.home_fragment);
         bottomNavigationView = bindingMain.bottomNavigation;
         frameLayout = bindingMain.fragmentContainer;
@@ -141,41 +131,46 @@ public class HomeFragment extends Fragment {
         preferenceManager = new PreferenceManager(getContext());
         tvTime = view.findViewById(R.id.tvTime);
 
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        //Toast.makeText(requireContext(), Integer.toString(hour), Toast.LENGTH_SHORT).show();
-        if(hour >= 7 && hour <12) {
-            tvTime.setText(R.string.setTimeMorining);
-        }
-        else if(hour >=12 && hour < 18) {
-            tvTime.setText(R.string.setTimeAfternoon);
-        }
-        else if(hour>= 18 && hour < 21) {
-            tvTime.setText(R.string.setTimeEvening);
-        }
-        else {
-            tvTime.setText(R.string.setTimeNight);
-        }
+
+        homeViewModel.loadMessageHome();
+        homeViewModel.getMessageHome().observe(getViewLifecycleOwner(), messageHome -> {
+            tvTime.setText(messageHome);
+        });
         recyclerViewAllBook = view.findViewById(R.id.recyclerAllBook);
         recyclerRecentView = view.findViewById(R.id.recyclerRecentView);
         recyclerViewAllBook.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listAllBook = new ArrayList<>();
-        adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
+        homeViewModel.getAllBook();
+        homeViewModel.getListAllBook().observe(getViewLifecycleOwner(), allBook -> {
+            if (allBook != null) {
+                listAllBook.addAll(allBook);
+                adapterAllBook = new HomeAdapterRecycle(requireContext(), listAllBook);
+                recyclerViewAllBook.setAdapter(adapterAllBook);
+            }
+        });
 
-        getDataFirebase();
-        recyclerViewAllBook.setAdapter(adapterAllBook);
         recyclerRecentView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listRecentBook = new ArrayList<>();
-        adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
-        getRecentBook();
-        recyclerRecentView.setAdapter(adapterRecent);
+        homeViewModel.getRecentBook();
+        homeViewModel.getListRecentBook().observe(getViewLifecycleOwner(), recentBook -> {
+            if (recentBook != null) {
+                listRecentBook.addAll(recentBook);
+                adapterRecent = new HomeAdapterRecycle(requireContext(), listRecentBook);
+                recyclerRecentView.setAdapter(adapterRecent);
+            }
+        });
 
         recyclerMostPopular = view.findViewById(R.id.recyclerMostPopular);
         recyclerMostPopular.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listMostPopular = new ArrayList<>();
-        adapterViral = new HomeAdapterRecycle(requireContext(), listMostPopular);
-        getViralBook();
-        recyclerMostPopular.setAdapter(adapterViral);
+        homeViewModel.getViralBook();
+        homeViewModel.getListViralBook().observe(getViewLifecycleOwner(), viralBook -> {
+            if (viralBook != null) {
+                listMostPopular.addAll(viralBook);
+                adapterViral = new HomeAdapterRecycle(requireContext(), listMostPopular);
+                recyclerMostPopular.setAdapter(adapterViral);
+            }
+        });
 
         btnViewAllBook.setOnClickListener(view1 -> {
             Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
@@ -248,136 +243,6 @@ public class HomeFragment extends Fragment {
 
         home_fragment.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams();
-//            if (scrollY > oldScrollY) {
-//                ((MainActivity)requireActivity()).hideBottomNavigationView();
-//                params.setMargins(0, 0, 0, 0);
-//                frameLayout.setLayoutParams(params);
-//            } else {
-//                ((MainActivity)requireActivity()).showBottomNavigationView();
-//                params.setMargins(0, 0, 0, 60);
-//                frameLayout.setLayoutParams(params);
-//            }
         });
-    }
-
-    public void getDataFirebase() {
-                firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful() & !task.getResult().isEmpty()) {
-                        Gson gson = new Gson();
-                        for (DocumentSnapshot documentSnapshot : task.getResult()){
-                            Map<String, Object> data = documentSnapshot.getData();
-                            Book book = gson.fromJson(gson.toJson(data), Book.class);
-                            listAllBook.add(book);
-                            adapterAllBook.notifyItemRangeChanged(listAllBook.size(), listAllBook.size());
-                        }
-//                        Toast.makeText(requireContext(), Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    public void getListBook(){
-        ApiService apiService = ApiClient.getApiService();
-        Call<ListOfBook> listOfBookCall = nextPageUrl == null ? apiService.getListBook(null, null): apiService.getListBookByUrl(nextPageUrl);
-        listOfBookCall.enqueue(new Callback<ListOfBook>() {
-            @Override
-            public void onResponse(Call<ListOfBook> call, Response<ListOfBook> response) {
-                //Toast.makeText(requireContext(), "Call Api success", Toast.LENGTH_SHORT).show();
-                if (response.body() != null){
-                    Log.d("API Response", response.body().toString());
-                    resultApi = response.body();
-                    ArrayList<Book>currentListBook = resultApi.getResults();
-                    listAllBook.addAll(currentListBook);
-                    adapterAllBook.notifyItemRangeChanged(listAllBook.size(), currentListBook.size());
-//                Toast.makeText(getContext(), "Size: " + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
-                    nextPageUrl = resultApi.getNext();
-                    if(nextPageUrl != null){
-                        getListBook();
-                    }
-                }
-                Log.e("API_RESPONSE", "Response is null or unsuccessful: " + response.code());
-            }
-
-            @Override
-            public void onFailure(Call<ListOfBook> call, Throwable t) {
-                Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
-                if (t instanceof IOException){
-                    Log.e("API","Network failure: " + t.getMessage());
-                }
-                else{
-                    Log.e("API", "Conversion error: "+ t.getMessage());
-                }
-            }
-        });
-    }
-
-    public void getRecentBook(){
-        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
-                .document(preferenceManager.getString(Constants.KEY_EMAIL))
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        List<Object> BookId = (List<Object>) task.getResult().get("BookId");
-                        if (BookId != null && !BookId.isEmpty()) {
-                            // Chuyển đổi tất cả các giá trị trong BookId thành String
-                            List<String> stringBookId = new ArrayList<>();
-                            for (Object id : BookId) {
-                                if (id instanceof Long) {
-                                    // Nếu ID là Long, chuyển thành String
-                                    stringBookId.add(String.valueOf(id));
-                                } else if (id instanceof String) {
-                                    stringBookId.add((String) id);
-                                }
-                            }
-
-                            // Tiến hành truy vấn với danh sách BookId dạng String
-                            firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                                    .whereIn(FieldPath.documentId(), stringBookId)
-                                    .get()
-                                    .addOnCompleteListener(bookTask -> {
-                                        if (bookTask.isSuccessful() && bookTask.getResult() != null) {
-                                            for (DocumentSnapshot documentSnapshot : bookTask.getResult()) {
-                                                Gson gson = new Gson();
-                                                Map<String, Object> data = documentSnapshot.getData();
-                                                if (data != null) {
-                                                    Book book = gson.fromJson(gson.toJson(data), Book.class);
-                                                    listRecentBook.add(book);
-                                                    adapterRecent.notifyItemInserted(listRecentBook.size() - 1); // Cập nhật item mới
-                                                }
-                                            }
-                                            // Thông báo về số lượng sách đã được tải
-                                            //Toast.makeText(getContext(), "Size: " + listRecentBook.size(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Log.e("Firestore", "Error fetching books", bookTask.getException());
-                                        }
-                                    });
-                        } else {
-                            Log.w("Firestore", "No BookId found in the document");
-                        }
-                    } else {
-                        Log.e("Firestore", "Error fetching recent read document", task.getException());
-                    }
-                });
-
-
-    }
-
-    public void getViralBook(){
-        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                .orderBy("download_count")
-                .limit(100)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful() && !task.getResult().isEmpty()){
-                        for(DocumentSnapshot documentSnapshot : task.getResult().getDocuments()){
-                            Gson gson = new Gson();
-                            Map<String, Object> data = documentSnapshot.getData();
-                            Book book = gson.fromJson(gson.toJson(data), Book.class);
-                            listMostPopular.add(book);
-                            adapterViral.notifyItemInserted(listMostPopular.size() - 1);
-                        }
-                    }
-                });
     }
 }

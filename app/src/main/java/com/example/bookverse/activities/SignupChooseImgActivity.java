@@ -13,7 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,18 +34,17 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.R;
+import com.example.bookverse.repository.UserRepository;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
-import com.example.bookverse.viewmodels.LoginViewModels;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
+import com.example.bookverse.viewmodels.LoginViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import android.util.Base64;
 import android.widget.Toast;
@@ -64,16 +62,28 @@ public class SignupChooseImgActivity extends AppCompatActivity {
     LinearLayout layout_chooseImg;
     Button signup_btnSignup;
     ProgressBar log_prbLoadin;
-    private LoginViewModels loginViewModels;
-    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-        new ActivityResultContracts.StartActivityForResult(),
-            result -> {
+    private LoginViewModel loginViewModel;
+    UserRepository userRepository;
+    private final ActivityResultLauncher<Intent>activityResultLauncher =registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri imageuri = result.getData().getData();
-                    loginViewModels.selectImage(imageuri);
+                    Uri imageUri = result.getData().getData();
+                    try {
+                        InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        if (bitmap != null) {
+                            signup_avatar.setImageBitmap(bitmap);
+                        } else {
+                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.background_default_user);
+                            signup_avatar.setImageResource(R.drawable.background_default_user);
+                        }
+                        endcodeedImage = enCodeImage(bitmap);
+                        loginViewModel.selectImage(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-    );
+            });
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +96,13 @@ public class SignupChooseImgActivity extends AppCompatActivity {
             return insets;
         });
 
+        userRepository = new UserRepository(this);
+        loginViewModel = new LoginViewModel(userRepository, this);
+
         layout = findViewById(R.id.main);
         log_prbLoadin = findViewById(R.id.log_prbLoadin);
         preferenceManager = new PreferenceManager(this);
         sharedPreferences = getSharedPreferences("MySharePref", MODE_PRIVATE);
-        loginViewModels = new LoginViewModels(getApplication(), preferenceManager);
         preferenceChangeListener = (sharedPreferences, key)->{
             if(key.equals("pathTheme")){
                 int newpathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
@@ -100,7 +112,6 @@ public class SignupChooseImgActivity extends AppCompatActivity {
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
         int pathTheme = sharedPreferences.getInt("pathTheme", R.drawable.background_app);
         updateBackground(pathTheme);
 
@@ -109,11 +120,11 @@ public class SignupChooseImgActivity extends AppCompatActivity {
         signup_chooseImage = findViewById(R.id.signup_chooseImage);
         signup_avatar = findViewById(R.id.signup_avatar);
         Intent getInfUser = getIntent();
-        Bundle infUser = getInfUser.getBundleExtra("newUser");
-        String username = infUser.getString("username");
-        String email = infUser.getString("email");
-        String password = infUser.getString("password");
-        String phoneNumber = infUser.getString("phoneNumber");
+        Bundle infUser = getInfUser.getBundleExtra(Constants.KEY_INF_USER);
+        String username = infUser.getString(Constants.KEY_NAME);
+        String email = infUser.getString(Constants.KEY_EMAIL);
+        String password = infUser.getString(Constants.KEY_PASSWORD);
+        String phoneNumber = infUser.getString(Constants.KEY_PHONE);
 
         layout_chooseImg.setOnClickListener(view->{
             Intent chooseImage = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
@@ -121,7 +132,7 @@ public class SignupChooseImgActivity extends AppCompatActivity {
             activityResultLauncher.launch(chooseImage);
         });
 
-        loginViewModels.getImageBitmap().observe(this, bitmap -> {
+        loginViewModel.getImageBitmap().observe(this, bitmap -> {
             if (bitmap != null) {
                 signup_avatar.setImageBitmap(bitmap);
             } else {
@@ -131,24 +142,21 @@ public class SignupChooseImgActivity extends AppCompatActivity {
 
         signup_btnSignup = findViewById(R.id.signup_btnSignup);
         signup_btnSignup.setOnClickListener(view->{
-            loginViewModels.signupChooseImg();
-            loginViewModels.getIsSignUpLoad().observe(this, isSignUpLoad -> {
-                if (isSignUpLoad) {
-                    signup_btnSignup.setVisibility(View.GONE);
-                    log_prbLoadin.setVisibility(VISIBLE);
-                } else {
-                    signup_btnSignup.setVisibility(VISIBLE);
-                    log_prbLoadin.setVisibility(View.GONE);
-                }
-            });
-            loginViewModels.getSignupSuccess().observe(this, signupSuccess -> {
+            Map<String, String> newUser = new HashMap<>();
+            newUser.put(Constants.KEY_NAME, username);
+            newUser.put(Constants.KEY_EMAIL, email);
+            newUser.put(Constants.KEY_PASSWORD, password);
+            newUser.put(Constants.KEY_PHONE, phoneNumber);
+            newUser.put(Constants.KEY_IMAGE, endcodeedImage);
+            loginViewModel.signupTest(newUser);
+            loginViewModel.getIsSignup().observe(this, signupSuccess -> {
                 if (signupSuccess) {
                     Intent intent = new Intent(SignupChooseImgActivity.this, LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 }
             });
-            loginViewModels.getSignUpMessage().observe(this, message ->{
+            loginViewModel.getMessageSignup().observe(this, message ->{
                 Toast.makeText(SignupChooseImgActivity.this, message, Toast.LENGTH_SHORT).show();
             });
         });

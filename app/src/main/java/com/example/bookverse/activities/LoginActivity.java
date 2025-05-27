@@ -1,12 +1,8 @@
 package com.example.bookverse.activities;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Patterns;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,31 +12,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
-import com.example.bookverse.databinding.ActivityLoginBinding;
-import com.example.bookverse.databinding.ActivityMainBinding;
+import com.example.bookverse.models.User;
+import com.example.bookverse.repository.UserRepository;
 import com.example.bookverse.sendMail.GetPassword;
 import com.example.bookverse.sendMail.SendMailTask;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
-import com.example.bookverse.viewmodels.LoginViewModels;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
+import com.example.bookverse.viewmodels.LoginViewModel;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginActivity extends AppCompatActivity {
@@ -57,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
 
     //signup
     LinearLayout layout_signup, layout_login, signup_nextview, layout_forgotPass, forgot_close, layout_viewLogin;
+    LoginViewModel loginViewModels;
+    UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +62,8 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
         preferenceManager = new PreferenceManager(getApplicationContext());
-        ActivityLoginBinding loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-        LoginViewModels loginViewModels = new ViewModelProvider(this, new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new LoginViewModels(getApplication(), preferenceManager);
-            }
-        }).get(LoginViewModels.class);
-        loginBinding.setLoginViewModel(loginViewModels);
-        loginBinding.setLifecycleOwner(this); // Đảm bảo LiveData và DataBinding cập nhật tự động
+        userRepository = new UserRepository(this);
+        loginViewModels = new LoginViewModel(userRepository, this);
 
         mainlayout = findViewById(R.id.main);
         login_editEmail = findViewById(R.id.login_editEmail);
@@ -116,36 +101,26 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(viewMain);
         }
 
-
         login_btnLogin.setOnClickListener(layout_viewLogin -> {
-//            login_btnLogin.setVisibility(ProgressBar.VISIBLE);
-//            login_btnLogin.setVisibility(View.GONE);
-            loginViewModels.login();
+            String email = login_editEmail.getText().toString();
+            String password = login_editPassword.getText().toString();
+            User user = new User(email, password);
+            loginViewModels.login(user, false);
 
-            loginViewModels.getIsLoggingIn().observe(this, isLoggingIn -> {
-                if (isLoggingIn) {
-                    log_prbLoadin.setVisibility(View.VISIBLE);
-                    login_btnLogin.setVisibility(View.GONE);
-                } else {
-                    log_prbLoadin.setVisibility(View.GONE);
-                    login_btnLogin.setVisibility(View.VISIBLE);
-                }
-            });
-
-            loginViewModels.getLoginSuccess().observe(this, loginSuccess -> {
+            loginViewModels.getIsLogin().observe(this, loginSuccess -> {
                 if (loginSuccess) {
                     Intent login = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(login);
-                    //Toast.makeText(getApplicationContext(), R.string.notifiloginSuccess, Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    //Toast.makeText(getApplicationContext(), R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
                     login_btnLogin.setVisibility(ProgressBar.GONE);
                     login_btnLogin.setVisibility(View.VISIBLE);
                 }
             });
-            loginViewModels.getMessage().observe(this, message -> {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            loginViewModels.getMessageLogin().observe(this, message -> {
+                if (message != null) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                }
             });
         });
 
@@ -155,71 +130,32 @@ public class LoginActivity extends AppCompatActivity {
             forgot_close.setVisibility(View.VISIBLE);
         });
 
-//        signup_nextview.setOnClickListener(view->{
-//            layout_viewLogin.setVisibility(View.GONE);
-//            signin_loading.setVisibility(View.VISIBLE);
-//            if(validateSignup()){
-//                Task<QuerySnapshot> queryUserName = firestore.collection(Constants.KEY_COLLECTION_USERS)
-//                        .whereEqualTo(Constants.KEY_NAME, signup_username.getText().toString())
-//                        .get();
-//                Task<QuerySnapshot> queryEmail = firestore.collection(Constants.KEY_EMAIL)
-//                        .whereEqualTo(Constants.KEY_EMAIL, signup_email.getText().toString())
-//                        .get();
-//                Tasks.whenAllComplete(queryUserName, queryEmail).addOnCompleteListener(task ->{
-//                    boolean checkUsename = queryUserName.getResult().isEmpty();
-//                    boolean checkEmail = queryEmail.getResult().isEmpty();
-//                    if(checkUsename){
-//                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
-//                    }
-//                    else if(checkEmail){
-//                        Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
-//                    }
-//                    else{
-//                        Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
-//                        Bundle newUser = new Bundle();
-//                        newUser.putString("username", signup_username.getText().toString());
-//                        newUser.putString("email", signup_email.getText().toString());
-//                        newUser.putString("password", signup_password.getText().toString());
-//                        newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
-//                        nextSignup.putExtra("newUser", newUser);
-//                        startActivity(nextSignup);
-//                    }
-//                });
-//            }
-//            else{
-//                Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
-//            }
-//            layout_viewLogin.setVisibility(View.VISIBLE);
-//            signin_loading.setVisibility(View.GONE);
-//        });
-
         signup_nextview.setOnClickListener(nextViewSignUp -> {
-            loginViewModels.signup();
-            loginViewModels.getIsSignupIn().observe(this, isSignup -> {
-                if (isSignup) {
-                    layout_viewLogin.setVisibility(View.GONE);
-                    signin_loading.setVisibility(View.VISIBLE);
-                } else {
-                    layout_viewLogin.setVisibility(View.VISIBLE);
-                    signin_loading.setVisibility(View.GONE);
-                }
-            });
-
-            loginViewModels.getSignupSuccess().observe(this, signUpSuccess -> {
+            String username = signup_username.getText().toString();
+            String email = signup_email.getText().toString();
+            String password = signup_password.getText().toString();
+            String phoneNumber = signup_phoneNumber.getText().toString();
+            Map<String, String> userInfo = new HashMap<>();
+            userInfo.put(Constants.KEY_NAME, username);
+            userInfo.put(Constants.KEY_EMAIL, email);
+            userInfo.put(Constants.KEY_PASSWORD, password);
+            userInfo.put(Constants.KEY_PHONE, phoneNumber);
+            loginViewModels.signupTest(userInfo);
+            loginViewModels.getIsSignup().observe(this, signUpSuccess -> {
                 if (signUpSuccess) {
                     Intent nextSignup = new Intent(getApplicationContext(), SignupChooseImgActivity.class);
                     Bundle newUser = new Bundle();
-                    newUser.putString("username", signup_username.getText().toString());
-                    newUser.putString("email", signup_email.getText().toString());
-                    newUser.putString("password", signup_password.getText().toString());
-                    newUser.putString("phoneNumber", signup_phoneNumber.getText().toString());
-                    nextSignup.putExtra("newUser", newUser);
+                    newUser.putString(Constants.KEY_NAME, signup_username.getText().toString());
+                    newUser.putString(Constants.KEY_EMAIL, signup_email.getText().toString());
+                    newUser.putString(Constants.KEY_PASSWORD, signup_password.getText().toString());
+                    newUser.putString(Constants.KEY_PHONE, signup_phoneNumber.getText().toString());
+                    nextSignup.putExtra(Constants.KEY_INF_USER, newUser);
                     startActivity(nextSignup);
                 }
             });
 
-            loginViewModels.getSignupMessage().observe(this, signUpMessage -> {
-                Toast.makeText(getApplicationContext(), loginViewModels.getSignupMessage().getValue(), Toast.LENGTH_SHORT).show();
+            loginViewModels.getMessageSignup().observe(this, signUpMessage -> {
+                if (signUpMessage != null) Toast.makeText(getApplicationContext(), signUpMessage, Toast.LENGTH_SHORT).show();
             });
         });
 
