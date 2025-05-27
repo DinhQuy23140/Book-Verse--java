@@ -88,38 +88,6 @@ public class ViewThemeActivity extends AppCompatActivity {
     }
 
     public void updateBackground(int pathTheme) {
-//        Glide.with(this)
-//                .load(pathTheme)  // Load trực tiếp từ pathTheme
-//                .placeholder(R.drawable.ic_default_image)
-//                .into(new CustomTarget<Drawable>() {
-//                    @Override
-//                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-//                        int layoutWidth = layout.getWidth();
-//                        int layoutHeight = layout.getHeight();
-//
-//                        Bitmap bitmap = drawableToBitmap(resource);
-//
-//                        int imageWidth = bitmap.getWidth();
-//                        int imageHeight = bitmap.getHeight();
-//
-//                        float scaleX = (float)layoutWidth/imageWidth;
-//                        float scaleY = (float)layoutHeight/imageHeight;
-//                        float scale = Math.min(scaleX, scaleY);
-//
-//                        int newWidth = Math.round(imageWidth * scale);
-//                        int newHeight = Math.round(imageHeight * scale);
-//
-//                        Bitmap scaleBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
-//                        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), scaleBitmap);
-//                        layout.setBackground(bitmapDrawable);  // Sử dụng Drawable từ Glide
-//                        layout.setBackground(resource);  // Sử dụng Drawable từ Glide
-//                    }
-//
-//                    @Override
-//                    public void onLoadCleared(@Nullable Drawable placeholder) {
-//                        layout.setBackgroundResource(R.drawable.ic_error_load_image);
-//                    }
-//                });
         Glide.with(this)
                 .load(pathTheme)  // Load trực tiếp từ pathTheme
                 .placeholder(R.drawable.ic_default_image)

@@ -161,18 +161,6 @@ public class ViewAllRecyclerView extends AppCompatActivity {
         recycleBook.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                int init = 600;
-//                int vt = recyclerView.computeVerticalScrollOffset();
-//                int newHeight = init - vt;
-//                newHeight = Math.max(newHeight, 10 );
-//                LinearLayout viewall_background = findViewById(R.id.viewall_background);
-//                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewall_background.getLayoutParams();
-//                layoutParams.height = newHeight;
-//                viewall_background.setLayoutParams(layoutParams);
-//                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-//                if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == listAllBook.size() - 1) {
-//                }
             }
         });
 

@@ -63,6 +63,28 @@ public class BookRepository {
 
     }
 
+    public void getBookByTitle(String search, CallBack callBack) {
+        List<Book> listResult = new ArrayList<>();
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .get()
+                .addOnCompleteListener(taskSearch -> {
+                    if(taskSearch.isSuccessful() && !taskSearch.getResult().isEmpty()) {
+                        for (DocumentSnapshot documentSnapshot : taskSearch.getResult()) {
+                            Map<String, Object> data = documentSnapshot.getData();
+                            String title = (String) data.get("title");
+                            if(title != null && title.toLowerCase().contains(search.toLowerCase())){
+                                Gson gson = new Gson();
+                                Book book = gson.fromJson(gson.toJson(data), Book.class);
+                                listResult.add(book);
+                            }
+                        }
+                        callBack.onResult(listResult);
+                    } else {
+                        callBack.onResult(new ArrayList<>());
+                    }
+                });
+    }
+
     public void getRecentBook(CallBack callBack) {
         String email = sharedPrefManage.getEmail();
         firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
