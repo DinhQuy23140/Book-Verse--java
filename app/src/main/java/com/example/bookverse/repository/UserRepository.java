@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.bookverse.R;
 import com.example.bookverse.models.User;
 import com.example.bookverse.sharepreference.SharedPrefManage;
 import com.example.bookverse.utilities.Constants;
@@ -23,12 +24,32 @@ public class UserRepository {
         void onResult(Boolean result);
     }
 
-    MutableLiveData<Boolean> isSuccess = new MediatorLiveData<>(false);
+
 
     public UserRepository(Context context) {
         this.context = context;
         firestore = FirebaseFirestore.getInstance();
         sharedPrefManage = new SharedPrefManage(context);
+    }
+
+    public String getDob() {
+        return sharedPrefManage.getDoB();
+    }
+
+    public String getEmailVal() {
+        return sharedPrefManage.getEmail();
+    }
+
+    public String getImage() {
+        return sharedPrefManage.getImg();
+    }
+
+    public String getPhoneNumber() {
+        return sharedPrefManage.getPhone();
+    }
+
+    public String getUsername() {
+        return sharedPrefManage.getUserName();
     }
 
     public void checkEmailisExits(String email, CallBack callback) {
@@ -97,6 +118,29 @@ public class UserRepository {
                     })
                     .addOnFailureListener(e -> callback.onResult(false));
         }
+    }
+
+    public void loadUser() {
+//        String email = sharedPrefManage.getEmail();
+//        firestore.collection(Constants.KEY_COLLECTION_USERS)
+//                .whereEqualTo(Constants.KEY_EMAIL, email)
+//                .get()
+//                .addOnCompleteListener(task ->{
+//                    if(task.isSuccessful() && !task.getResult().isEmpty()){
+//                        String strImg = task.getResult().getDocuments().get(0).getString(Constants.KEY_IMAGE);
+//                        String fullname = task.getResult().getDocuments().get(0).getString(Constants.KEY_NAME);
+//                        Object phone = task.getResult().getDocuments().get(0).get(Constants.KEY_PHONE);
+//                        if (strImg != null) {
+//                            image.setValue(strImg);
+//                        } else {
+//                            image.setValue(null);
+//                        }
+//                        username.setValue(fullname);
+//                        emailVal.setValue(email);
+//                        phoneNumber.setValue(String.valueOf(phone));
+//                        dob.setValue(task.getResult().getDocuments().get(0).getString(Constants.KEY_BIRTH));
+//                    }
+//                });
     }
 
 

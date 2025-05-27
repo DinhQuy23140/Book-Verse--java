@@ -39,8 +39,10 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookverse.MainActivity;
 import com.example.bookverse.R;
+import com.example.bookverse.repository.UserRepository;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
+import com.example.bookverse.viewmodels.InfUserViewModel;
 import com.google.firebase.Firebase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -52,6 +54,8 @@ import java.util.Calendar;
 
 public class InfUserActivity extends AppCompatActivity {
 
+    InfUserViewModel infUserViewModel;
+    UserRepository userRepository;
     FirebaseFirestore firebaseFirestore;
     ImageView infUser_avatar;
     TextView infUser_emailedt, infUser_BirthOfDate;
@@ -74,6 +78,8 @@ public class InfUserActivity extends AppCompatActivity {
             return insets;
         });
 
+        userRepository = new UserRepository(this);
+        infUserViewModel = new InfUserViewModel(this, userRepository);
         layout = findViewById(R.id.main);
         sharedPreferences = getSharedPreferences("MySharePref", MODE_PRIVATE);
         preferenceChangeListener = (sharedPreferences, key)->{
@@ -101,26 +107,19 @@ public class InfUserActivity extends AppCompatActivity {
         
         Intent getInfUser = getIntent();
         String email = getInfUser.getStringExtra(Constants.KEY_EMAIL);
-        firebaseFirestore.collection(Constants.KEY_COLLECTION_USERS)
-                .whereEqualTo(Constants.KEY_EMAIL, email)
-                .get()
-                .addOnCompleteListener(task ->{
-                    if(task.isSuccessful() && !task.getResult().isEmpty()){
-                        String strImg = task.getResult().getDocuments().get(0).getString(Constants.KEY_IMAGE);
-                        String fullname = task.getResult().getDocuments().get(0).getString(Constants.KEY_NAME);
-                        Object phone = task.getResult().getDocuments().get(0).get(Constants.KEY_PHONE);
-                        if (strImg != null) {
-                            infUser_avatar.setImageBitmap(decodeBase64ToImage(strImg));
-                        }
-                        else {
-                            infUser_avatar.setImageResource(R.drawable.background_default_user);
-                        }
-                        infUser_fullnameEdt.setText(fullname);
-                        infUser_emailedt.setText(email);
-                        infUser_phoneEdt.setText(String.valueOf(phone));
-                        infUser_BirthOfDate.setText(task.getResult().getDocuments().get(0).getString(Constants.KEY_BIRTH));
-                    }
-                });
+        infUserViewModel.loadUser();
+        infUserViewModel.getImage().observe(this, img -> {
+            if (img != null) {
+                infUser_avatar.setImageBitmap(decodeBase64ToImage(img));
+            } else {
+                infUser_avatar.setImageResource(R.drawable.background_default_user);
+            }
+        });
+
+        infUserViewModel.getUsername().observe(this, fullname -> infUser_fullnameEdt.setText(fullname));
+        infUserViewModel.getEmailVal().observe(this, emailVal -> infUser_emailedt.setText(emailVal));
+        infUserViewModel.getPhoneNumber().observe(this, phone -> infUser_phoneEdt.setText(String.valueOf(phone)));
+        infUserViewModel.getDob().observe(this, birth -> infUser_BirthOfDate.setText(birth));
 
         infUser_avatar.setOnClickListener(selectImg -> {
             Intent img = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
