@@ -1,0 +1,42 @@
+package com.example.bookverse.repository;
+
+import android.content.Context;
+
+import com.example.bookverse.sharepreference.SharedPrefManage;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+public class BookRepository {
+    FirebaseFirestore firestore;
+    SharedPrefManage sharedPrefManage;
+    Context context;
+
+    public BookRepository(Context context) {
+        this.context = context;
+        firestore = FirebaseFirestore.getInstance();
+        sharedPrefManage = new SharedPrefManage(context);
+    }
+
+    public void getAllBook() {
+
+    }
+
+    public void getBookByType() {
+
+    }
+
+    public void getRecentBook() {
+
+    }
+
+    public void getBookById() {
+
+    }
+
+    public void getViralBook() {
+
+    }
+
+    public void getFavoriteBook() {
+
+    }
+}
