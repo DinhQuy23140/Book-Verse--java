@@ -3,17 +3,23 @@ package com.example.bookverse.repository;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.bookverse.R;
 import com.example.bookverse.models.Book;
 import com.example.bookverse.sharepreference.SharedPrefManage;
 import com.example.bookverse.utilities.Constants;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BookRepository {
     FirebaseFirestore firebaseFirestore;
@@ -22,6 +28,10 @@ public class BookRepository {
 
     public interface CallBack {
         void onResult(List<Book> result);
+    }
+
+    public interface BooleanCallBack {
+        void onResult(Boolean result);
     }
 
     public BookRepository(Context context) {
@@ -132,5 +142,50 @@ public class BookRepository {
 
     public void getFavoriteBook() {
 
+    }
+
+    public void addFavoriteBook(Book book) {
+        String email = sharedPrefManage.getEmail();
+        Map<String, Object> data = new HashMap<>();
+        data.put("users", FieldValue.arrayUnion(email));
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .document(String.valueOf(book.getId()))
+                .set(data, SetOptions.merge());
+    }
+
+    public void deleteFavoriteBook(Book book) {
+        String email = sharedPrefManage.getEmail();
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .document(String.valueOf(book.getId()))
+                .update("users", FieldValue.arrayRemove(email));
+    }
+
+    public void addRecentBook(Book book) {
+        String email = sharedPrefManage.getEmail();
+        Map<String, Object> data = new HashMap<>();
+        data.put("BookId", FieldValue.arrayUnion(book.getId()));
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
+                .document(email)
+                .set(data, SetOptions.merge());
+    }
+
+    public void isFavoriteBook(Book book, BooleanCallBack booleanCallBack) {
+        String email = sharedPrefManage.getEmail();
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .document(String.valueOf(book.getId()))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null){
+                        List<String> users = (List<String>) task.getResult().get("users");
+                        if(users != null){
+                            Set<String> set = new HashSet<>(users);
+                            if(set.contains(sharedPrefManage.getEmail())){
+                                booleanCallBack.onResult(true);
+                            } else {
+                                booleanCallBack.onResult(false);
+                            }
+                        }
+                    }
+                });
     }
 }
