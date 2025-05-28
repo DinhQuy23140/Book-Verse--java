@@ -69,7 +69,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:text="TextView"
-                android:textSize="25sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -185,8 +185,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
+                    android:text="@string/txtTag" />
+
+                <TextView
+                    android:id="@+id/infB_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
-                    android:text="Overview" />
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/textView35"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/txtSummary" />
 
                 <TextView
                     android:id="@+id/infB_desBook"
@@ -196,7 +212,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:ellipsize="end"
-                    android:text="Description" />
+                    android:text="@string/txtSummary" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
