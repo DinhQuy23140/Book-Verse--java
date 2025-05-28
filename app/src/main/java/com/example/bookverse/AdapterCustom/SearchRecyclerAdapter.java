@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookverse.R;
-import com.example.bookverse.activities.ViewAllRecyclerView;
+import com.example.bookverse.activities.ViewResultActivity;
 
 import java.util.ArrayList;
 
@@ -43,7 +41,7 @@ public class SearchRecyclerAdapter extends RecyclerView.Adapter<SearchRecyclerAd
         holder.searchSubTitle.setText(keySub);
         holder.searchViewBookTopic.setBackgroundResource(path);
         holder.itemView.setOnClickListener(view1 ->{
-            Intent viewResultSearch = new Intent(holder.itemView.getContext(), ViewAllRecyclerView.class);
+            Intent viewResultSearch = new Intent(holder.itemView.getContext(), ViewResultActivity.class);
             viewResultSearch.putExtra("keyView", keySub);
             holder.itemView.getContext().startActivity(viewResultSearch);
             //Toast.makeText(context, keySub, Toast.LENGTH_SHORT).show();

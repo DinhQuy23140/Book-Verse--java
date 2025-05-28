@@ -16,14 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.example.bookverse.R;
 import com.example.bookverse.activities.InfUserActivity;
 import com.example.bookverse.activities.SettingAppActivity;
 import com.example.bookverse.activities.VertifiAccountActivity;
-import com.example.bookverse.activities.ViewAllRecyclerView;
-import com.example.bookverse.activities.ViewFavoriteBookActivity;
+import com.example.bookverse.activities.ViewResultActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
@@ -116,7 +114,7 @@ public class PersonFragment extends Fragment {
             startActivity(viewInf);
         });
         person_favoriteBook.setOnClickListener(viewFavoriteBook -> {
-            Intent viewInf = new Intent(requireContext(), ViewAllRecyclerView.class);
+            Intent viewInf = new Intent(requireContext(), ViewResultActivity.class);
             viewInf.putExtra("keyView", "ViewFavorite");
             startActivity(viewInf);
         });

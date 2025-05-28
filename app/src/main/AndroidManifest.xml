@@ -82,7 +82,7 @@
             android:name=".activities.ViewBookActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ViewAllRecyclerView"
+            android:name=".activities.ViewResultActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
