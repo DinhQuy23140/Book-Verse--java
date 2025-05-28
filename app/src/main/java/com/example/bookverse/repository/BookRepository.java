@@ -2,6 +2,7 @@ package com.example.bookverse.repository;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.bookverse.R;
 import com.example.bookverse.models.Book;
@@ -162,8 +163,52 @@ public class BookRepository {
                 });
     }
 
-    public void getFavoriteBook() {
+    public void getBookByTopic(String keyTopic, CallBack callBack) {
+        List<Book> topicBooks = new ArrayList<>();
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
+                            Map<String, Object> data = documentSnapshot.getData();
+                            if (data != null) {
+                                List<String> books = (List<String>) data.get("bookshelves");
+                                if (books != null) {
+                                    boolean match = books.stream()
+                                            .anyMatch(bookTitle -> bookTitle.toLowerCase().contains(keyTopic.toLowerCase()));
+                                    if (match) {
+                                        Gson gson = new Gson();
+                                        Book book = gson.fromJson(gson.toJson(data), Book.class);
+                                        topicBooks.add(book);
+                                    }
+                                }
+                            }
+                        }
+                        callBack.onResult(topicBooks);
+                    } else {
+                        callBack.onResult(new ArrayList<>());
+                    }
+                });
+    }
 
+    public void getFavoriteBook(CallBack callBack) {
+        List<Book> favoriteBooks = new ArrayList<>();
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+                .whereArrayContains(Constants.KEY_COLLECTION_USERS, sharedPrefManage.getEmail())
+                .get()
+                .addOnCompleteListener(taskGetFavorite -> {
+                    if(taskGetFavorite.isSuccessful() && !taskGetFavorite.getResult().isEmpty()) {
+                        for(DocumentSnapshot documentSnapshot : taskGetFavorite.getResult().getDocuments()) {
+                            Gson gson = new Gson();
+                            Map<String, Object> data = documentSnapshot.getData();
+                            Book book = gson.fromJson(gson.toJson(data), Book.class);
+                            favoriteBooks.add(book);
+                        }
+                        callBack.onResult(favoriteBooks);
+                    } else {
+                        callBack.onResult(new ArrayList<>());
+                    }
+                });
     }
 
     public void addFavoriteBook(Book book) {
@@ -192,7 +237,6 @@ public class BookRepository {
     }
 
     public void isFavoriteBook(Book book, BooleanCallBack booleanCallBack) {
-        String email = sharedPrefManage.getEmail();
         firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
                 .document(String.valueOf(book.getId()))
                 .get()

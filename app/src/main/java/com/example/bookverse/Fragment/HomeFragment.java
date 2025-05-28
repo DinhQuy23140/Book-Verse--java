@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +20,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
 import com.example.bookverse.models.Book;
 import com.example.bookverse.models.ListOfBook;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.SettingAppActivity;
-import com.example.bookverse.activities.ViewAllRecyclerView;
+import com.example.bookverse.activities.ViewResultActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.databinding.ActivityMainBinding;
 import com.example.bookverse.repository.BookRepository;
@@ -173,19 +172,19 @@ public class HomeFragment extends Fragment {
         });
 
         btnViewAllBook.setOnClickListener(view1 -> {
-            Intent viewAllBook = new Intent(getActivity(), ViewAllRecyclerView.class);
+            Intent viewAllBook = new Intent(getActivity(), ViewResultActivity.class);
             viewAllBook.putExtra("keyView", "ViewAllBook");
             startActivity(viewAllBook);
         });
 
         frgHome_viewViral.setOnClickListener(frgHome_viewViral -> {
-            Intent viewViral = new Intent(getActivity(), ViewAllRecyclerView.class);
+            Intent viewViral = new Intent(getActivity(), ViewResultActivity.class);
             viewViral.putExtra("keyView", "ViewViral");
             startActivity(viewViral);
         });
 
         frgHome_viewRecent.setOnClickListener(frgHome_viewRecent -> {
-           Intent viewRecent = new Intent(getActivity(), ViewAllRecyclerView.class);
+           Intent viewRecent = new Intent(getActivity(), ViewResultActivity.class);
            viewRecent.putExtra("keyView", "ViewRecent");
            startActivity(viewRecent);
         });
@@ -224,7 +223,7 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
-                Intent viewFavorite = new Intent(requireContext(), ViewAllRecyclerView.class);
+                Intent viewFavorite = new Intent(requireContext(), ViewResultActivity.class);
                 viewFavorite.putExtra("keyView", "ViewFavorite");
                 startActivity(viewFavorite);
             }

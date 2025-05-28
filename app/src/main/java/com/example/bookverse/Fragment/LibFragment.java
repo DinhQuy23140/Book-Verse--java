@@ -1,5 +1,6 @@
 package com.example.bookverse.Fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,8 +26,10 @@ import com.example.bookverse.models.Book;
 import com.example.bookverse.R;
 import com.example.bookverse.activities.SearchActivity;
 import com.example.bookverse.activities.ViewFavoriteBookActivity;
+import com.example.bookverse.repository.BookRepository;
 import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
+import com.example.bookverse.viewmodels.HomeViewModel;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,6 +59,8 @@ public class LibFragment extends Fragment {
     PreferenceManager preferenceManager;
     ArrayList<Book> listBook;
     HistoAdapter adapter;
+    BookRepository bookRepository;
+    HomeViewModel homeViewModel;
 
 
     // TODO: Rename and change types of parameters
@@ -103,6 +108,9 @@ public class LibFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        bookRepository = new BookRepository(requireContext());
+        homeViewModel = new HomeViewModel(requireContext(), bookRepository);
         preferenceManager = new PreferenceManager(requireContext());
         firebaseFirestore = FirebaseFirestore.getInstance();
         lib_imvAvata = view.findViewById(R.id.lib_imvAvata);
@@ -113,7 +121,6 @@ public class LibFragment extends Fragment {
         listBook = new ArrayList<>();
         adapter = new HistoAdapter(getContext(), listBook);
         getRecentBook();
-        Toast.makeText(getContext(), "Email: " + preferenceManager.getString(Constants.KEY_EMAIL), Toast.LENGTH_SHORT).show();
         lib_rvRecent.setAdapter(adapter);
         String strImg = preferenceManager.getString(Constants.KEY_IMAGE);
         if (strImg != null) {
@@ -136,55 +143,60 @@ public class LibFragment extends Fragment {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void getRecentBook(){
-        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
-                .document(preferenceManager.getString(Constants.KEY_EMAIL))
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        List<Object> BookId = (List<Object>) task.getResult().get("BookId");
-                        if (BookId != null && !BookId.isEmpty()) {
-                            // Chuyển đổi tất cả các giá trị trong BookId thành String
-                            List<String> stringBookId = new ArrayList<>();
-                            for (Object id : BookId) {
-                                if (id instanceof Long) {
-                                    // Nếu ID là Long, chuyển thành String
-                                    stringBookId.add(String.valueOf(id));
-                                } else if (id instanceof String) {
-                                    stringBookId.add((String) id);
-                                }
-                            }
-
-                            // Tiến hành truy vấn với danh sách BookId dạng String
-                            firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
-                                    .whereIn(FieldPath.documentId(), stringBookId)
-                                    .get()
-                                    .addOnCompleteListener(bookTask -> {
-                                        if (bookTask.isSuccessful() && bookTask.getResult() != null) {
-                                            for (DocumentSnapshot documentSnapshot : bookTask.getResult()) {
-                                                Gson gson = new Gson();
-                                                Map<String, Object> data = documentSnapshot.getData();
-                                                if (data != null) {
-                                                    Book book = gson.fromJson(gson.toJson(data), Book.class);
-                                                    listBook.add(book);
-                                                    adapter.notifyItemInserted(listBook.size() - 1); // Cập nhật item mới
-                                                }
-                                            }
-                                            // Thông báo về số lượng sách đã được tải
-                                            Toast.makeText(getContext(), "Size: " + listBook.size(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Log.e("Firestore", "Error fetching books", bookTask.getException());
-                                        }
-                                    });
-                        } else {
-                            Log.w("Firestore", "No BookId found in the document");
-                        }
-                    } else {
-                        Log.e("Firestore", "Error fetching recent read document", task.getException());
-                    }
-                });
-
-
+//        firebaseFirestore.collection(Constants.KEY_COLLECTION_RECENTREAD)
+//                .document(preferenceManager.getString(Constants.KEY_EMAIL))
+//                .get()
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful() && task.getResult() != null) {
+//                        List<Object> BookId = (List<Object>) task.getResult().get("BookId");
+//                        if (BookId != null && !BookId.isEmpty()) {
+//                            // Chuyển đổi tất cả các giá trị trong BookId thành String
+//                            List<String> stringBookId = new ArrayList<>();
+//                            for (Object id : BookId) {
+//                                if (id instanceof Long) {
+//                                    // Nếu ID là Long, chuyển thành String
+//                                    stringBookId.add(String.valueOf(id));
+//                                } else if (id instanceof String) {
+//                                    stringBookId.add((String) id);
+//                                }
+//                            }
+//
+//                            // Tiến hành truy vấn với danh sách BookId dạng String
+//                            firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+//                                    .whereIn(FieldPath.documentId(), stringBookId)
+//                                    .get()
+//                                    .addOnCompleteListener(bookTask -> {
+//                                        if (bookTask.isSuccessful() && bookTask.getResult() != null) {
+//                                            for (DocumentSnapshot documentSnapshot : bookTask.getResult()) {
+//                                                Gson gson = new Gson();
+//                                                Map<String, Object> data = documentSnapshot.getData();
+//                                                if (data != null) {
+//                                                    Book book = gson.fromJson(gson.toJson(data), Book.class);
+//                                                    listBook.add(book);
+//                                                    adapter.notifyItemInserted(listBook.size() - 1); // Cập nhật item mới
+//                                                }
+//                                            }
+//                                            // Thông báo về số lượng sách đã được tải
+//                                            Toast.makeText(getContext(), "Size: " + listBook.size(), Toast.LENGTH_SHORT).show();
+//                                        } else {
+//                                            Log.e("Firestore", "Error fetching books", bookTask.getException());
+//                                        }
+//                                    });
+//                        } else {
+//                            Log.w("Firestore", "No BookId found in the document");
+//                        }
+//                    } else {
+//                        Log.e("Firestore", "Error fetching recent read document", task.getException());
+//                    }
+//                });
+        homeViewModel.getRecentBook();
+        homeViewModel.getListRecentBook().observe(getViewLifecycleOwner(), result -> {
+            listBook = (ArrayList<Book>) result;
+            adapter = new HistoAdapter(getContext(), listBook);
+            lib_rvRecent.setAdapter(adapter);
+        });
     }
 
     public Bitmap decodeBase64ToImage(String base64){
