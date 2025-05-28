@@ -57,6 +57,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.LoginActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,13 +69,11 @@
             android:exported="true" />
         <activity
             android:name=".activities.InfBokkActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".activities.SearchActivity"
             android:exported="true" />
-        <activity
-            android:name="com.folioreader.ui.activity.SearchActivity"
-            android:exported="false" />
         <activity
             android:name=".activities.TestCallApiActivity"
             android:exported="false" />

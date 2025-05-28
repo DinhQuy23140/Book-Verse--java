@@ -54,4 +54,5 @@
     <string name="txtLogout">Đăng xuất</string>
     <string name="txtSummary">Tóm tắt</string>
     <string name="txtTag">Tag</string>
+    <string name="notifiFailure">Có lỗi xảy ra</string>
 </resources>
