@@ -118,7 +118,7 @@ public class UserRepository {
                             sharedPrefManage.savePhone(Objects.requireNonNull(user.get(Constants.KEY_PHONE)).toString());
                             sharedPrefManage.saveEmail(Objects.requireNonNull(user.get(Constants.KEY_EMAIL)).toString());
                             sharedPrefManage.saveDoB(user.get(Constants.KEY_DOB).toString());
-                            sharedPrefManage.saveSex(user.get(Constants.KEY_SEX).toString());
+                            //sharedPrefManage.saveSex(user.get(Constants.KEY_SEX).toString());
                             callback.onResult(true);
                         } else {
                             callback.onResult(false);

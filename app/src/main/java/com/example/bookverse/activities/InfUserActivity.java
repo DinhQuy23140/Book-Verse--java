@@ -51,6 +51,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InfUserActivity extends AppCompatActivity {
 
@@ -62,7 +64,7 @@ public class InfUserActivity extends AppCompatActivity {
     EditText infUser_fullnameEdt, infUser_phoneEdt;
     ImageButton infUser_save, btnBack;
     Button infUser_bthLogout;
-    String endcodeedImage;
+    String endcodeedImage, username, email, phone, dob;
     NestedScrollView layout;
     SharedPreferences sharedPreferences;
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
@@ -111,6 +113,7 @@ public class InfUserActivity extends AppCompatActivity {
         infUserViewModel.getImage().observe(this, img -> {
             if (img != null) {
                 infUser_avatar.setImageBitmap(decodeBase64ToImage(img));
+                endcodeedImage = img;
             } else {
                 infUser_avatar.setImageResource(R.drawable.background_default_user);
             }
@@ -119,7 +122,15 @@ public class InfUserActivity extends AppCompatActivity {
         infUserViewModel.getUsername().observe(this, fullname -> infUser_fullnameEdt.setText(fullname));
         infUserViewModel.getEmailVal().observe(this, emailVal -> infUser_emailedt.setText(emailVal));
         infUserViewModel.getPhoneNumber().observe(this, phone -> infUser_phoneEdt.setText(String.valueOf(phone)));
-        infUserViewModel.getDob().observe(this, birth -> infUser_BirthOfDate.setText(birth));
+        infUserViewModel.getDob().observe(this, birth -> {
+            if (birth != null && !birth.isEmpty()) {
+                infUser_BirthOfDate.setText(birth);
+                dob = birth;
+            } else {
+                infUser_BirthOfDate.setText("00/00/0000");
+                dob = "00/00/0000";
+            }
+        });
 
         infUser_avatar.setOnClickListener(selectImg -> {
             Intent img = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
@@ -155,22 +166,19 @@ public class InfUserActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.notifiLoginFailure, Toast.LENGTH_SHORT).show();
             }
             else {
-                firebaseFirestore.collection(Constants.KEY_COLLECTION_USERS)
-                        .whereEqualTo(Constants.KEY_EMAIL, email)
-                        .get()
-                        .addOnCompleteListener(task ->{
-                            if(task.isSuccessful() && !task.getResult().isEmpty()){
-                                firebaseFirestore.collection(Constants.KEY_COLLECTION_USERS)
-                                        .document(task.getResult().getDocuments().get(0).getId())
-                                        .update(
-                                                Constants.KEY_NAME, fullname,
-                                                Constants.KEY_PHONE, phone,
-                                                Constants.KEY_BIRTH, birth,
-                                                Constants.KEY_IMAGE, endcodeedImage
-                                        );
-                                Toast.makeText(InfUserActivity.this, R.string.notifiUpdateSuccess, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                Map<String, Object> user = new HashMap<>();
+                user.put(Constants.KEY_NAME, infUser_fullnameEdt.getText().toString());
+                user.put(Constants.KEY_PHONE, infUser_phoneEdt.getText().toString());
+                user.put(Constants.KEY_DOB, dob);
+                user.put(Constants.KEY_EMAIL, email);
+                user.put(Constants.KEY_IMAGE, endcodeedImage);
+                infUserViewModel.updateUser(user);
+            }
+        });
+
+        infUserViewModel.getMessage().observe(this, result -> {
+            if (result != null && !result.isEmpty()) {
+                Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
             }
         });
 
