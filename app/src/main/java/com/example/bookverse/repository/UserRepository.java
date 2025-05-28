@@ -70,7 +70,7 @@ public class UserRepository {
                 .document(email)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
+                    if (documentSnapshot.exists() && Objects.equals(documentSnapshot.getString(Constants.KEY_PASSWORD), user.getPassword())) {
                         sharedPrefManage.saveEmail(documentSnapshot.getString(Constants.KEY_EMAIL));
                         sharedPrefManage.savePassword(documentSnapshot.getString(Constants.KEY_PASSWORD));
                         sharedPrefManage.setIsLogin(true);
@@ -84,6 +84,14 @@ public class UserRepository {
                     } else callback.onResult(false);
                 })
                 .addOnFailureListener(e -> callback.onResult(false));
+    }
+
+    public boolean isLogin() {
+        return sharedPrefManage.isLogin();
+    }
+
+    public void setLogin(boolean status) {
+        sharedPrefManage.setIsLogin(status);
     }
 
     public void signup(Map<String, String> user, CallBack result) {
