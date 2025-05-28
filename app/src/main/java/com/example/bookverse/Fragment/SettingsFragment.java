@@ -88,19 +88,6 @@ public class SettingsFragment extends Fragment {
         return binding.getRoot();
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (mainBinding.bottomNavigation != null) {
-//            mainBinding.bottomNavigation.setSelectedItemId(R.id.bottom_Lib);
-//            Toast.makeText(getContext(), "Item set to bottom_Lib", Toast.LENGTH_LONG).show();
-//        } else {
-//            Toast.makeText(getContext(), "BottomNavigationView is null", Toast.LENGTH_LONG).show();
-//        }
-//    }
-
-
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -113,7 +100,6 @@ public class SettingsFragment extends Fragment {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, new HomeFragment()).commit();
         });
-
 
         tvTheme.setOnClickListener(viewTheme -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.bookverse.API.ApiService;
 import com.example.bookverse.AdapterCustom.HomeAdapterRecycle;
+import com.example.bookverse.models.ApiClient;
 import com.example.bookverse.models.Book;
 import com.example.bookverse.models.ListOfBook;
 import com.example.bookverse.R;
@@ -29,12 +33,25 @@ import com.example.bookverse.activities.SettingAppActivity;
 import com.example.bookverse.activities.ViewResultActivity;
 import com.example.bookverse.activities.ViewRecentBookActivity;
 import com.example.bookverse.databinding.ActivityMainBinding;
+import com.example.bookverse.models.Person;
 import com.example.bookverse.repository.BookRepository;
+import com.example.bookverse.utilities.Constants;
 import com.example.bookverse.utilities.PreferenceManager;
 import com.example.bookverse.viewmodels.HomeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,7 +76,7 @@ public class HomeFragment extends Fragment {
 
     TextView btnViewAllBook, frgHome_viewRecent, frgHome_viewViral, tvTime;
     private String nextPageUrl = null;
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    FirebaseFirestore firebaseFirestore;
     PreferenceManager preferenceManager;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -130,6 +147,7 @@ public class HomeFragment extends Fragment {
         preferenceManager = new PreferenceManager(getContext());
         tvTime = view.findViewById(R.id.tvTime);
 
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         homeViewModel.loadMessageHome();
         homeViewModel.getMessageHome().observe(getViewLifecycleOwner(), messageHome -> {
@@ -244,4 +262,75 @@ public class HomeFragment extends Fragment {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams();
         });
     }
+
+//    public void writeToFirebase(){
+//        ApiService apiService = ApiClient.getApiService();
+//        Call<ListOfBook> listOfBookCall = nextPageUrl == null ? apiService.getListBook(null, null): apiService.getListBookByUrl(nextPageUrl);
+//        listOfBookCall.enqueue(new Callback<ListOfBook>() {
+//            @Override
+//            public void onResponse(Call<ListOfBook> call, Response<ListOfBook> response) {
+//                Toast.makeText(requireContext(), "Call Api success", Toast.LENGTH_SHORT).show();
+//                if (response.body() != null){
+//                    Log.d("API Response", response.body().toString());
+//                    resultApi = response.body();
+//                    ArrayList<Book>currentListBook = resultApi.getResults();
+//                    listAllBook.addAll(currentListBook);
+//                    for(int i = 0; i < currentListBook.size(); i++){
+//                        Book book = currentListBook.get(i);
+//                        Map<String, String> formats = new HashMap<>();
+//                        ArrayList<Person> authors = book.getAuthors();
+//                        StringBuilder authorList = new StringBuilder();
+//                        for(int index = 0; index < authors.size(); index++){
+//                            authorList.append(authors.get(index).getName());
+//                            if (index < authors.size()-1) authorList.append(", ");
+//                        }
+//                        formats.put(Constants.KEY_ID, String.valueOf(book.getId()));
+//                        formats.put(Constants.KEY_BOOK_AUTHOR, String.valueOf(authorList));
+//                        formats.put(Constants.KEY_BOOK_BOOKSHELVES, Arrays.asList(book.getBookshelves()).toString());
+//                        formats.put(Constants.KEY_BOOK_COPPYRIGHT, String.valueOf(book.isCopyright()));
+//                        formats.put(Constants.KEY_BOOK_DOWNLOAD_COUNT, String.valueOf(book.getDownload_count()));
+//                        formats.put(Constants.KEY_BOOK_FORMATS, String.valueOf(book.getFormats()));
+//                        formats.put(Constants.KEY_BOOK_LANGUAGES, Arrays.toString(book.getLanguages()));
+//                        formats.put(Constants.KEY_BOOK_MEDIA_TYPE, String.valueOf(book.getMedia_type()));
+//                        formats.put(Constants.KEY_BOOK_SUBJECTS, Arrays.toString(book.getSubjects()));
+//                        formats.put(Constants.KEY_BOOK_TITLE, String.valueOf(book.getTitle()));
+//                        formats.put(Constants.KEY_BOOK_SUMMARIES, String.valueOf(book.getSummaries()));
+//
+//                        StringBuilder translatorList = new StringBuilder();
+//                        for(int index = 0; index < authors.size(); index++){
+//                            translatorList.append(authors.get(index).getName());
+//                            if (index < authors.size()-1) translatorList.append(", ");
+//                        }
+//                        formats.put(Constants.KEY_BOOK_TRANSLATORS, String.valueOf(translatorList));
+//
+//                        Gson gson = new Gson();
+//                        // Chuyển book object thành map
+//                        Map<String, Object> bookMap = gson.fromJson(gson.toJson(book), new TypeToken<Map<String, Object>>(){}.getType());
+//                        firebaseFirestore.collection(Constants.KEY_COLLECTION_BOOKS)
+//                                .document(String.valueOf(book.getId()))
+//                                .set(bookMap);
+//                    }
+////                Toast.makeText(getContext(), "Size: " + Integer.toString(listAllBook.size()), Toast.LENGTH_SHORT).show();
+//                    nextPageUrl = resultApi.getNext();
+//                    if(nextPageUrl != null){
+//                        writeToFirebase();
+//                    }
+//                } else {
+//                    Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
+//                }
+//                Log.e("API_RESPONSE", "Response is null or unsuccessful: " + response.code());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ListOfBook> call, Throwable t) {
+//                Toast.makeText(requireContext(), "Call Api failure", Toast.LENGTH_SHORT).show();
+//                if (t instanceof IOException){
+//                    Log.e("API","Network failure: " + t.getMessage());
+//                }
+//                else{
+//                    Log.e("API", "Conversion error: "+ t.getMessage());
+//                }
+//            }
+//        });
+//    }
 }

@@ -124,19 +124,11 @@ public class previewThemeFragment extends Fragment {
             // Đặt background trực tiếp ngay lập tức
             frameLayout.setBackgroundResource(idImage);
 
-            //cap nhap
-//            frameLayout.invalidate();
-//            frameLayout.requestLayout();
-
             // Lưu giá trị vào SharedPreferences
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt("pathTheme", idImage);
             editor.apply();
 
-//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.fragment_container, new ListThemeFragment()).commit();
-//            Toast.makeText(getContext(), "Theme set", Toast.LENGTH_SHORT).show();
         });
 
 

@@ -44,6 +44,7 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +54,7 @@ import java.util.Set;
 public class InfBokkActivity extends AppCompatActivity {
     LinearLayout layout;
     ImageView infB_back, infB_imageB, infB_favoriteB, infB_btndown;
-    TextView infB_titleB, infB_authorB, infB_countDown;
+    TextView infB_titleB, infB_authorB, infB_countDown, infB_tag, infB_Summary;
     ConstraintLayout infB_readB;
     PreferenceManager preferenceManager;
     SharedPreferences sharedPreferences;
@@ -99,6 +100,8 @@ public class InfBokkActivity extends AppCompatActivity {
         infB_titleB = findViewById(R.id.infB_titleB);
         infB_authorB = findViewById(R.id.infB_authorB);
         infB_countDown = findViewById(R.id.infB_countDown);
+        infB_tag = findViewById(R.id.infB_tag);
+        infB_Summary = findViewById(R.id.infB_desBook);
         infB_readB = findViewById(R.id.infB_readB);
         Gson gson = new Gson();
         jsonBook = getIntent().getStringExtra("jsonBook");
@@ -121,6 +124,9 @@ public class InfBokkActivity extends AppCompatActivity {
         infB_titleB.setText(title);
         infB_authorB.setText(authorList);
         infB_countDown.setText(String.valueOf(dowCount));
+
+        infB_tag.setText(Arrays.toString(getBook.getSubjects()));
+        infB_Summary.setText(getBook.getSummaries().toString());
 
         infB_back.setOnClickListener(v->finish());
         preferenceManager = new PreferenceManager(getApplicationContext());

@@ -52,4 +52,6 @@
     <string name="DescriptionBack">Back</string>
     <string name="txtViral">Thinh hành</string>
     <string name="txtLogout">Đăng xuất</string>
+    <string name="txtSummary">Tóm tắt</string>
+    <string name="txtTag">Tag</string>
 </resources>

@@ -2,12 +2,14 @@ package com.example.bookverse.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Book implements Serializable {
     private int id, download_count;
     private String title, media_type;
     private String[] subjects, bookshelves, languages, users;
+    private List<String> summaries;
     private ArrayList<Person> authors, translators;
     private boolean copyright;
     private Map<String, String> formats;
@@ -25,6 +27,30 @@ public class Book implements Serializable {
         this.title = title;
         this.translators = translators;
         this.users = users;
+    }
+
+    public Book(ArrayList<Person> authors, String[] bookshelves, boolean copyright, int download_count, Map<String, String> formats, int id, String[] languages, String media_type, String[] subjects, List<String> summaries, String title, ArrayList<Person> translators, String[] users) {
+        this.authors = authors;
+        this.bookshelves = bookshelves;
+        this.copyright = copyright;
+        this.download_count = download_count;
+        this.formats = formats;
+        this.id = id;
+        this.languages = languages;
+        this.media_type = media_type;
+        this.subjects = subjects;
+        this.summaries = summaries;
+        this.title = title;
+        this.translators = translators;
+        this.users = users;
+    }
+
+    public List<String> getSummaries() {
+        return summaries;
+    }
+
+    public void setSummaries(List<String> summaries) {
+        this.summaries = summaries;
     }
 
     public ArrayList<Person> getAuthors() {
