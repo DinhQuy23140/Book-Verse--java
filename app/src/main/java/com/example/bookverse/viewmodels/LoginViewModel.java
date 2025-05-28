@@ -92,6 +92,9 @@ public class LoginViewModel extends ViewModel {
         });
     }
 
+    public boolean checkIsLogin() {
+        return userRepository.isLogin();
+    }
 
     public void selectImage (Bitmap bitmap) {
         String imgStr = enCodeImage(bitmap);

@@ -53,4 +53,8 @@ public class InfUserViewModel extends ViewModel {
         image.setValue(userRepository.getImage());
         dob.setValue(userRepository.getDob());
     }
+
+    public void setIsLogin(Boolean status) {
+        userRepository.setLogin(status);
+    }
 }

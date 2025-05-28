@@ -178,7 +178,7 @@ public class InfUserActivity extends AppCompatActivity {
             Intent logout = new Intent(this, LoginActivity.class);
             logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(logout);
-            preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
+            infUserViewModel.setIsLogin(false);
         });
 
         btnBack.setOnClickListener(back -> {

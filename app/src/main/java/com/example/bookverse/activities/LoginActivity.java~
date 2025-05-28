@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                 login_btnLogin.setVisibility(View.VISIBLE);
             }
         });
-
+        
         loginViewModels.getMessageLogin().observe(this, message -> {
             if (message != null) {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
